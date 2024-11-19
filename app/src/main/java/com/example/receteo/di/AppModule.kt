@@ -2,9 +2,9 @@ package com.example.receteo.di
 
 import android.content.Context
 import androidx.room.Room
-import com.example.receteo.data.Api.RecipeApi
-
-import com.example.receteo.data.db.RecipeDatabase
+import com.example.receteo.data.local.RecipeDao
+import com.example.receteo.data.local.RecipeDatabase
+import com.example.receteo.data.remote.RecipeApi
 import com.example.receteo.data.repository.RecipeRepository
 import dagger.Module
 import dagger.Provides
@@ -22,21 +22,22 @@ object AppModule {
     @Singleton
     fun provideDatabase(context: Context): RecipeDatabase {
         return Room.databaseBuilder(
-            context.applicationContext,
+            context,
             RecipeDatabase::class.java,
             "recipe_database"
-        ).fallbackToDestructiveMigration().build()
+        ).build()
     }
 
     @Provides
-    @Singleton
-    fun provideRecipeDao(database: RecipeDatabase) = database.recipeDao()
+    fun provideRecipeDao(database: RecipeDatabase): RecipeDao {
+        return database.recipeDao()
+    }
 
     @Provides
     @Singleton
     fun provideRetrofit(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("http://localhost:1337/admin") // Cambia esto por tu URL de Strapi
+            .baseUrl("https://your-api-url.com/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
@@ -50,9 +51,9 @@ object AppModule {
     @Provides
     @Singleton
     fun provideRecipeRepository(
-        recipeDao: RecipeDatabase,
+        recipeDao: RecipeDao,
         recipeApi: RecipeApi
     ): RecipeRepository {
-        return RecipeRepository(recipeDao.recipeDao(), recipeApi)
+        return RecipeRepository(recipeDao, recipeApi)
     }
 }

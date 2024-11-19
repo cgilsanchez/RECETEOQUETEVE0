@@ -1,34 +1,26 @@
 package com.example.receteo.data.repository
 
-import com.example.receteo.data.Api.RecipeApi
-import com.example.receteo.data.db.RecipeDao
-import com.example.receteo.data.db.RecipeEntity
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flow
+import com.example.receteo.data.local.RecipeDao
+import com.example.receteo.data.local.RecipeEntity
+import com.example.receteo.data.remote.RecipeApi
+import javax.inject.Inject
 
-class RecipeRepository(
+class RecipeRepository @Inject constructor(
     private val recipeDao: RecipeDao,
     private val recipeApi: RecipeApi
 ) {
-
-    // Obtener todas las recetas (desde API y Room)
-    fun getRecipes(): Flow<List<RecipeEntity>> = flow {
-        val remoteData = recipeApi.getRecipes() // Llama a la API
-        remoteData.forEach { recipeDao.insertRecipe(it) } // Guarda en Room
-        val localData = recipeDao.getAllRecipes().first() // Obtén datos de Room
-        emit(localData)
+    suspend fun getAllRecipes() = recipeDao.getAllRecipes()
+    suspend fun getFavoriteRecipes() = recipeDao.getFavoriteRecipes()
+    suspend fun createRecipe(recipe: RecipeEntity) {
+        recipeDao.insertRecipe(recipe)
+        recipeApi.createRecipe(recipe)
     }
-
-    // Agregar receta (en Room y en la API)
-    suspend fun addRecipe(recipe: RecipeEntity) {
-        recipeDao.insertRecipe(recipe) // Guarda en Room
-        recipeApi.createRecipe(recipe) // Envía a la API
+    suspend fun updateRecipe(recipe: RecipeEntity) {
+        recipeDao.updateRecipe(recipe)
+        recipeApi.updateRecipe(recipe.id, recipe)
     }
-
-    // Eliminar receta
-    suspend fun deleteRecipe(recipe: RecipeEntity) {
-        recipeDao.deleteRecipe(recipe) // Elimina en Room
-        // Nota: Agrega un endpoint en Strapi si quieres eliminar remotamente
+    suspend fun deleteRecipe(id: Int) {
+        recipeDao.deleteRecipeById(id)
+        recipeApi.deleteRecipe(id)
     }
 }

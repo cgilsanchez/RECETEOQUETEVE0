@@ -1,4 +1,4 @@
-package com.example.receteo.ui.fragments
+package com.example.receteo.ui.profile
 
 import android.os.Bundle
 import android.view.LayoutInflater
