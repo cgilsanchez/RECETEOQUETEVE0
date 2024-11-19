@@ -1,9 +1,10 @@
 package com.example.receteo.data.Api
 
+import com.example.receteo.data.db.RecipeEntity
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Body
-import com.example.recipeproject.data.db.RecipeEntity
+
 
 interface RecipeApi {
     @GET("recipes")

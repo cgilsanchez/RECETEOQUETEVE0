@@ -2,9 +2,10 @@ package com.example.receteo.di
 
 import android.content.Context
 import androidx.room.Room
-import com.example.recipeproject.data.api.RecipeApi
-import com.example.recipeproject.data.db.RecipeDatabase
-import com.example.recipeproject.data.repository.RecipeRepository
+import com.example.receteo.data.Api.RecipeApi
+
+import com.example.receteo.data.db.RecipeDatabase
+import com.example.receteo.data.repository.RecipeRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,10 +22,10 @@ object AppModule {
     @Singleton
     fun provideDatabase(context: Context): RecipeDatabase {
         return Room.databaseBuilder(
-            context,
+            context.applicationContext,
             RecipeDatabase::class.java,
             "recipe_database"
-        ).build()
+        ).fallbackToDestructiveMigration().build()
     }
 
     @Provides
@@ -35,7 +36,7 @@ object AppModule {
     @Singleton
     fun provideRetrofit(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://your-strapi-url/api/") // Cambia esto por tu URL de Strapi
+            .baseUrl("http://localhost:1337/admin") // Cambia esto por tu URL de Strapi
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
