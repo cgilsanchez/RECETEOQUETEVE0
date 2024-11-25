@@ -7,4 +7,5 @@
     <string name="iniciar_sesi_n">Iniciar Sesión</string>
     <string name="no_tienes_cuenta_reg_strate">No tienes cuenta? Regístrate</string>
     <string name="todo" />
+    <string name="title_activity_login" />
 </resources>

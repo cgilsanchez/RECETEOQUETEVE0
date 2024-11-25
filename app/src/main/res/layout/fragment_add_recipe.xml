@@ -2,44 +2,40 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <ScrollView
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.recipes.AddRecipeFragment">
+        android:orientation="vertical"
+        android:padding="16dp">
 
-        <LinearLayout
-            android:orientation="vertical"
+        <EditText
+            android:id="@+id/etRecipeName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp">
+            android:hint="Recipe Name" />
 
-            <EditText
-                android:id="@+id/etRecipeName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Recipe Name" />
+        <EditText
+            android:id="@+id/etIngredients"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Ingredients"
+            android:inputType="textMultiLine"
+            android:minLines="3" />
 
-            <EditText
-                android:id="@+id/etIngredients"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Ingredients"
-                android:inputType="textMultiLine"
-                android:minLines="3" />
+        <EditText
+            android:id="@+id/etDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Description"
+            android:inputType="textMultiLine"
+            android:minLines="5" />
 
-            <EditText
-                android:id="@+id/etDescription"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Description"
-                android:inputType="textMultiLine"
-                android:minLines="5" />
+        <Button
+            android:id="@+id/btnSaveRecipe"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Save" />
+    </LinearLayout>
 
-            <Button
-                android:id="@+id/btnSaveRecipe"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Save" />
-        </LinearLayout>
-    </ScrollView>
 </layout>
