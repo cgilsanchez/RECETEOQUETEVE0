@@ -1,5 +1,6 @@
 package com.example.receteo
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
@@ -14,8 +15,12 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var navController: NavController
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+        // Crear un Bundle vacío si savedInstanceState es null
+        val nonNullSavedInstanceState = savedInstanceState ?: Bundle()
+        super.onCreate(nonNullSavedInstanceState)
+
         setContentView(R.layout.activity_main)
 
         val navHostFragment =
@@ -25,4 +30,6 @@ class MainActivity : AppCompatActivity() {
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         bottomNavigationView.setupWithNavController(navController)
     }
+
+
 }

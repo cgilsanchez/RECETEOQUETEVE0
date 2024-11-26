@@ -1,8 +1,7 @@
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
-    id("kotlin-kapt")
-    id("androidx.navigation.safeargs")
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
+    id("kotlin-kapt") // Para Room y Hilt
     id("com.google.dagger.hilt.android")
 }
 
@@ -12,80 +11,49 @@ android {
 
     defaultConfig {
         applicationId = "com.example.receteo"
-        minSdk = 24
-        targetSdk = 34
+        minSdk = 21
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
+    buildFeatures {
+        viewBinding = true
+        dataBinding = true // Habilita Data Binding
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = "11"
-    }
-
-    buildFeatures {
-        viewBinding = true
-        dataBinding = true
+        jvmTarget = "17"
     }
 }
 
 dependencies {
-    // Room
-    implementation(libs.androidx.room.runtime)
-    kapt(libs.androidx.room.room.compiler)
-    implementation(libs.androidx.room.ktx)
 
-    // Hilt
-    implementation(libs.hilt.android)
-    kapt(libs.hilt.android.compiler)
-
-    // Retrofit y Gson
-    implementation(libs.retrofit)
-    implementation(libs.converter.gson)
-
-    // AndroidX
-    implementation(libs.androidx.core.ktx)
+    implementation(libs.core.ktx.v1120)
     implementation(libs.androidx.appcompat)
+    implementation(libs.material.v1100)
     implementation(libs.androidx.constraintlayout)
-
-    // Material Design
-    implementation(libs.material)
-
-    // Navegación
-    implementation(libs.androidx.navigation.fragment)
-    implementation(libs.androidx.navigation.ui)
-
-    // Fragment y Activity
-    implementation(libs.androidx.fragment.ktx)
-    implementation(libs.androidx.activity)
-
-    // CardView y diseño de interfaz
-    implementation(libs.cardview.v7)
-    implementation(libs.design)
-
-    // Carga de imágenes
-    implementation(libs.coil)
-
-    // Testing
+    implementation(libs.androidx.navigation.fragment.ktx.v273)
+    implementation(libs.androidx.navigation.ui.ktx.v273)
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.compiler)
+    implementation(libs.androidx.room.runtime.v260)
+    kapt(libs.androidx.room.compiler.v260)
+    implementation(libs.androidx.room.ktx.v260)
+    implementation(libs.androidx.lifecycle.runtime)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+
 }
 
 kapt {

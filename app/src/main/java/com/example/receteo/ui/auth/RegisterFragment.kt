@@ -26,7 +26,7 @@ class RegisterFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnRegister.setOnClickListener {
-            // Lógica para registrar usuario
+
         }
 
         binding.btnBackToLogin.setOnClickListener {

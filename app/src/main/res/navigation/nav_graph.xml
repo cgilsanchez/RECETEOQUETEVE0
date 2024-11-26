@@ -1,20 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    app:startDestination="@id/recipeListFragment">
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeFragment">
 
     <fragment
-        android:id="@+id/recipeListFragment"
-        android:name="com.example.receteo.ui.recipes.RecipeListFragment"
-        tools:layout="@layout/fragment_recipe_list">
-        <action
-            android:id="@+id/action_recipeListFragment_to_addRecipeFragment"
-            app:destination="@id/addRecipeFragment" />
-    </fragment>
+        android:id="@+id/homeFragment"
+        android:name="com.example.receteo.ui.HomeFragment"
+        android:label="Home" />
 
     <fragment
-        android:id="@+id/addRecipeFragment"
-        android:name="com.example.receteo.ui.recipes.AddRecipeFragment"
-        tools:layout="@layout/fragment_add_recipe" />
+        android:id="@+id/settingsFragment"
+        android:name="com.example.receteo.ui.SettingsFragment"
+        android:label="Settings" />
 </navigation>

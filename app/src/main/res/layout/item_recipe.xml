@@ -28,6 +28,12 @@
                 android:layout_height="wrap_content"
                 android:text="Ingredients" />
 
+            <TextView
+                android:id="@+id/tvDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Description" />
+
             <ImageView
                 android:id="@+id/ivFavorite"
                 android:layout_width="24dp"

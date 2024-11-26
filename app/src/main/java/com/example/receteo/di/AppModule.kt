@@ -37,7 +37,7 @@ object AppModule {
     @Singleton
     fun provideRetrofit(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://your-api-url.com/")
+            .baseUrl("http://localhost:1337/admin")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }

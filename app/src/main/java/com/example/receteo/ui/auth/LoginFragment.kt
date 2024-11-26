@@ -26,7 +26,6 @@ class LoginFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnLogin.setOnClickListener {
-            // Lógica para iniciar sesión
         }
 
         binding.btnRegister.setOnClickListener {

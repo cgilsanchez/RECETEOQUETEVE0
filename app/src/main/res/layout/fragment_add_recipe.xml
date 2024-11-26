@@ -10,16 +10,16 @@
         android:padding="16dp">
 
         <EditText
-            android:id="@+id/etRecipeName"
+            android:id="@+id/RecipeName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Recipe Name" />
+            android:hint="@string/recipe_name" />
 
         <EditText
             android:id="@+id/etIngredients"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Ingredients"
+            android:hint="@string/ingredients"
             android:inputType="textMultiLine"
             android:minLines="3" />
 

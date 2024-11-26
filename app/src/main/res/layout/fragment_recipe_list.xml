@@ -11,6 +11,8 @@
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            app:layout_anchor="@+id/recyclerView"
+            app:layout_anchorGravity="center"
             tools:listitem="@layout/item_recipe" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
