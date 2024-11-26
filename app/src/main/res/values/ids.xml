@@ -3,4 +3,11 @@
     <item name="action_register_to_login" type="id" />
     <item name="action_login_to_register" type="id" />
     <item name="bottom_navigation" type="id" />
+    <item name="textViewTitle" type="id" />
+    <item name="textViewDescription" type="id" />
+    <item name="textViewIngredients" type="id" />
+    <item name="buttonFavorite" type="id" />
+    <item name="recyclerViewFavorites" type="id" />
+    <item name="buttonRegister" type="id" />
+    <item name="buttonGoToLogin" type="id" />
 </resources>

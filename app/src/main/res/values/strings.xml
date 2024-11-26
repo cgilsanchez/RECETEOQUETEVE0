@@ -11,4 +11,6 @@
     <string name="title_activity_register" />
     <string name="recipe_name">Recipe Name</string>
     <string name="ingredients">Ingredients</string>
+    <string name="favorite" />
+    <string name="correo_electr_nico">Correo electrónico</string>
 </resources>

@@ -10,4 +10,4 @@ data class RecipeEntity(
     val title: String,
     val ingredients: String,
     val description: String,
-    val isFavorite: Boolean = false)
+    var isFavorite: Boolean = false)
