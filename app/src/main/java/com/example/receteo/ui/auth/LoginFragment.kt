@@ -15,26 +15,22 @@ class LoginFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
+        // Inflar el layout asociado
         return inflater.inflate(R.layout.fragment_login, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val emailEditText = view.findViewById<EditText>(R.id.editTextEmail)
-        val passwordEditText = view.findViewById<EditText>(R.id.editTextPassword)
-        val loginButton = view.findViewById<Button>(R.id.buttonLogin)
-        val registerButton = view.findViewById<Button>(R.id.buttonGoToRegister)
-
-        loginButton.setOnClickListener {
-            val email = emailEditText.text.toString()
-            val password = passwordEditText.text.toString()
-            // Aquí puedes validar e iniciar sesión
-        }
-
-        registerButton.setOnClickListener {
+        // Configurar navegación para los botones
+        view.findViewById<Button>(R.id.button_register)?.setOnClickListener {
             findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
         }
+
+        view.findViewById<Button>(R.id.button_login)?.setOnClickListener {
+            findNavController().navigate(R.id.action_loginFragment_to_recipeListFragment)
+        }
     }
+
 }

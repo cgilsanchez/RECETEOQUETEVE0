@@ -10,4 +10,14 @@
     <item name="recyclerViewFavorites" type="id" />
     <item name="buttonRegister" type="id" />
     <item name="buttonGoToLogin" type="id" />
+    <item name="LoginFragment" type="id" />
+    <item name="registerFragment" type="id" />
+    <item name="action_loginFragment_to_registerFragment" type="id" />
+    <item name="action_registerFragment_to_loginFragment" type="id" />
+    <item name="nav_host_fragment" type="id" />
+    <item name="editTextEmail" type="id" />
+    <item name="editTextPassword" type="id" />
+    <item name="buttonLogin" type="id" />
+    <item name="buttonGoToRegister" type="id" />
+    <item name="recipeListFragment" type="id" />
 </resources>
