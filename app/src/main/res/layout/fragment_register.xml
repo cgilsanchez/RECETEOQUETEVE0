@@ -1,12 +1,51 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="36dp">
 
-    <Button
-        android:id="@+id/button_login"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Volver al Login" />
-</LinearLayout>
+        android:orientation="vertical">
+
+        <!-- Campo de Nombre -->
+        <EditText
+            android:id="@+id/editTextNameRegister"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nombre Completo"
+            android:inputType="textPersonName" />
+
+        <!-- Campo de Correo -->
+        <EditText
+            android:id="@+id/editTextEmailRegister"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Correo Electrónico"
+            android:inputType="textEmailAddress" />
+
+        <!-- Campo de Contraseña -->
+        <EditText
+            android:id="@+id/editTextPasswordRegister"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Contraseña"
+            android:inputType="textPassword" />
+
+        <!-- Botón de Registro -->
+        <Button
+            android:id="@+id/buttonSubmitRegister"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Registrar"
+            android:layout_marginTop="16dp" />
+
+        <!-- Botón para volver al Login -->
+        <Button
+            android:id="@+id/buttonBackToLogin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Volver al Inicio de Sesión"
+            android:layout_marginTop="16dp" />
+    </LinearLayout>
+</ScrollView>
