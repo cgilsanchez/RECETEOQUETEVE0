@@ -20,4 +20,9 @@
     <item name="buttonLogin" type="id" />
     <item name="buttonGoToRegister" type="id" />
     <item name="recipeListFragment" type="id" />
+    <item name="editTextTitle" type="id" />
+    <item name="editTextIngredients" type="id" />
+    <item name="editTextDescription" type="id" />
+    <item name="buttonSave" type="id" />
+    <item name="buttonAddRecipe" type="id" />
 </resources>

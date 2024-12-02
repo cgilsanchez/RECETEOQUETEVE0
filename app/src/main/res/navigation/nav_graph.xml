@@ -10,8 +10,7 @@
         tools:layout="@layout/fragment_login">
         <action
             android:id="@+id/action_loginFragment_to_registerFragment"
-            app:destination="@id/registerFragment"
-            />
+            app:destination="@id/registerFragment" />
         <action
             android:id="@+id/action_loginFragment_to_recipeListFragment"
             app:destination="@id/recipeListFragment" />
@@ -39,6 +38,9 @@
                 android:name="recipeName"
                 app:argType="string" />
         </action>
+        <action
+            android:id="@+id/action_recipeListFragment_to_recipeCreateFragment"
+            app:destination="@id/recipeCreateFragment" />
     </fragment>
 
     <!-- RecipeDetailFragment -->
@@ -50,4 +52,10 @@
             android:name="recipeName"
             app:argType="string" />
     </fragment>
+
+    <!-- RecipeCreateFragment -->
+    <fragment
+        android:id="@+id/recipeCreateFragment"
+        android:name="com.example.receteo.ui.RecipeCreateFragment"
+        tools:layout="@layout/fragment_recipe_create" />
 </navigation>

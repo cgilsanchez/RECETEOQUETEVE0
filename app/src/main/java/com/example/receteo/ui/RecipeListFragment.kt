@@ -39,6 +39,12 @@ class RecipeListFragment : Fragment() {
         }
 
         recyclerView.adapter = adapter
+
+        // Configurar el botón para agregar una nueva receta
+        val addRecipeButton = view.findViewById<View>(R.id.buttonAddRecipe)
+        addRecipeButton.setOnClickListener {
+            // Navegar al RecipeCreateFragment
+            Navigation.findNavController(view).navigate(R.id.action_recipeListFragment_to_recipeCreateFragment)
+        }
     }
 }
-

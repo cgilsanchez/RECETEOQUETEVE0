@@ -1,0 +1,47 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Campo de título -->
+        <EditText
+            android:id="@+id/editTextTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Título de la receta"
+            android:inputType="text" />
+
+        <!-- Campo de ingredientes -->
+        <EditText
+            android:id="@+id/editTextIngredients"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Ingredientes"
+            android:inputType="textMultiLine"
+            android:lines="3"
+            android:minLines="3" />
+
+        <!-- Campo de descripción -->
+        <EditText
+            android:id="@+id/editTextDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Descripción"
+            android:inputType="textMultiLine"
+            android:lines="5"
+            android:minLines="5" />
+
+        <!-- Botón de guardar -->
+        <Button
+            android:id="@+id/buttonSave"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Guardar"
+            android:layout_marginTop="16dp" />
+    </LinearLayout>
+</ScrollView>
