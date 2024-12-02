@@ -25,4 +25,5 @@
     <item name="editTextDescription" type="id" />
     <item name="buttonSave" type="id" />
     <item name="buttonAddRecipe" type="id" />
+    <item name="recycler_view_favorites" type="id" />
 </resources>

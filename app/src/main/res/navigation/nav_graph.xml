@@ -58,4 +58,10 @@
         android:id="@+id/recipeCreateFragment"
         android:name="com.example.receteo.ui.RecipeCreateFragment"
         tools:layout="@layout/fragment_recipe_create" />
+
+    <fragment
+        android:id="@+id/favoritesFragment"
+        android:name="com.example.receteo.ui.FavoritesFragment"
+        tools:layout="@layout/fragment_favorites" />
+
 </navigation>
