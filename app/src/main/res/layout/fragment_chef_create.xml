@@ -1,0 +1,35 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="36dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Campo de nombre -->
+        <EditText
+            android:id="@+id/editTextChefName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nombre del Chef"
+            android:inputType="text" />
+
+        <!-- Campo de especialidad -->
+        <EditText
+            android:id="@+id/editTextChefSpecialty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Especialidad"
+            android:inputType="text" />
+
+        <!-- Botón de guardar -->
+        <Button
+            android:id="@+id/buttonSaveChef"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Guardar"
+            android:layout_marginTop="16dp" />
+    </LinearLayout>
+</ScrollView>

@@ -21,14 +21,14 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Navegar al registro
+
         view.findViewById<Button>(R.id.buttonRegister).setOnClickListener {
             findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
         }
 
-        // Navegar al RecipeListFragment al presionar el botón de inicio de sesión
+
         view.findViewById<Button>(R.id.buttonLogin).setOnClickListener {
-            findNavController().navigate(R.id.action_loginFragment_to_recipeListFragment)
+            findNavController().navigate(R.id.action_loginFragment_to_nav_recipes)
         }
     }
 }

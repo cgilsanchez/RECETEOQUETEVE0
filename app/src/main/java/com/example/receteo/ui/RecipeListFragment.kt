@@ -28,23 +28,21 @@ class RecipeListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Configuración del RecyclerView
+
         val recyclerView = view.findViewById<RecyclerView>(R.id.recycler_view_recipes)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        // Datos de ejemplo
+
         val recipes = listOf("Receta 1", "Receta 2", "Receta 3")
         val adapter = RecipeAdapter(
             recipes,
             onClick = { recipeName ->
-                // Navegar al fragmento de detalles de receta
+
                 val bundle = Bundle().apply { putString("recipeName", recipeName) }
-                Navigation.findNavController(view).navigate(
-                    R.id.action_recipeListFragment_to_recipeDetailFragment, bundle
-                )
+
             },
             onFavoriteClick = { recipeName ->
-                // Manejar favoritos usando el SharedViewModel
+
                 if (sharedViewModel.favoriteRecipes.value!!.contains(recipeName)) {
                     sharedViewModel.removeFavorite(recipeName)
                     Toast.makeText(requireContext(), "$recipeName eliminado de favoritos", Toast.LENGTH_SHORT).show()
@@ -57,9 +55,5 @@ class RecipeListFragment : Fragment() {
 
         recyclerView.adapter = adapter
 
-        // Configuración del botón para agregar recetas
-        view.findViewById<View>(R.id.buttonAddRecipe).setOnClickListener {
-            Navigation.findNavController(view).navigate(R.id.action_recipeListFragment_to_recipeCreateFragment)
-        }
     }
 }

@@ -27,4 +27,14 @@
     <item name="buttonAddRecipe" type="id" />
     <item name="recycler_view_favorites" type="id" />
     <item name="action_favoritesFragment_to_recipeDetailFragment" type="id" />
+    <item name="tv_user_name" type="id" />
+    <item name="tv_user_email" type="id" />
+    <item name="btn_logout" type="id" />
+    <item name="text_chef_name" type="id" />
+    <item name="recycler_view_chefs" type="id" />
+    <item name="buttonAddChef" type="id" />
+    <item name="action_chefListFragment_to_chefCreateFragment" type="id" />
+    <item name="editTextChefName" type="id" />
+    <item name="editTextChefSpecialty" type="id" />
+    <item name="buttonSaveChef" type="id" />
 </resources>

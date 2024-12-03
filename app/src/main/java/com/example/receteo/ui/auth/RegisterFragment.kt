@@ -21,12 +21,12 @@ class RegisterFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Volver al login
+
         view.findViewById<Button>(R.id.buttonBackToLogin).setOnClickListener {
             findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
         }
 
-        // Registrar datos (puedes implementar lógica para guardar datos aquí)
+
         view.findViewById<Button>(R.id.buttonSubmitRegister).setOnClickListener {
             // Lógica para registrar al usuario
         }
