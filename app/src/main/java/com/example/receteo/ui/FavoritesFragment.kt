@@ -5,11 +5,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.receteo.R
+import com.example.receteo.ui.viewModel.SharedViewModel
 
-class FavoritesFragment(private val favoriteRecipes: List<String>) : Fragment() {
+class FavoritesFragment : Fragment() {
+
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -24,7 +28,18 @@ class FavoritesFragment(private val favoriteRecipes: List<String>) : Fragment() 
         val recyclerView = view.findViewById<RecyclerView>(R.id.recycler_view_favorites)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        val adapter = RecipeAdapter(favoriteRecipes, onClick = {}, onFavoriteClick = {})
-        recyclerView.adapter = adapter
+        // Observar los favoritos desde el SharedViewModel
+        sharedViewModel.favoriteRecipes.observe(viewLifecycleOwner) { favorites ->
+            val adapter = RecipeAdapter(
+                recipes = favorites,
+                onClick = { recipeName ->
+                    // Navegar al detalle de la receta favorita
+                },
+                onFavoriteClick = { recipeName ->
+                    sharedViewModel.removeFavorite(recipeName)
+                }
+            )
+            recyclerView.adapter = adapter
+        }
     }
 }

@@ -41,6 +41,12 @@
         <action
             android:id="@+id/action_recipeListFragment_to_recipeCreateFragment"
             app:destination="@id/recipeCreateFragment" />
+
+        <action
+            android:id="@+id/action_recipeListFragment_to_favoritesFragment"
+            app:destination="@id/favoritesFragment" />
+
+
     </fragment>
 
     <!-- RecipeDetailFragment -->
@@ -62,6 +68,15 @@
     <fragment
         android:id="@+id/favoritesFragment"
         android:name="com.example.receteo.ui.FavoritesFragment"
-        tools:layout="@layout/fragment_favorites" />
+        tools:layout="@layout/fragment_favorites">
+    <action
+        android:id="@+id/action_favoritesFragment_to_recipeDetailFragment"
+        app:destination="@id/recipeDetailFragment">
+        <argument
+            android:name="recipeName"
+            app:argType="string" />
+    </action>
+
+    </fragment>
 
 </navigation>

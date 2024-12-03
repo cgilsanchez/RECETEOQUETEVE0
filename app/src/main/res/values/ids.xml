@@ -26,4 +26,5 @@
     <item name="buttonSave" type="id" />
     <item name="buttonAddRecipe" type="id" />
     <item name="recycler_view_favorites" type="id" />
+    <item name="action_favoritesFragment_to_recipeDetailFragment" type="id" />
 </resources>
