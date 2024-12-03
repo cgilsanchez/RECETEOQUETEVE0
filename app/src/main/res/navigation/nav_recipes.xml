@@ -32,6 +32,9 @@
         <argument
             android:name="recipeName"
             app:argType="string" />
+        <action
+            android:id="@+id/action_recipeDetailFragment_to_recipeListFragment2"
+            app:destination="@id/recipeListFragment2" />
     </fragment>
 
     <!-- RecipeCreateFragment -->

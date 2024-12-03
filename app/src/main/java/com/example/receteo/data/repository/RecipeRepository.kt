@@ -5,7 +5,8 @@ import com.example.receteo.data.local.RecipeEntity
 import com.example.receteo.data.remote.RecipeApi
 import javax.inject.Inject
 
-class RecipeRepository @Inject constructor(
+class
+RecipeRepository @Inject constructor(
     private val recipeDao: RecipeDao,
     private val recipeApi: RecipeApi
 ) {

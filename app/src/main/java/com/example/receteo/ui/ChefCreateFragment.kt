@@ -8,6 +8,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation
 import com.example.receteo.R
 
 class ChefCreateFragment : Fragment() {
@@ -37,5 +38,7 @@ class ChefCreateFragment : Fragment() {
                 Toast.makeText(requireContext(), "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show()
             }
         }
+
+
     }
 }
