@@ -37,4 +37,6 @@
     <item name="editTextChefName" type="id" />
     <item name="editTextChefSpecialty" type="id" />
     <item name="buttonSaveChef" type="id" />
+    <item name="action_nav_recipes_to_recipeCreateFragment" type="id" />
+    <item name="action_recipeListFragment_to_recipeCreateFragment" type="id" />
 </resources>

@@ -1,11 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_recipes"
     app:startDestination="@id/recipeListFragment2">
 
+    <!-- RecipeListFragment -->
     <fragment
         android:id="@+id/recipeListFragment2"
         android:name="com.example.receteo.ui.RecipeListFragment"
-        android:label="RecipeListFragment" />
+        android:label="Lista de Recetas"
+        tools:layout="@layout/fragment_recipe_list">
+        <action
+            android:id="@+id/action_recipeListFragment2_to_recipeDetailFragment"
+            app:destination="@id/recipeDetailFragment">
+            <argument
+                android:name="recipeName"
+                app:argType="string" />
+        </action>
+        <action
+            android:id="@+id/action_recipeListFragment2_to_recipeCreateFragment"
+            app:destination="@id/recipeCreateFragment" />
+    </fragment>
+
+    <!-- RecipeDetailFragment -->
+    <fragment
+        android:id="@+id/recipeDetailFragment"
+        android:name="com.example.receteo.ui.RecipeDetailFragment"
+        android:label="Detalle de Receta"
+        tools:layout="@layout/fragment_recipe_detail">
+        <argument
+            android:name="recipeName"
+            app:argType="string" />
+    </fragment>
+
+    <!-- RecipeCreateFragment -->
+    <fragment
+        android:id="@+id/recipeCreateFragment"
+        android:name="com.example.receteo.ui.RecipeCreateFragment"
+        android:label="Crear Receta"
+        tools:layout="@layout/fragment_recipe_create" />
 </navigation>

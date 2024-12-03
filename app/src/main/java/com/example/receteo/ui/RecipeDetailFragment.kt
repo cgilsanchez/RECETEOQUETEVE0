@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation
 import com.example.receteo.R
 
 class RecipeDetailFragment : Fragment() {
@@ -26,4 +27,5 @@ class RecipeDetailFragment : Fragment() {
         val titleTextView = view.findViewById<TextView>(R.id.text_recipe_title)
         titleTextView.text = recipeName
     }
+
 }

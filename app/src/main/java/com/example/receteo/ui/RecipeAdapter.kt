@@ -25,13 +25,16 @@ class RecipeAdapter(
         val recipe = recipes[position]
         holder.titleTextView.text = recipe
 
+        // Navegar al RecipeDetailFragment al hacer clic en la carta
+        holder.itemView.setOnClickListener {
+            onClick(recipe) // Utiliza el callback ya existente para manejar la navegación
+        }
+
         // Cambiar el ícono del botón dependiendo del estado de favorito
         val isFavorite = favoriteRecipes.contains(recipe)
         holder.favoriteButton.setImageResource(
             if (isFavorite) R.drawable.ic_favorite_filled else R.drawable.ic_favorite_border
         )
-
-        holder.itemView.setOnClickListener { onClick(recipe) }
 
         holder.favoriteButton.setOnClickListener {
             if (isFavorite) {
@@ -51,4 +54,3 @@ class RecipeAdapter(
         val favoriteButton: ImageButton = view.findViewById(R.id.button_favorite)
     }
 }
-
