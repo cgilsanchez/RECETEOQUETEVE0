@@ -1,4 +1,4 @@
-package com.example.receteo.ui
+package com.example.receteo.ui.favorites
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,6 +9,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.receteo.R
+import com.example.receteo.ui.recipe.RecipeAdapter
 import com.example.receteo.ui.viewModel.SharedViewModel
 
 class FavoritesFragment : Fragment() {

@@ -1,4 +1,4 @@
-package com.example.receteo.ui
+package com.example.receteo.ui.chef
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,7 +8,6 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.navigation.Navigation
 import com.example.receteo.R
 
 class ChefCreateFragment : Fragment() {

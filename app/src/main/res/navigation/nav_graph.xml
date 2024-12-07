@@ -31,7 +31,7 @@
     <!-- RecipeDetailFragment -->
     <fragment
         android:id="@+id/recipeDetailFragment"
-        android:name="com.example.receteo.ui.RecipeDetailFragment"
+        android:name="com.example.receteo.ui.recipe.RecipeDetailFragment"
         tools:layout="@layout/fragment_recipe_detail">
         <argument
             android:name="recipeName"
@@ -41,12 +41,12 @@
     <!-- RecipeCreateFragment -->
     <fragment
         android:id="@+id/recipeCreateFragment"
-        android:name="com.example.receteo.ui.RecipeCreateFragment"
+        android:name="com.example.receteo.ui.recipe.RecipeCreateFragment"
         tools:layout="@layout/fragment_recipe_create" />
 
     <fragment
         android:id="@+id/favoritesFragment"
-        android:name="com.example.receteo.ui.FavoritesFragment"
+        android:name="com.example.receteo.ui.favorites.FavoritesFragment"
         tools:layout="@layout/fragment_favorites">
     <action
         android:id="@+id/action_favoritesFragment_to_recipeDetailFragment"

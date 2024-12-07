@@ -5,6 +5,6 @@
     app:startDestination="@id/userFragment">
     <fragment
         android:id="@+id/userFragment"
-        android:name="com.example.receteo.ui.auth.UserFragment"
+        android:name="com.example.receteo.ui.user.UserFragment"
         android:label="UserFragment" />
 </navigation>

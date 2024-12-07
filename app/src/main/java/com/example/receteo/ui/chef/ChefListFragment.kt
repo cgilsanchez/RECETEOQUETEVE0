@@ -1,4 +1,4 @@
-package com.example.receteo.ui
+package com.example.receteo.ui.chef
 
 import android.os.Bundle
 import android.view.LayoutInflater

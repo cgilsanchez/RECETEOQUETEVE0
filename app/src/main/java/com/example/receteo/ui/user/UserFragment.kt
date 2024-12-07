@@ -1,4 +1,4 @@
-package com.example.receteo.ui.auth
+package com.example.receteo.ui.user
 
 import android.content.Intent
 import android.os.Bundle

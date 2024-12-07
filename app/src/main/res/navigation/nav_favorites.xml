@@ -6,6 +6,6 @@
 
     <fragment
         android:id="@+id/favoritesFragment2"
-        android:name="com.example.receteo.ui.FavoritesFragment"
+        android:name="com.example.receteo.ui.favorites.FavoritesFragment"
         android:label="FavoritesFragment" />
 </navigation>
