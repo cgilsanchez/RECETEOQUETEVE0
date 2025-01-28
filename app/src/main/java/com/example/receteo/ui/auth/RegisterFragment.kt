@@ -1,5 +1,6 @@
 package com.example.receteo.ui.auth
 
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -33,6 +34,7 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
 
                 authViewModel.register(username, email, password) { user ->
                     if (user != null) {
+                        saveToken(user.jwt)  // Guardamos el token
                         Toast.makeText(requireContext(), "Registro exitoso", Toast.LENGTH_SHORT).show()
                         findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
                     } else {
@@ -45,5 +47,10 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
                 findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
             }
         }
+    }
+
+    private fun saveToken(token: String) {
+        val sharedPreferences = requireActivity().getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+        sharedPreferences.edit().putString("jwt", token).apply()
     }
 }

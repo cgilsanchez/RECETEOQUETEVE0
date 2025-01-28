@@ -15,7 +15,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object ApiModule {
 
-    private const val BASE_URL = "http://localhost:1337/api/" // Asegúrate de usar la URL correcta de la API
+    private const val BASE_URL = "https://people-service-6bwq.onrender.com/api/" // Asegúrate de usar la URL correcta de la API
 
     @Provides
     @Singleton

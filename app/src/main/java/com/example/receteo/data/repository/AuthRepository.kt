@@ -16,9 +16,12 @@ class AuthRepository @Inject constructor(
             if (response.isSuccessful) {
                 response.body()
             } else {
+                // Registrar el error en Logcat para depuración
+                android.util.Log.e("AuthRepository", "Error en login: ${response.errorBody()?.string()}")
                 null
             }
         } catch (e: Exception) {
+            android.util.Log.e("AuthRepository", "Excepción en login: ${e.message}")
             null
         }
     }
@@ -29,10 +32,14 @@ class AuthRepository @Inject constructor(
             if (response.isSuccessful) {
                 response.body()
             } else {
+                // Registrar el error en Logcat para depuración
+                android.util.Log.e("AuthRepository", "Error en registro: ${response.errorBody()?.string()}")
                 null
             }
         } catch (e: Exception) {
+            android.util.Log.e("AuthRepository", "Excepción en registro: ${e.message}")
             null
         }
     }
 }
+

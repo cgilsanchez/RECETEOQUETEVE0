@@ -25,6 +25,10 @@ class MainActivity : AppCompatActivity() {
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         bottomNavigationView.setupWithNavController(navController)
 
+        if (isUserLoggedIn()) {
+            navController.navigate(R.id.nav_recipes) // Ir a la pantalla principal si ya está logueado
+        }
+
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.loginFragment, R.id.registerFragment -> bottomNavigationView.visibility = View.GONE
@@ -33,7 +37,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        return navController.navigateUp() || super.onSupportNavigateUp()
+    private fun isUserLoggedIn(): Boolean {
+        val sharedPreferences = getSharedPreferences("auth_prefs", MODE_PRIVATE)
+        return sharedPreferences.getString("jwt", null) != null
     }
 }
+
