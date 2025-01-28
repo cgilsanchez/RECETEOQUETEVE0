@@ -9,9 +9,9 @@ import retrofit2.http.POST
 
 interface AuthApi {
 
-    @POST("api/auth/local") // URL corregida
+    @POST("api/auth/local")
     suspend fun login(@Body request: AuthRequest): Response<UserModel>
 
-    @POST("api/auth/local/register") // URL corregida
+    @POST("api/auth/local/register")
     suspend fun register(@Body request: RegisterRequest): Response<UserModel>
 }

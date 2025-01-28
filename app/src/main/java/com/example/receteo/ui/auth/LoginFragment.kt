@@ -20,27 +20,29 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentLoginBinding.bind(view)
 
-        binding.buttonLogin.setOnClickListener {
-            val identifier = binding.editTextUsername.text.toString().trim()
-            val password = binding.editTextPassword.text.toString().trim()
+        binding.apply {
+            buttonLogin.setOnClickListener {
+                val identifier = editTextUsername?.text?.toString()?.trim()
+                val password = editTextPassword?.text?.toString()?.trim()
 
-            if (identifier.isEmpty() || password.isEmpty()) {
-                Toast.makeText(requireContext(), "Completa todos los campos", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
+                if (identifier.isNullOrEmpty() || password.isNullOrEmpty()) {
+                    Toast.makeText(requireContext(), "Completa todos los campos", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
 
-            authViewModel.login(identifier, password) { user ->
-                if (user != null) {
-                    Toast.makeText(requireContext(), "Login exitoso", Toast.LENGTH_SHORT).show()
-                    findNavController().navigate(R.id.action_loginFragment_to_nav_recipes) // Navega al home
-                } else {
-                    Toast.makeText(requireContext(), "Error en el login", Toast.LENGTH_SHORT).show()
+                authViewModel.login(identifier, password) { user ->
+                    if (user != null) {
+                        Toast.makeText(requireContext(), "Login exitoso", Toast.LENGTH_SHORT).show()
+                        findNavController().navigate(R.id.action_loginFragment_to_nav_recipes)
+                    } else {
+                        Toast.makeText(requireContext(), "Error en el login", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
-        }
 
-        binding.buttonRegister.setOnClickListener {
-            findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
+            buttonRegister.setOnClickListener {
+                findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
+            }
         }
     }
 }
