@@ -1,62 +1,46 @@
 package com.example.receteo.ui.auth
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.receteo.R
+import com.example.receteo.databinding.FragmentLoginBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class LoginFragment : Fragment() {
+class LoginFragment : Fragment(R.layout.fragment_login) {
 
+    private lateinit var binding: FragmentLoginBinding
     private val authViewModel: AuthViewModel by viewModels()
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        return inflater.inflate(R.layout.fragment_login, container, false)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = FragmentLoginBinding.bind(view)
 
-        // Encuentra las vistas
-        val usernameEditText = view.findViewById<EditText>(R.id.editTextUsername)
-        val passwordEditText = view.findViewById<EditText>(R.id.editTextPassword)
-        val loginButton = view.findViewById<Button>(R.id.buttonLogin)
-        val registerButton = view.findViewById<Button>(R.id.buttonRegister)
+        binding.buttonLogin.setOnClickListener {
+            val identifier = binding.editTextUsername.text.toString().trim()
+            val password = binding.editTextPassword.text.toString().trim()
 
-        loginButton.setOnClickListener {
-            val username = usernameEditText?.text.toString().trim() // Manejo seguro con "?.text"
-            val password = passwordEditText?.text.toString().trim()
-
-            if (username.isEmpty() || password.isEmpty()) {
+            if (identifier.isEmpty() || password.isEmpty()) {
                 Toast.makeText(requireContext(), "Completa todos los campos", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            authViewModel.login(username, password)
-        }
-
-        registerButton.setOnClickListener {
-            findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
-        }
-
-        authViewModel.user.observe(viewLifecycleOwner) { user ->
-            if (user != null) {
-                Toast.makeText(requireContext(), "Bienvenido ${user.username}", Toast.LENGTH_SHORT).show()
-                findNavController().navigate(R.id.action_loginFragment_to_nav_recipes)
-            } else {
-                Toast.makeText(requireContext(), "Error en login, verifica tus datos", Toast.LENGTH_SHORT).show()
+            authViewModel.login(identifier, password) { user ->
+                if (user != null) {
+                    Toast.makeText(requireContext(), "Login exitoso", Toast.LENGTH_SHORT).show()
+                    findNavController().navigate(R.id.action_loginFragment_to_nav_recipes) // Navega al home
+                } else {
+                    Toast.makeText(requireContext(), "Error en el login", Toast.LENGTH_SHORT).show()
+                }
             }
+        }
+
+        binding.buttonRegister.setOnClickListener {
+            findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
         }
     }
 }

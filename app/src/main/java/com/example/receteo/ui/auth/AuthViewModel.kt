@@ -1,54 +1,29 @@
 package com.example.receteo.ui.auth
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.receteo.data.remote.models.UserModel
 import com.example.receteo.data.repository.AuthRepository
+import com.example.receteo.data.remote.models.UserModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val repository: AuthRepository
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
-    private val _user = MutableLiveData<UserModel?>()
-    val user: LiveData<UserModel?> get() = _user
-
-    fun login(username: String, password: String) {
+    fun login(identifier: String, password: String, onResult: (UserModel?) -> Unit) {
         viewModelScope.launch {
-            try {
-                val response = repository.login(username, password)
-                if (response != null) {
-                    _user.postValue(response)
-                } else {
-                    println("❌ Error en login: Credenciales incorrectas")
-                    _user.postValue(null)
-                }
-            } catch (e: Exception) {
-                println("❌ Excepción en login: ${e.message}")
-                _user.postValue(null)
-            }
+            val user = authRepository.login(identifier, password)
+            onResult(user)
         }
     }
 
-    fun register(username: String, email: String, password: String) {
+    fun register(username: String, email: String, password: String, onResult: (UserModel?) -> Unit) {
         viewModelScope.launch {
-            try {
-                val response = repository.register(username, email, password)
-                if (response != null) {
-                    _user.postValue(response)
-                } else {
-                    println("❌ Error en registro")
-                    _user.postValue(null)
-                }
-            } catch (e: Exception) {
-                println("❌ Excepción en register: ${e.message}")
-                _user.postValue(null)
-            }
+            val user = authRepository.register(username, email, password)
+            onResult(user)
         }
     }
 }

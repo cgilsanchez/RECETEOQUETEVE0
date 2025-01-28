@@ -2,9 +2,8 @@ package com.example.receteo.data.remote.models
 
 
 
-data class UserModel(
-    val id: Int,
+data class RegisterRequest(
     val username: String,
     val email: String,
-    val jwt: String?
+    val password: String
 )
