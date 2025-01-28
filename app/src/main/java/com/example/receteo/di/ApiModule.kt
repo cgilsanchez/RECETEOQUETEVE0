@@ -1,5 +1,7 @@
 package com.example.receteo.di
 
+import com.example.receteo.data.remote.AuthApi
+import com.example.receteo.data.remote.ChefApi
 import com.example.receteo.data.remote.RecipeApi
 import dagger.Module
 import dagger.Provides
@@ -13,20 +15,22 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object ApiModule {
 
-    private const val BASE_URL = "http://localhost:1337/admin"
+    private const val BASE_URL = "http://localhost:1337/api/" // Asegúrate de usar la URL correcta de la API
 
     @Provides
     @Singleton
-    fun provideRetrofit(): Retrofit {
-        return Retrofit.Builder()
+    fun provideRetrofit(): Retrofit =
+        Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-    }
 
     @Provides
-    @Singleton
-    fun provideRecipeApi(retrofit: Retrofit): RecipeApi {
-        return retrofit.create(RecipeApi::class.java)
-    }
+    fun provideAuthApi(retrofit: Retrofit): AuthApi = retrofit.create(AuthApi::class.java)
+
+    @Provides
+    fun provideChefApi(retrofit: Retrofit): ChefApi = retrofit.create(ChefApi::class.java)
+
+    @Provides
+    fun provideRecipeApi(retrofit: Retrofit): RecipeApi = retrofit.create(RecipeApi::class.java)
 }

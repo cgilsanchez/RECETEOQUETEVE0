@@ -1,6 +1,5 @@
 package com.example.receteo.data.local
 
-
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
@@ -15,7 +14,7 @@ interface RecipeDao {
     suspend fun getFavoriteRecipes(): List<RecipeEntity>
 
     @Insert
-    suspend fun insertRecipe(recipe: RecipeEntity)
+    suspend fun insertRecipe(recipe: RecipeEntity) // Cambiado de RecipeModel a RecipeEntity
 
     @Update
     suspend fun updateRecipe(recipe: RecipeEntity)

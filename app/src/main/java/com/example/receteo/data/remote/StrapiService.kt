@@ -5,7 +5,7 @@ interface StrapiService {
 
 
     object ApiClient {
-        private const val BASE_URL = "https://tu-api-strapi-url.com/api/"
+        private const val BASE_URL = "http://localhost:1337/admin"
 
         val retrofit: Retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)

@@ -40,4 +40,5 @@
     <item name="action_nav_recipes_to_recipeCreateFragment" type="id" />
     <item name="action_recipeListFragment_to_recipeCreateFragment" type="id" />
     <item name="chefCreateFragment" type="id" />
+    <item name="editTextUsername" type="id" />
 </resources>

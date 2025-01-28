@@ -1,27 +1,18 @@
 package com.example.receteo.data.repository
 
-import com.example.receteo.data.local.RecipeDao
-import com.example.receteo.data.local.RecipeEntity
 import com.example.receteo.data.remote.RecipeApi
+import com.example.receteo.data.remote.models.RecipeModel
 import javax.inject.Inject
 
-class
-RecipeRepository @Inject constructor(
-    private val recipeDao: RecipeDao,
+class RecipeRepository @Inject constructor(
     private val recipeApi: RecipeApi
 ) {
-    suspend fun getAllRecipes() = recipeDao.getAllRecipes()
-    suspend fun getFavoriteRecipes() = recipeDao.getFavoriteRecipes()
-    suspend fun createRecipe(recipe: RecipeEntity) {
-        recipeDao.insertRecipe(recipe)
-        recipeApi.createRecipe(recipe)
-    }
-    suspend fun updateRecipe(recipe: RecipeEntity) {
-        recipeDao.updateRecipe(recipe)
-        recipeApi.updateRecipe(recipe.id, recipe)
-    }
-    suspend fun deleteRecipe(id: Int) {
-        recipeDao.deleteRecipeById(id)
-        recipeApi.deleteRecipe(id)
-    }
+
+    suspend fun getAllRecipesFromApi() = recipeApi.getAllRecipes()
+
+    suspend fun createRecipe(recipe: RecipeModel) = recipeApi.createRecipe(recipe)
+
+    suspend fun updateRecipe(id: Int, recipe: RecipeModel) = recipeApi.updateRecipe(id, recipe)
+
+    suspend fun deleteRecipe(id: Int) = recipeApi.deleteRecipe(id)
 }
