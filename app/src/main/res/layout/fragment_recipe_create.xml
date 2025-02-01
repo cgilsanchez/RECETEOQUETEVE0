@@ -1,47 +1,44 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="36dp">
+    android:orientation="vertical"
+    android:padding="16dp">
 
-    <LinearLayout
+    <EditText
+        android:id="@+id/etRecipeName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:hint="Nombre de la receta" />
 
-        <!-- Campo de título -->
-        <EditText
-            android:id="@+id/editTextTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Título de la receta"
-            android:inputType="text" />
+    <EditText
+        android:id="@+id/etIngredients"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Ingredientes" />
 
-        <!-- Campo de ingredientes -->
-        <EditText
-            android:id="@+id/editTextIngredients"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Ingredientes"
-            android:inputType="textMultiLine"
-            android:lines="3"
-            android:minLines="3" />
+    <EditText
+        android:id="@+id/etDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Descripción" />
 
-        <!-- Campo de descripción -->
-        <EditText
-            android:id="@+id/editTextDescription"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Descripción"
-            android:inputType="textMultiLine"
-            android:lines="5"
-            android:minLines="5" />
+    <EditText
+        android:id="@+id/etImageUrl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="URL de la imagen" />
 
-        <!-- Botón de guardar -->
-        <Button
-            android:id="@+id/buttonSave"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Guardar"
-            android:layout_marginTop="16dp" />
-    </LinearLayout>
-</ScrollView>
+    <AutoCompleteTextView
+        android:id="@+id/dropdownChef"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Seleccionar Chef" />
+
+    <Button
+        android:id="@+id/btnSaveRecipe"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Guardar Receta"
+        android:backgroundTint="@android:color/holo_green_dark"/>
+</LinearLayout>

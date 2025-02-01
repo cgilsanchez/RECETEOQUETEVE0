@@ -42,7 +42,13 @@
     <fragment
         android:id="@+id/recipeCreateFragment"
         android:name="com.example.receteo.ui.recipe.RecipeCreateFragment"
-        tools:layout="@layout/fragment_recipe_create" />
+        tools:layout="@layout/fragment_recipe_create">
+        <argument
+            android:name="recipeId"
+            app:argType="integer" />  <!-- NO USAR nullable en integer -->
+    </fragment>
+
+
 
     <fragment
         android:id="@+id/favoritesFragment"

@@ -1,10 +1,11 @@
-package com.example.receteo.viewModel
+package com.example.receteo.ui.recipe
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.receteo.data.remote.models.RecipeModel
+import com.example.receteo.data.remote.models.RecipeRequestModel
 import com.example.receteo.data.repository.RecipeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -18,48 +19,40 @@ class RecipeViewModel @Inject constructor(
     private val _recipes = MutableLiveData<List<RecipeModel>>()
     val recipes: LiveData<List<RecipeModel>> get() = _recipes
 
+    private val _selectedRecipe = MutableLiveData<RecipeModel?>()
+    val selectedRecipe: LiveData<RecipeModel?> get() = _selectedRecipe
+
     fun fetchRecipes() {
         viewModelScope.launch {
-            try {
-                val response = repository.getAllRecipesFromApi()
-                if (response.isSuccessful) {
-                    _recipes.postValue(response.body())
-                } else {
-                    println("❌ Error al obtener recetas: ${response.errorBody()?.string()}")
-                }
-            } catch (e: Exception) {
-                println("❌ Excepción en fetchRecipes: ${e.message}")
-            }
+            _recipes.value = repository.getRecipes()
         }
     }
 
-    fun createRecipe(recipe: RecipeModel) {
+    fun createRecipe(recipe: RecipeRequestModel) {
         viewModelScope.launch {
-            try {
-                val response = repository.createRecipe(recipe)
-                if (response.isSuccessful) {
-                    fetchRecipes()
-                } else {
-                    println("❌ Error al crear receta: ${response.errorBody()?.string()}")
-                }
-            } catch (e: Exception) {
-                println("❌ Excepción en createRecipe: ${e.message}")
-            }
+            repository.createRecipe(recipe)
+            fetchRecipes()
         }
     }
 
-    fun deleteRecipe(recipeId: Int) {
+    fun getRecipeById(id: Int) {
         viewModelScope.launch {
-            try {
-                val response = repository.deleteRecipe(recipeId)
-                if (response.isSuccessful) {
-                    fetchRecipes()
-                } else {
-                    println("❌ Error al eliminar receta: ${response.errorBody()?.string()}")
-                }
-            } catch (e: Exception) {
-                println("❌ Excepción en deleteRecipe: ${e.message}")
-            }
+            val recipe = repository.getRecipeById(id)
+            _selectedRecipe.postValue(recipe)
+        }
+    }
+
+    fun updateRecipe(recipe: RecipeRequestModel, id: Int) {
+        viewModelScope.launch {
+            repository.updateRecipe(recipe, id)
+            fetchRecipes()
+        }
+    }
+
+    fun deleteRecipe(id: Int) {
+        viewModelScope.launch {
+            repository.deleteRecipe(id)
+            fetchRecipes()
         }
     }
 }

@@ -19,20 +19,23 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val navHostFragment = supportFragmentManager
-            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        navController = navHostFragment.navController
+            .findFragmentById(R.id.nav_host_fragment) as? NavHostFragment
 
-        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
-        bottomNavigationView.setupWithNavController(navController)
+        navHostFragment?.let {
+            navController = it.navController
 
-        if (isUserLoggedIn()) {
-            navController.navigate(R.id.nav_recipes) // Ir a la pantalla principal si ya está logueado
-        }
+            val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+            bottomNavigationView.setupWithNavController(navController)
 
-        navController.addOnDestinationChangedListener { _, destination, _ ->
-            when (destination.id) {
-                R.id.loginFragment, R.id.registerFragment -> bottomNavigationView.visibility = View.GONE
-                else -> bottomNavigationView.visibility = View.VISIBLE
+            if (isUserLoggedIn()) {
+                navController.navigate(R.id.nav_recipes) // Navegar a la pantalla principal si está logueado
+            }
+
+            navController.addOnDestinationChangedListener { _, destination, _ ->
+                when (destination.id) {
+                    R.id.loginFragment, R.id.registerFragment -> bottomNavigationView.visibility = View.GONE
+                    else -> bottomNavigationView.visibility = View.VISIBLE
+                }
             }
         }
     }
@@ -42,4 +45,3 @@ class MainActivity : AppCompatActivity() {
         return sharedPreferences.getString("jwt", null) != null
     }
 }
-

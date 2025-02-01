@@ -1,56 +1,40 @@
-package com.example.receteo.ui.recipe
-
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.receteo.R
+import com.example.receteo.data.remote.models.RecipeModel
+import com.example.receteo.databinding.ItemRecipeBinding
 
 class RecipeAdapter(
-    private val recipes: List<String>,
-    private val onClick: (String) -> Unit,
-    private val onFavoriteClick: (String) -> Unit
+    private var recipes: List<RecipeModel>,
+    private val onRecipeClick: (RecipeModel) -> Unit,
+    private val onDeleteClick: (RecipeModel) -> Unit
 ) : RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder>() {
 
-    private val favoriteRecipes = mutableSetOf<String>()
+    inner class RecipeViewHolder(private val binding: ItemRecipeBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(recipe: RecipeModel) {
+            binding.tvRecipeTitle.text = recipe.attributes.name
+            binding.tvRecipeDescription.text = recipe.attributes.descriptions
+            binding.btnDeleteRecipe.setOnClickListener { onDeleteClick(recipe) }
+            binding.root.setOnClickListener { onRecipeClick(recipe) }
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecipeViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_recipe, parent, false)
-        return RecipeViewHolder(view)
+        val binding = ItemRecipeBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return RecipeViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
-        val recipe = recipes[position]
-        holder.titleTextView.text = recipe
-
-        // Navegar al RecipeDetailFragment al hacer clic en la carta
-        holder.itemView.setOnClickListener {
-            onClick(recipe) // Utiliza el callback ya existente para manejar la navegación
-        }
-
-        // Cambiar el ícono del botón dependiendo del estado de favorito
-        val isFavorite = favoriteRecipes.contains(recipe)
-        holder.favoriteButton.setImageResource(
-            if (isFavorite) R.drawable.ic_favorite_filled else R.drawable.ic_favorite_border
-        )
-
-        holder.favoriteButton.setOnClickListener {
-            if (isFavorite) {
-                favoriteRecipes.remove(recipe)
-            } else {
-                favoriteRecipes.add(recipe)
-            }
-            onFavoriteClick(recipe)
-            notifyItemChanged(position)
-        }
+        holder.bind(recipes[position])
     }
 
-    override fun getItemCount(): Int = recipes.size
+    override fun getItemCount() = recipes.size
 
-    class RecipeViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val titleTextView: TextView = view.findViewById(R.id.text_recipe_title)
-        val favoriteButton: ImageButton = view.findViewById(R.id.button_favorite)
+    // ✅ Nueva función para actualizar los datos de la lista dinámicamente
+    fun updateData(newRecipes: List<RecipeModel>) {
+        recipes = newRecipes
+        notifyDataSetChanged()
     }
 }

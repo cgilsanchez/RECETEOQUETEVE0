@@ -1,68 +1,72 @@
 package com.example.receteo.ui.recipe
 
+import RecipeAdapter
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
-import androidx.navigation.Navigation
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.receteo.R
-import com.example.receteo.ui.viewModel.SharedViewModel
+import com.example.receteo.data.remote.models.RecipeModel
+import com.example.receteo.databinding.FragmentRecipeListBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class RecipeListFragment : Fragment() {
 
-    // Usamos el SharedViewModel para manejar los favoritos
-    private val sharedViewModel: SharedViewModel by activityViewModels()
+    private lateinit var binding: FragmentRecipeListBinding
+    private val viewModel: RecipeViewModel by viewModels()
+    private lateinit var adapter: RecipeAdapter
+    private val recipeList = mutableListOf<RecipeModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_recipe_list, container, false)
+    ): View {
+        binding = FragmentRecipeListBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val recyclerView = view.findViewById<RecyclerView>(R.id.recycler_view_recipes)
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        setupRecyclerView()
+        observeRecipes()
+        viewModel.fetchRecipes()
+    }
 
-        // Lista de recetas de ejemplo
-        val recipes = listOf("Receta 1", "Receta 2", "Receta 3")
-
-        // Configuración del adaptador
-        val adapter = RecipeAdapter(
-            recipes,
-            onClick = { recipeName ->
-                // Navegar al RecipeDetailFragment con el nombre de la receta
-                val bundle = Bundle().apply { putString("recipeName", recipeName) }
-                Navigation.findNavController(view).navigate(
-                    R.id.action_recipeListFragment2_to_recipeDetailFragment,
-                    bundle
-                )
+    private fun setupRecyclerView() {
+        adapter = RecipeAdapter(recipeList,
+            onRecipeClick = { recipe ->
+                val bundle = Bundle()
+                bundle.putInt("recipeId", recipe.id) // ✅ Solo pasamos el ID
+                findNavController().navigate(R.id.recipeCreateFragment, bundle)
             },
-            onFavoriteClick = { recipeName ->
-                // Manejar la lógica de favoritos con el SharedViewModel
-                if (sharedViewModel.favoriteRecipes.value!!.contains(recipeName)) {
-                    sharedViewModel.removeFavorite(recipeName)
-                    Toast.makeText(requireContext(), "$recipeName eliminado de favoritos", Toast.LENGTH_SHORT).show()
-                } else {
-                    sharedViewModel.addFavorite(recipeName)
-                    Toast.makeText(requireContext(), "$recipeName añadido a favoritos", Toast.LENGTH_SHORT).show()
-                }
-            }
-        )
+            onDeleteClick = { recipe ->
+                viewModel.deleteRecipe(recipe.id)
+                Toast.makeText(requireContext(), "Eliminando: ${recipe.attributes.name}", Toast.LENGTH_SHORT).show()
+            })
 
-        recyclerView.adapter = adapter
-
-        // Manejar clic en el botón para agregar receta
-        view.findViewById<View>(R.id.buttonAddRecipe).setOnClickListener {
-            Navigation.findNavController(view).navigate(R.id.action_recipeListFragment2_to_recipeCreateFragment)
+        binding.recyclerView.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = this@RecipeListFragment.adapter
         }
     }
-}
 
+    private fun observeRecipes() {
+        viewModel.recipes.observe(viewLifecycleOwner) { recipes ->
+            if (recipes.isNotEmpty()) {
+                recipeList.clear()
+                recipeList.addAll(recipes)
+                adapter.updateData(recipeList) // ✅ Ahora actualiza la lista correctamente
+            } else {
+                Toast.makeText(requireContext(), "No se encontraron recetas", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+}
