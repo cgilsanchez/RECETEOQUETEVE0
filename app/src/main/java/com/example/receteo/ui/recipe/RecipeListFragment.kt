@@ -37,19 +37,28 @@ class RecipeListFragment : Fragment() {
         setupRecyclerView()
         observeRecipes()
         viewModel.fetchRecipes()
+
+        binding.fabAddRecipe.setOnClickListener {
+            findNavController().navigate(R.id.recipeCreateFragment)
+        }
     }
 
     private fun setupRecyclerView() {
         adapter = RecipeAdapter(recipeList,
             onRecipeClick = { recipe ->
                 val bundle = Bundle()
-                bundle.putInt("recipeId", recipe.id) // ✅ Solo pasamos el ID
+                bundle.putInt("recipeId", recipe.id)
                 findNavController().navigate(R.id.recipeCreateFragment, bundle)
             },
             onDeleteClick = { recipe ->
                 viewModel.deleteRecipe(recipe.id)
-                Toast.makeText(requireContext(), "Eliminando: ${recipe.attributes.name}", Toast.LENGTH_SHORT).show()
-            })
+            },
+            onEditClick = { recipe ->
+                val bundle = Bundle()
+                bundle.putInt("recipeId", recipe.id)
+                findNavController().navigate(R.id.recipeCreateFragment, bundle)
+            }
+        )
 
         binding.recyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
@@ -62,11 +71,10 @@ class RecipeListFragment : Fragment() {
             if (recipes.isNotEmpty()) {
                 recipeList.clear()
                 recipeList.addAll(recipes)
-                adapter.updateData(recipeList) // ✅ Ahora actualiza la lista correctamente
+                adapter.updateData(recipeList)
             } else {
                 Toast.makeText(requireContext(), "No se encontraron recetas", Toast.LENGTH_SHORT).show()
             }
         }
     }
-
 }

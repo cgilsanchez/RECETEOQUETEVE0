@@ -29,12 +29,6 @@
         android:layout_height="wrap_content"
         android:hint="URL de la imagen" />
 
-    <AutoCompleteTextView
-        android:id="@+id/dropdownChef"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Seleccionar Chef" />
-
     <Button
         android:id="@+id/btnSaveRecipe"
         android:layout_width="match_parent"

@@ -13,5 +13,6 @@ data class RecipeAttributes(
     val name: String,
     val descriptions: String,
     val ingredients: String,
-    val createdAt: String
+    val createdAt: String,
+    val imageUrl: String
 )

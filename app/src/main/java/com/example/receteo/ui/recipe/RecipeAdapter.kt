@@ -7,7 +7,8 @@ import com.example.receteo.databinding.ItemRecipeBinding
 class RecipeAdapter(
     private var recipes: List<RecipeModel>,
     private val onRecipeClick: (RecipeModel) -> Unit,
-    private val onDeleteClick: (RecipeModel) -> Unit
+    private val onDeleteClick: (RecipeModel) -> Unit,
+    private val onEditClick: (RecipeModel) -> Unit
 ) : RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder>() {
 
     inner class RecipeViewHolder(private val binding: ItemRecipeBinding) :
@@ -16,8 +17,9 @@ class RecipeAdapter(
         fun bind(recipe: RecipeModel) {
             binding.tvRecipeTitle.text = recipe.attributes.name
             binding.tvRecipeDescription.text = recipe.attributes.descriptions
+
             binding.btnDeleteRecipe.setOnClickListener { onDeleteClick(recipe) }
-            binding.root.setOnClickListener { onRecipeClick(recipe) }
+            binding.btnEditRecipe.setOnClickListener { onEditClick(recipe) }
         }
     }
 
@@ -32,7 +34,6 @@ class RecipeAdapter(
 
     override fun getItemCount() = recipes.size
 
-    // ✅ Nueva función para actualizar los datos de la lista dinámicamente
     fun updateData(newRecipes: List<RecipeModel>) {
         recipes = newRecipes
         notifyDataSetChanged()

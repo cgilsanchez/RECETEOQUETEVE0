@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.example.receteo.data.remote.models.RecipeRequestModel
 import com.example.receteo.databinding.FragmentRecipeCreateBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -29,7 +30,7 @@ class RecipeCreateFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        recipeId = arguments?.getInt("recipeId", -1) // Obtenemos el ID si existe
+        recipeId = arguments?.getInt("recipeId", -1)
 
         if (recipeId != null && recipeId != -1) {
             recipeViewModel.getRecipeById(recipeId!!)
@@ -37,6 +38,7 @@ class RecipeCreateFragment : Fragment() {
                 recipe?.let {
                     binding.etRecipeName.setText(it.attributes.name)
                     binding.etDescription.setText(it.attributes.descriptions)
+                    binding.etIngredients.setText(it.attributes.ingredients)
                 }
             }
         }
@@ -46,19 +48,24 @@ class RecipeCreateFragment : Fragment() {
 
     private fun saveOrUpdateRecipe() {
         val name = binding.etRecipeName.text.toString().trim()
-        val description = binding.etDescription.text.toString().trim()
+        val descriptions = binding.etDescription.text.toString().trim()
+        val ingredients = binding.etIngredients.text.toString().trim()
+        val imageUrl = binding.etImageUrl.text.toString().trim()  // Añadir esta línea
 
-        if (name.isEmpty() || description.isEmpty()) {
+        if (name.isEmpty() || descriptions.isEmpty() || ingredients.isEmpty() || imageUrl.isEmpty()) {
             Toast.makeText(requireContext(), "Todos los campos son obligatorios", Toast.LENGTH_SHORT).show()
             return
         }
 
-        if (recipeId == -1) {
-            Toast.makeText(requireContext(), "Receta creada con éxito", Toast.LENGTH_SHORT).show()
+        val recipeRequest = RecipeRequestModel(name, descriptions, ingredients, imageUrl)
+
+        if (recipeId == null || recipeId == -1) {
+            recipeViewModel.createRecipe(recipeRequest)
         } else {
-            Toast.makeText(requireContext(), "Receta actualizada con éxito", Toast.LENGTH_SHORT).show()
+            recipeViewModel.updateRecipe(recipeRequest, recipeId!!)
         }
 
         findNavController().popBackStack()
     }
+
 }
