@@ -24,7 +24,8 @@ class RecipeViewModel @Inject constructor(
 
     fun fetchRecipes() {
         viewModelScope.launch {
-            _recipes.value = repository.getRecipes()
+            val recipes = repository.getRecipes()
+            _recipes.postValue(recipes ?: emptyList())
         }
     }
 

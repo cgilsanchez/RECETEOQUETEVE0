@@ -68,13 +68,9 @@ class RecipeListFragment : Fragment() {
 
     private fun observeRecipes() {
         viewModel.recipes.observe(viewLifecycleOwner) { recipes ->
-            if (recipes.isNotEmpty()) {
-                recipeList.clear()
-                recipeList.addAll(recipes)
-                adapter.updateData(recipeList)
-            } else {
-                Toast.makeText(requireContext(), "No se encontraron recetas", Toast.LENGTH_SHORT).show()
-            }
+            recipeList.clear()
+            recipeList.addAll(recipes)
+            adapter.updateData(recipeList)
         }
     }
 }

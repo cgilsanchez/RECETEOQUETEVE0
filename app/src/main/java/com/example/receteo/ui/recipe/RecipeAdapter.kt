@@ -15,8 +15,8 @@ class RecipeAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(recipe: RecipeModel) {
-            binding.tvRecipeTitle.text = recipe.attributes.name
-            binding.tvRecipeDescription.text = recipe.attributes.descriptions
+            binding.tvRecipeTitle.text = recipe.name
+            binding.tvRecipeDescription.text = recipe.descriptions
 
             binding.btnDeleteRecipe.setOnClickListener { onDeleteClick(recipe) }
             binding.btnEditRecipe.setOnClickListener { onEditClick(recipe) }

@@ -36,9 +36,9 @@ class RecipeCreateFragment : Fragment() {
             recipeViewModel.getRecipeById(recipeId!!)
             recipeViewModel.selectedRecipe.observe(viewLifecycleOwner) { recipe ->
                 recipe?.let {
-                    binding.etRecipeName.setText(it.attributes.name)
-                    binding.etDescription.setText(it.attributes.descriptions)
-                    binding.etIngredients.setText(it.attributes.ingredients)
+                    binding.etRecipeName.setText(it.name)
+                    binding.etDescription.setText(it.descriptions)
+                    binding.etIngredients.setText(it.ingredients)
                 }
             }
         }
@@ -50,7 +50,7 @@ class RecipeCreateFragment : Fragment() {
         val name = binding.etRecipeName.text.toString().trim()
         val descriptions = binding.etDescription.text.toString().trim()
         val ingredients = binding.etIngredients.text.toString().trim()
-        val imageUrl = binding.etImageUrl.text.toString().trim()  // Añadir esta línea
+        val imageUrl = binding.etImageUrl.text.toString().trim()
 
         if (name.isEmpty() || descriptions.isEmpty() || ingredients.isEmpty() || imageUrl.isEmpty()) {
             Toast.makeText(requireContext(), "Todos los campos son obligatorios", Toast.LENGTH_SHORT).show()
@@ -67,5 +67,4 @@ class RecipeCreateFragment : Fragment() {
 
         findNavController().popBackStack()
     }
-
 }

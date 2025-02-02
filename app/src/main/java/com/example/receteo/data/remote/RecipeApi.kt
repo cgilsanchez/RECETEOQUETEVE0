@@ -1,7 +1,6 @@
 package com.example.receteo.data.remote
 
 import com.example.receteo.data.remote.models.RecipeResponse
-import com.example.receteo.data.remote.models.RecipeModel
 import com.example.receteo.data.remote.models.RecipeRequestModel
 import retrofit2.Response
 import retrofit2.http.*
@@ -12,7 +11,7 @@ interface RecipeApi {
     suspend fun getRecipes(): Response<RecipeResponse>
 
     @GET("recetas/{id}")
-    suspend fun getRecipeById(@Path("id") id: Int): Response<RecipeResponse> // ✅ Se usa RecipeResponse
+    suspend fun getRecipeById(@Path("id") id: Int): Response<RecipeResponse>
 
     @POST("recetas")
     suspend fun createRecipe(@Body recipe: RecipeRequestModel): Response<RecipeResponse>

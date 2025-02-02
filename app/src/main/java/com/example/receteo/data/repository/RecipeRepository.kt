@@ -8,25 +8,32 @@ import javax.inject.Inject
 class RecipeRepository @Inject constructor(private val api: RecipeApi) {
 
     suspend fun getRecipes(): List<RecipeModel>? {
-        val response = api.getRecipes()
-        return if (response.isSuccessful) response.body()?.data else null
+        return try {
+            val response = api.getRecipes()
+            if (response.isSuccessful) {
+                response.body()?.data?.map { it.attributes }
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            null
+        }
     }
 
     suspend fun createRecipe(recipe: RecipeRequestModel): RecipeModel? {
         val response = api.createRecipe(recipe)
-        return if (response.isSuccessful) response.body()?.data?.firstOrNull() else null
+        return if (response.isSuccessful) response.body()?.data?.firstOrNull()?.attributes else null
     }
 
     suspend fun updateRecipe(recipe: RecipeRequestModel, id: Int): RecipeModel? {
         val response = api.updateRecipe(id, recipe)
-        return if (response.isSuccessful) response.body()?.data?.firstOrNull() else null
+        return if (response.isSuccessful) response.body()?.data?.firstOrNull()?.attributes else null
     }
 
     suspend fun getRecipeById(id: Int): RecipeModel? {
         val response = api.getRecipeById(id)
-        return if (response.isSuccessful) response.body()?.data?.get(0) else null
+        return if (response.isSuccessful) response.body()?.data?.firstOrNull()?.attributes else null
     }
-
 
     suspend fun deleteRecipe(id: Int): Boolean {
         val response = api.deleteRecipe(id)
