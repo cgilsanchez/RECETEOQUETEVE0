@@ -35,7 +35,8 @@ android {
 }
 
 dependencies {
-
+    implementation("com.github.bumptech.glide:glide:4.15.1")
+    kapt("com.github.bumptech.glide:compiler:4.15.1")
     implementation(libs.core.ktx.v1120)
     implementation(libs.androidx.appcompat)
     implementation(libs.material.v1100)

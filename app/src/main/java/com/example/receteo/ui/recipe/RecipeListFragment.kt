@@ -1,7 +1,8 @@
 package com.example.receteo.ui.recipe
 
-import RecipeAdapter
+import com.example.receteo.ui.recipe.RecipeAdapter
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,7 +36,7 @@ class RecipeListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupRecyclerView()
-        observeRecipes()
+        observeViewModel()
         viewModel.fetchRecipes()
 
         binding.fabAddRecipe.setOnClickListener {
@@ -45,18 +46,15 @@ class RecipeListFragment : Fragment() {
 
     private fun setupRecyclerView() {
         adapter = RecipeAdapter(recipeList,
-            onRecipeClick = { recipe ->
-                val bundle = Bundle()
-                bundle.putInt("recipeId", recipe.id)
+            onEditClick = { recipe ->
+                val bundle = Bundle().apply {
+                    putInt("recipeId", recipe.id)
+                }
                 findNavController().navigate(R.id.recipeCreateFragment, bundle)
             },
             onDeleteClick = { recipe ->
                 viewModel.deleteRecipe(recipe.id)
-            },
-            onEditClick = { recipe ->
-                val bundle = Bundle()
-                bundle.putInt("recipeId", recipe.id)
-                findNavController().navigate(R.id.recipeCreateFragment, bundle)
+                viewModel.fetchRecipes()  // 🔥 ACTUALIZAR UI DESPUÉS DE BORRAR
             }
         )
 
@@ -66,11 +64,15 @@ class RecipeListFragment : Fragment() {
         }
     }
 
-    private fun observeRecipes() {
+
+    private fun observeViewModel() {
         viewModel.recipes.observe(viewLifecycleOwner) { recipes ->
-            recipeList.clear()
-            recipeList.addAll(recipes)
-            adapter.updateData(recipeList)
+            if (recipes.isNotEmpty()) {
+                adapter.updateData(recipes)  // 🔥 ACTUALIZA LA LISTA
+            } else {
+                Log.e("RecipeListFragment", "No recipes found")
+            }
         }
     }
+
 }

@@ -39,12 +39,14 @@ class RecipeCreateFragment : Fragment() {
                     binding.etRecipeName.setText(it.name)
                     binding.etDescription.setText(it.descriptions)
                     binding.etIngredients.setText(it.ingredients)
+                    binding.etImageUrl.setText(it.imageUrl)  // 🔥 Cargar URL de imagen en el campo de edición
                 }
             }
         }
 
         binding.btnSaveRecipe.setOnClickListener { saveOrUpdateRecipe() }
     }
+
 
     private fun saveOrUpdateRecipe() {
         val name = binding.etRecipeName.text.toString().trim()
@@ -65,6 +67,7 @@ class RecipeCreateFragment : Fragment() {
             recipeViewModel.updateRecipe(recipeRequest, recipeId!!)
         }
 
+        recipeViewModel.fetchRecipes()  // 🔥 Asegurar que se actualice la lista después de modificar una receta
         findNavController().popBackStack()
     }
 }

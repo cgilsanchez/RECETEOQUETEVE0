@@ -1,5 +1,6 @@
 package com.example.receteo.ui.recipe
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -24,36 +25,40 @@ class RecipeViewModel @Inject constructor(
 
     fun fetchRecipes() {
         viewModelScope.launch {
-            val recipes = repository.getRecipes()
-            _recipes.postValue(recipes ?: emptyList())
+            try {
+                val response = repository.getRecipes()
+                _recipes.postValue(response)  // 🔥 Asegurar actualización de UI
+            } catch (e: Exception) {
+                Log.e("RecipeViewModel", "Error fetching recipes", e)
+            }
         }
     }
+
 
     fun createRecipe(recipe: RecipeRequestModel) {
         viewModelScope.launch {
             repository.createRecipe(recipe)
-            fetchRecipes()
+            fetchRecipes()  // 🔥 Asegurar actualización
         }
     }
 
     fun getRecipeById(id: Int) {
         viewModelScope.launch {
-            val recipe = repository.getRecipeById(id)
-            _selectedRecipe.postValue(recipe)
+            _selectedRecipe.postValue(repository.getRecipeById(id))
         }
     }
 
     fun updateRecipe(recipe: RecipeRequestModel, id: Int) {
         viewModelScope.launch {
             repository.updateRecipe(recipe, id)
-            fetchRecipes()
+            fetchRecipes()  // 🔥 Asegurar actualización
         }
     }
 
     fun deleteRecipe(id: Int) {
         viewModelScope.launch {
             repository.deleteRecipe(id)
-            fetchRecipes()
+            fetchRecipes()  // 🔥 Asegurar actualización después de eliminar
         }
     }
 }
