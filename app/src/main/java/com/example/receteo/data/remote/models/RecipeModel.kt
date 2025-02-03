@@ -7,7 +7,9 @@ data class RecipeModel(
     val ingredients: String,
     val createdAt: String,
     val imageUrl: String,
+    var isFavorite: Boolean
 )
+
 
 
 

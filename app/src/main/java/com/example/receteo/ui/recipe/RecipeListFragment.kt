@@ -14,11 +14,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.receteo.R
 import com.example.receteo.data.remote.models.*
 import com.example.receteo.databinding.FragmentRecipeListBinding
+import com.example.receteo.ui.favorites.FavoritesViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class RecipeListFragment : Fragment() {
-
+    private val favoritesViewModel: FavoritesViewModel by viewModels()
     private var _binding: FragmentRecipeListBinding? = null
     private val binding get() = _binding!!
     private val viewModel: RecipeViewModel by viewModels()
@@ -66,8 +67,9 @@ class RecipeListFragment : Fragment() {
                     .show()
             },
             onFavoriteClick = { recipe ->
-                Toast.makeText(requireContext(), "Favorito actualizado", Toast.LENGTH_SHORT).show()
+                favoritesViewModel.toggleFavorite(recipe) // 🔥 Usa la instancia correcta
             }
+
         )
 
         binding.recyclerView.apply {

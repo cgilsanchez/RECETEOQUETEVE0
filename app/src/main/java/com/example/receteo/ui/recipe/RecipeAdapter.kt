@@ -21,8 +21,6 @@ class RecipeAdapter(
     private val onFavoriteClick: (RecipeModel) -> Unit
 ) : RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder>() {
 
-    private val favoriteRecipes = mutableSetOf<Int>()
-
     inner class RecipeViewHolder(val binding: ItemRecipeBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(recipe: RecipeModel) {
@@ -43,16 +41,18 @@ class RecipeAdapter(
                 onDeleteClick(recipe)
             }
 
-            binding.btnFavorite.text = if (favoriteRecipes.contains(recipe.id)) "💖" else "❤"
+            // 🔥 Botón de favoritos mejorado
             binding.btnFavorite.setOnClickListener {
-                if (favoriteRecipes.contains(recipe.id)) {
-                    favoriteRecipes.remove(recipe.id)
-                } else {
-                    favoriteRecipes.add(recipe.id)
-                }
-                binding.btnFavorite.text = if (favoriteRecipes.contains(recipe.id)) "💖" else "❤"
-                onFavoriteClick(recipe)
+                onFavoriteClick(recipe) // 🔥 Notificar a `RecipeViewModel`
+                updateFavoriteIcon(!recipe.isFavorite) // Cambia el icono en la UI inmediatamente
             }
+
+
+
+        }
+
+        private fun updateFavoriteIcon(isFavorite: Boolean) {
+            binding.btnFavorite.text = if (isFavorite) "💖" else "❤"
         }
     }
 

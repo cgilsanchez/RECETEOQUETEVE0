@@ -4,13 +4,15 @@ import android.util.Log
 import androidx.lifecycle.*
 import com.example.receteo.data.remote.models.*
 import com.example.receteo.data.repository.RecipeRepository
+import com.example.receteo.ui.favorites.FavoritesViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class RecipeViewModel @Inject constructor(
-    private val repository: RecipeRepository
+    private val repository: RecipeRepository,
+    private val favoritesViewModel: FavoritesViewModel
 ) : ViewModel() {
 
     private val _recipes = MutableLiveData<List<RecipeModel>>()
@@ -75,6 +77,23 @@ class RecipeViewModel @Inject constructor(
             }
         }
     }
+
+    fun toggleFavorite(recipeId: Int) {
+        _recipes.value = _recipes.value?.map { recipe ->
+            if (recipe.id == recipeId) {
+                val newState = !recipe.isFavorite
+                if (newState) {
+                    favoritesViewModel.addFavorite(recipe.copy(isFavorite = true)) // 🔥 Usa la instancia inyectada
+                } else {
+                    favoritesViewModel.removeFavorite(recipe) // 🔥 Usa la instancia inyectada
+                }
+                recipe.copy(isFavorite = newState)
+            } else recipe
+        } ?: emptyList()
+    }
+
+
+
 
     fun deleteRecipe(recipeId: Int) {
         viewModelScope.launch {

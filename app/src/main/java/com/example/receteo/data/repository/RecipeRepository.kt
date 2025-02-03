@@ -21,10 +21,10 @@ class RecipeRepository @Inject constructor(private val api: RecipeApi) {
                         descriptions = recipeData.attributes.descriptions,
                         ingredients = recipeData.attributes.ingredients,
                         createdAt = recipeData.attributes.createdAt,
-                        imageUrl = recipeData.attributes.image?.data?.attributes?.url ?: ""
+                        imageUrl = recipeData.attributes.image?.data?.attributes?.url ?: "",
+                        isFavorite = false // 🔥 Se asigna un valor por defecto
                     )
                 } ?: emptyList()
-
             } else {
                 Log.e("RecipeRepository", "Error en la API: ${response.code()}")
                 emptyList()
@@ -34,7 +34,6 @@ class RecipeRepository @Inject constructor(private val api: RecipeApi) {
             emptyList()
         }
     }
-
 
     suspend fun getRecipeById(recipeId: Int): RecipeModel? {
         return try {
@@ -48,7 +47,8 @@ class RecipeRepository @Inject constructor(private val api: RecipeApi) {
                         descriptions = it.attributes.descriptions,
                         ingredients = it.attributes.ingredients,
                         createdAt = it.attributes.createdAt,
-                        imageUrl = it.attributes.image?.data?.attributes?.url ?: ""
+                        imageUrl = it.attributes.image?.data?.attributes?.url ?: "",
+                        isFavorite = false // 🔥 Se asigna un valor por defecto
                     )
                 }
             } else {
@@ -59,6 +59,7 @@ class RecipeRepository @Inject constructor(private val api: RecipeApi) {
             null
         }
     }
+
 
 
 
