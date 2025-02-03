@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -16,8 +15,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class RecipeCreateFragment : Fragment() {
 
     private lateinit var binding: FragmentRecipeCreateBinding
-    private val recipeViewModel: RecipeViewModel by viewModels()
-    private var recipeId: Int? = null
+    private val viewModel: RecipeViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -30,44 +28,21 @@ class RecipeCreateFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        recipeId = arguments?.getInt("recipeId", -1)
+        binding.btnSaveRecipe.setOnClickListener {
+            val name = binding.etRecipeName.text.toString()
+            val ingredients = binding.etIngredients.text.toString()
+            val description = binding.etDescription.text.toString()
+            val imageUrl = binding.etImageUrl.text.toString()
 
-        if (recipeId != null && recipeId != -1) {
-            recipeViewModel.getRecipeById(recipeId!!)
-            recipeViewModel.selectedRecipe.observe(viewLifecycleOwner) { recipe ->
-                recipe?.let {
-                    binding.etRecipeName.setText(it.name)
-                    binding.etDescription.setText(it.descriptions)
-                    binding.etIngredients.setText(it.ingredients)
-                    binding.etImageUrl.setText(it.imageUrl)  // 🔥 Cargar URL de imagen en el campo de edición
-                }
+            if (name.isNotEmpty() && ingredients.isNotEmpty() && description.isNotEmpty()) {
+                val newRecipe = RecipeRequestModel(name, ingredients, description, imageUrl)
+                viewModel.createRecipe(newRecipe)
+                findNavController().popBackStack()
+            } else {
+                binding.etRecipeName.error = "Campo obligatorio"
+                binding.etIngredients.error = "Campo obligatorio"
+                binding.etDescription.error = "Campo obligatorio"
             }
         }
-
-        binding.btnSaveRecipe.setOnClickListener { saveOrUpdateRecipe() }
-    }
-
-
-    private fun saveOrUpdateRecipe() {
-        val name = binding.etRecipeName.text.toString().trim()
-        val descriptions = binding.etDescription.text.toString().trim()
-        val ingredients = binding.etIngredients.text.toString().trim()
-        val imageUrl = binding.etImageUrl.text.toString().trim()
-
-        if (name.isEmpty() || descriptions.isEmpty() || ingredients.isEmpty() || imageUrl.isEmpty()) {
-            Toast.makeText(requireContext(), "Todos los campos son obligatorios", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val recipeRequest = RecipeRequestModel(name, descriptions, ingredients, imageUrl)
-
-        if (recipeId == null || recipeId == -1) {
-            recipeViewModel.createRecipe(recipeRequest)
-        } else {
-            recipeViewModel.updateRecipe(recipeRequest, recipeId!!)
-        }
-
-        recipeViewModel.fetchRecipes()  // 🔥 Asegurar que se actualice la lista después de modificar una receta
-        findNavController().popBackStack()
     }
 }

@@ -1,34 +1,32 @@
 package com.example.receteo.ui.recipe
 
-import com.example.receteo.ui.recipe.RecipeAdapter
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.receteo.R
-import com.example.receteo.data.remote.models.RecipeModel
+import com.example.receteo.data.remote.models.*
 import com.example.receteo.databinding.FragmentRecipeListBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class RecipeListFragment : Fragment() {
 
-    private lateinit var binding: FragmentRecipeListBinding
+    private var _binding: FragmentRecipeListBinding? = null
+    private val binding get() = _binding!!
     private val viewModel: RecipeViewModel by viewModels()
     private lateinit var adapter: RecipeAdapter
-    private val recipeList = mutableListOf<RecipeModel>()
+    private val recipeList = mutableListOf<RecipeData>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentRecipeListBinding.inflate(inflater, container, false)
+        _binding = FragmentRecipeListBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -54,7 +52,6 @@ class RecipeListFragment : Fragment() {
             },
             onDeleteClick = { recipe ->
                 viewModel.deleteRecipe(recipe.id)
-                viewModel.fetchRecipes()  // 🔥 ACTUALIZAR UI DESPUÉS DE BORRAR
             }
         )
 
@@ -64,15 +61,35 @@ class RecipeListFragment : Fragment() {
         }
     }
 
-
     private fun observeViewModel() {
         viewModel.recipes.observe(viewLifecycleOwner) { recipes ->
-            if (recipes.isNotEmpty()) {
-                adapter.updateData(recipes)  // 🔥 ACTUALIZA LA LISTA
-            } else {
-                Log.e("RecipeListFragment", "No recipes found")
+            val convertedRecipes = recipes.map { recipeModel ->
+                RecipeData(
+                    id = recipeModel.id,
+                    attributes = RecipeAttributes(
+                        name = recipeModel.name,
+                        descriptions = recipeModel.descriptions,
+                        ingredients = recipeModel.ingredients,
+                        createdAt = recipeModel.createdAt,
+                        image = ImageData(
+                            data = ImageAttributes(
+                                attributes = ImageFormats(
+                                    url = recipeModel.imageUrl
+                                )
+                            )
+                        )
+                    )
+                )
             }
+
+            recipeList.clear()
+            recipeList.addAll(convertedRecipes)
+            adapter.notifyDataSetChanged()
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }

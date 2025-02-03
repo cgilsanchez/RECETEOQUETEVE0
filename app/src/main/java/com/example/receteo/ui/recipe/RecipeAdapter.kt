@@ -1,39 +1,37 @@
-package com.example.receteo.ui.recipe  // 🔥 Asegura que el package sea correcto
+package com.example.receteo.ui.recipe
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.os.AsyncTask
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.example.receteo.R
-import com.example.receteo.data.remote.models.RecipeModel
+import com.example.receteo.data.remote.models.RecipeData
 import com.example.receteo.databinding.ItemRecipeBinding
+import java.io.InputStream
+import java.net.HttpURLConnection
+import java.net.URL
 
 class RecipeAdapter(
-    private val recipes: MutableList<RecipeModel>,
-    private val onEditClick: (RecipeModel) -> Unit,
-    private val onDeleteClick: (RecipeModel) -> Unit
+    private val recipes: MutableList<RecipeData>,
+    private val onEditClick: (RecipeData) -> Unit,
+    private val onDeleteClick: (RecipeData) -> Unit
 ) : RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder>() {
-
 
     inner class RecipeViewHolder(private val binding: ItemRecipeBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(recipe: RecipeModel) {
-            binding.tvRecipeName.text = recipe.name
-            binding.tvRecipeDescription.text = recipe.descriptions
+        fun bind(recipe: RecipeData) {
+            binding.tvRecipeName.text = recipe.attributes.name
+            binding.tvRecipeDescription.text = recipe.attributes.descriptions ?: "Sin descripción"
 
-            // 🔥 Verifica que recipe.imageUrl contiene la URL correcta
-            Glide.with(binding.root.context)
-                .load(recipe.imageUrl)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(R.drawable.ic_launcher_background)
-                .error(R.drawable.ic_launcher_background)
-                .into(binding.recipeImage)
+            val imageUrl = recipe.attributes.image?.data?.attributes?.url ?: ""
+            if (imageUrl.isNotEmpty()) {
+                LoadImageTask(binding.ivRecipeImage).execute(imageUrl)
+            }
 
             binding.btnEdit.setOnClickListener { onEditClick(recipe) }
-            binding.btnDelete.setOnClickListener {
-                onDeleteClick(recipe)
-            }
+            binding.btnDelete.setOnClickListener { onDeleteClick(recipe) }
         }
     }
 
@@ -48,10 +46,32 @@ class RecipeAdapter(
 
     override fun getItemCount(): Int = recipes.size
 
-    fun updateData(newRecipes: List<RecipeModel>) {
+    fun updateData(newRecipes: List<RecipeData>) {
         recipes.clear()
         recipes.addAll(newRecipes)
-        notifyDataSetChanged()  // 🔥 IMPORTANTE: Notificar cambios a la UI
+        notifyDataSetChanged()
     }
 
+    private class LoadImageTask(private val imageView: ImageView) :
+        AsyncTask<String, Void, Bitmap?>() {
+
+        override fun doInBackground(vararg params: String): Bitmap? {
+            val url = params[0]
+            return try {
+                val connection = URL(url).openConnection() as HttpURLConnection
+                connection.doInput = true
+                connection.connect()
+                val input: InputStream = connection.inputStream
+                BitmapFactory.decodeStream(input)
+            } catch (e: Exception) {
+                null
+            }
+        }
+
+        override fun onPostExecute(result: Bitmap?) {
+            result?.let {
+                imageView.setImageBitmap(it)
+            }
+        }
+    }
 }

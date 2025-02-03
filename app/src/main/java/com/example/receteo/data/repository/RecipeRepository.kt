@@ -1,42 +1,71 @@
 package com.example.receteo.data.repository
 
 import com.example.receteo.data.remote.RecipeApi
-import com.example.receteo.data.remote.models.RecipeModel
-import com.example.receteo.data.remote.models.RecipeRequestModel
+import com.example.receteo.data.remote.models.*
 import javax.inject.Inject
 
 class RecipeRepository @Inject constructor(private val api: RecipeApi) {
 
-    suspend fun getRecipes(): List<RecipeModel>? {
+    /**
+     * Obtiene todas las recetas de la API y las convierte en RecipeModel.
+     */
+    suspend fun getRecipes(): List<RecipeModel> {
         return try {
             val response = api.getRecipes()
             if (response.isSuccessful) {
-                response.body()?.data?.map { it.attributes }
+                response.body()?.data?.map { recipeData ->
+                    RecipeModel(
+                        id = recipeData.id,
+                        name = recipeData.attributes.name,
+                        descriptions = recipeData.attributes.descriptions,
+                        ingredients = recipeData.attributes.ingredients,
+                        createdAt = recipeData.attributes.createdAt,
+                        imageUrl = recipeData.attributes.image?.data?.attributes?.url ?: ""
+                    )
+                } ?: emptyList()
             } else {
-                null
+                emptyList()
             }
         } catch (e: Exception) {
-            null
+            emptyList()
         }
     }
 
-    suspend fun createRecipe(recipe: RecipeRequestModel): RecipeModel? {
-        val response = api.createRecipe(recipe)
-        return if (response.isSuccessful) response.body()?.data?.firstOrNull()?.attributes else null
+
+
+    /**
+     * Crea una nueva receta.
+     */
+    suspend fun createRecipe(recipeRequest: RecipeRequestModel): Boolean {
+        return try {
+            val response = api.createRecipe(recipeRequest)
+            response.isSuccessful
+        } catch (e: Exception) {
+            false
+        }
     }
 
-    suspend fun updateRecipe(recipe: RecipeRequestModel, id: Int): RecipeModel? {
-        val response = api.updateRecipe(id, recipe)
-        return if (response.isSuccessful) response.body()?.data?.firstOrNull()?.attributes else null
+    /**
+     * Actualiza una receta existente por ID.
+     */
+    suspend fun updateRecipe(recipeRequest: RecipeRequestModel, recipeId: Int): Boolean {
+        return try {
+            val response = api.updateRecipe(recipeId, recipeRequest)
+            response.isSuccessful
+        } catch (e: Exception) {
+            false
+        }
     }
 
-    suspend fun getRecipeById(id: Int): RecipeModel? {
-        val response = api.getRecipeById(id)
-        return if (response.isSuccessful) response.body()?.data?.firstOrNull()?.attributes else null
-    }
-
-    suspend fun deleteRecipe(id: Int): Boolean {
-        val response = api.deleteRecipe(id)
-        return response.isSuccessful
+    /**
+     * Elimina una receta por ID.
+     */
+    suspend fun deleteRecipe(recipeId: Int): Boolean {
+        return try {
+            val response = api.deleteRecipe(recipeId)
+            response.isSuccessful
+        } catch (e: Exception) {
+            false
+        }
     }
 }
