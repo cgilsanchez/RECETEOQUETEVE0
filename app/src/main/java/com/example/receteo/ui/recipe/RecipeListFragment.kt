@@ -1,6 +1,7 @@
 package com.example.receteo.ui.recipe
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -63,6 +64,8 @@ class RecipeListFragment : Fragment() {
 
     private fun observeViewModel() {
         viewModel.recipes.observe(viewLifecycleOwner) { recipes ->
+            Log.d("RecipeListFragment", "Número de recetas recibidas: ${recipes.size}")
+
             val convertedRecipes = recipes.map { recipeModel ->
                 RecipeData(
                     id = recipeModel.id,
@@ -84,9 +87,11 @@ class RecipeListFragment : Fragment() {
 
             recipeList.clear()
             recipeList.addAll(convertedRecipes)
+            Log.d("RecipeListFragment", "Adaptador actualizado con ${recipeList.size} recetas")
             adapter.notifyDataSetChanged()
         }
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

@@ -7,7 +7,7 @@ import retrofit2.http.*
 
 interface RecipeApi {
 
-    @GET("recetas")
+    @GET("recetas?populate=image")
     suspend fun getRecipes(): Response<RecipeResponse>
 
     @GET("recetas/{id}")

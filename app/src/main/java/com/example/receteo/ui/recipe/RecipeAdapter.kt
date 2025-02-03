@@ -20,7 +20,7 @@ class RecipeAdapter(
     private val onDeleteClick: (RecipeData) -> Unit
 ) : RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder>() {
 
-    inner class RecipeViewHolder(private val binding: ItemRecipeBinding) :
+    inner class RecipeViewHolder(val binding: ItemRecipeBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(recipe: RecipeData) {
             binding.tvRecipeName.text = recipe.attributes.name
@@ -44,8 +44,24 @@ class RecipeAdapter(
     }
 
     override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
-        holder.bind(recipes[position])
+        val recipe = recipes[position]
+
+        Log.d("RecipeAdapter", "Asignando receta: ${recipe.attributes.name}")
+
+        holder.binding.tvRecipeName.text = recipe.attributes.name
+        holder.binding.tvRecipeDescription.text = recipe.attributes.descriptions ?: "Sin descripción"
+
+        val imageUrl = recipe.attributes.image?.data?.attributes?.url
+        Log.d("RecipeAdapter", "URL de la imagen: $imageUrl")
+
+        if (!imageUrl.isNullOrEmpty()) {
+            LoadImageTask(holder.binding.ivRecipeImage).execute(imageUrl)
+        } else {
+            Log.e("RecipeAdapter", "URL de imagen es nula o vacía")
+            holder.binding.ivRecipeImage.setImageResource(android.R.color.darker_gray)
+        }
     }
+
 
     override fun getItemCount(): Int = recipes.size
 
@@ -75,11 +91,13 @@ class RecipeAdapter(
 
         override fun onPostExecute(result: Bitmap?) {
             if (result != null) {
+                Log.d("RecipeAdapter", "Imagen cargada correctamente")
                 imageView.setImageBitmap(result)
             } else {
                 Log.e("RecipeAdapter", "Imagen no pudo ser cargada, asignando imagen de respaldo")
-                imageView.setImageResource(android.R.color.darker_gray) // Imagen de respaldo en caso de error
+                imageView.setImageResource(android.R.color.darker_gray)
             }
         }
+
     }
 }
