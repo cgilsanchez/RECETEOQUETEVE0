@@ -3,6 +3,7 @@ package com.example.receteo.ui.recipe
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.AsyncTask
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -28,6 +29,8 @@ class RecipeAdapter(
             val imageUrl = recipe.attributes.image?.data?.attributes?.url ?: ""
             if (imageUrl.isNotEmpty()) {
                 LoadImageTask(binding.ivRecipeImage).execute(imageUrl)
+            } else {
+                binding.ivRecipeImage.setImageResource(android.R.color.darker_gray) // Imagen de respaldo
             }
 
             binding.btnEdit.setOnClickListener { onEditClick(recipe) }
@@ -52,11 +55,11 @@ class RecipeAdapter(
         notifyDataSetChanged()
     }
 
-    private class LoadImageTask(private val imageView: ImageView) :
-        AsyncTask<String, Void, Bitmap?>() {
-
+    private class LoadImageTask(private val imageView: ImageView) : AsyncTask<String, Void, Bitmap?>() {
         override fun doInBackground(vararg params: String): Bitmap? {
             val url = params[0]
+            Log.d("RecipeAdapter", "Cargando imagen desde URL: $url")  // LOG PARA VERIFICAR LA URL
+
             return try {
                 val connection = URL(url).openConnection() as HttpURLConnection
                 connection.doInput = true
@@ -64,13 +67,18 @@ class RecipeAdapter(
                 val input: InputStream = connection.inputStream
                 BitmapFactory.decodeStream(input)
             } catch (e: Exception) {
+                Log.e("RecipeAdapter", "Error cargando imagen: ${e.message}")  // LOG PARA VERIFICAR ERRORES
+                e.printStackTrace()
                 null
             }
         }
 
         override fun onPostExecute(result: Bitmap?) {
-            result?.let {
-                imageView.setImageBitmap(it)
+            if (result != null) {
+                imageView.setImageBitmap(result)
+            } else {
+                Log.e("RecipeAdapter", "Imagen no pudo ser cargada, asignando imagen de respaldo")
+                imageView.setImageResource(android.R.color.darker_gray) // Imagen de respaldo en caso de error
             }
         }
     }
