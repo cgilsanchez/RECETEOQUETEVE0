@@ -19,7 +19,6 @@
             android:scaleType="centerCrop"
             android:contentDescription="Recipe Image"/>
 
-
         <TextView
             android:id="@+id/tvRecipeName"
             android:layout_width="wrap_content"
@@ -54,5 +53,12 @@
                 android:backgroundTint="@android:color/holo_red_light"
                 android:text="ELIMINAR" />
         </LinearLayout>
+
+        <Button
+            android:id="@+id/btnFavorite"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@android:color/holo_red_dark"
+            android:text="❤" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>

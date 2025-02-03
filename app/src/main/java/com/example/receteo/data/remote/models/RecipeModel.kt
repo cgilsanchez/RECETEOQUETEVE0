@@ -6,8 +6,10 @@ data class RecipeModel(
     val descriptions: String,
     val ingredients: String,
     val createdAt: String,
-    val imageUrl: String
+    val imageUrl: String,
 )
+
+
 
 data class RecipeResponse(
     val data: List<RecipeData>

@@ -13,7 +13,7 @@ class RecipeViewModel @Inject constructor(
     private val repository: RecipeRepository
 ) : ViewModel() {
 
-    private val _recipes = MutableLiveData<List<RecipeModel>>()  // 🔥 Corregido a RecipeModel
+    private val _recipes = MutableLiveData<List<RecipeModel>>()
     val recipes: LiveData<List<RecipeModel>> get() = _recipes
 
     private val _selectedRecipe = MutableLiveData<RecipeModel?>()
@@ -26,7 +26,7 @@ class RecipeViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val response = repository.getRecipes()
-                if (response.isNotEmpty()) {
+                if (!response.isNullOrEmpty()) {
                     _recipes.postValue(response)
                 } else {
                     _errorMessage.postValue("No se encontraron recetas.")
@@ -37,8 +37,23 @@ class RecipeViewModel @Inject constructor(
         }
     }
 
+    fun getRecipeById(recipeId: Int) {
+        viewModelScope.launch {
+            try {
+                val recipe = repository.getRecipeById(recipeId)
+                if (recipe != null) {
+                    _selectedRecipe.postValue(recipe)
+                } else {
+                    _errorMessage.postValue("Receta no encontrada.")
+                }
+            } catch (e: Exception) {
+                _errorMessage.postValue("Error al obtener la receta: ${e.message}")
+            }
+        }
+    }
 
-    // 🔥 MOVEMOS LAS FUNCIONES AQUÍ PARA QUE SEAN ACCESIBLES EN LOS FRAGMENTOS
+
+
     fun createRecipe(recipeRequest: RecipeRequestModel) {
         viewModelScope.launch {
             try {
@@ -63,16 +78,16 @@ class RecipeViewModel @Inject constructor(
 
     fun deleteRecipe(recipeId: Int) {
         viewModelScope.launch {
-            Log.d("RecipeViewModel", "Llamando a repository.deleteRecipe($recipeId)")
-            val success = repository.deleteRecipe(recipeId)
-            if (success) {
-                Log.d("RecipeViewModel", "Receta eliminada correctamente, actualizando lista")
-                _recipes.value = _recipes.value?.filter { it.id != recipeId }?.toMutableList()
-            } else {
-                Log.e("RecipeViewModel", "Error eliminando la receta en la API")
+            try {
+                val success = repository.deleteRecipe(recipeId)
+                if (success) {
+                    _recipes.value = _recipes.value?.filter { it.id != recipeId }?.toMutableList()
+                } else {
+                    _errorMessage.postValue("Error eliminando la receta.")
+                }
+            } catch (e: Exception) {
+                _errorMessage.postValue("Error eliminando la receta: ${e.message}")
             }
         }
     }
-
-
 }

@@ -24,13 +24,42 @@ class RecipeRepository @Inject constructor(private val api: RecipeApi) {
                         imageUrl = recipeData.attributes.image?.data?.attributes?.url ?: ""
                     )
                 } ?: emptyList()
+
             } else {
+                Log.e("RecipeRepository", "Error en la API: ${response.code()}")
                 emptyList()
             }
         } catch (e: Exception) {
+            Log.e("RecipeRepository", "Excepción obteniendo recetas: ${e.message}")
             emptyList()
         }
     }
+
+
+    suspend fun getRecipeById(recipeId: Int): RecipeModel? {
+        return try {
+            val response = api.getRecipeById(recipeId) // Llamada a la API
+            if (response.isSuccessful) {
+                val recipeData = response.body()?.data?.firstOrNull() // 🔥 Acceder al primer elemento si es una lista
+                recipeData?.let {
+                    RecipeModel(
+                        id = it.id,
+                        name = it.attributes.name,
+                        descriptions = it.attributes.descriptions,
+                        ingredients = it.attributes.ingredients,
+                        createdAt = it.attributes.createdAt,
+                        imageUrl = it.attributes.image?.data?.attributes?.url ?: ""
+                    )
+                }
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            Log.e("RecipeRepository", "Error al obtener receta: ${e.message}")
+            null
+        }
+    }
+
 
 
 

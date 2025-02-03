@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -16,6 +17,7 @@ class RecipeCreateFragment : Fragment() {
 
     private lateinit var binding: FragmentRecipeCreateBinding
     private val viewModel: RecipeViewModel by viewModels()
+    private var recipeId: Int? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,21 +30,37 @@ class RecipeCreateFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.btnSaveRecipe.setOnClickListener {
-            val name = binding.etRecipeName.text.toString()
-            val ingredients = binding.etIngredients.text.toString()
-            val description = binding.etDescription.text.toString()
-            val imageUrl = binding.etImageUrl.text.toString()
+        recipeId = arguments?.getInt("recipeId", -1)
 
-            if (name.isNotEmpty() && ingredients.isNotEmpty() && description.isNotEmpty()) {
-                val newRecipe = RecipeRequestModel(name, ingredients, description, imageUrl)
-                viewModel.createRecipe(newRecipe)
-                findNavController().popBackStack()
-            } else {
-                binding.etRecipeName.error = "Campo obligatorio"
-                binding.etIngredients.error = "Campo obligatorio"
-                binding.etDescription.error = "Campo obligatorio"
+        if (recipeId != null && recipeId != -1) {
+            viewModel.getRecipeById(recipeId!!)
+            viewModel.selectedRecipe.observe(viewLifecycleOwner) { recipe ->
+                recipe?.let {
+                    binding.etRecipeName.setText(it.name)
+                    binding.etDescription.setText(it.descriptions)
+                    binding.etIngredients.setText(it.ingredients)
+                    binding.etImageUrl.setText(it.imageUrl ?: "")
+                }
             }
         }
+
+        binding.btnSaveRecipe.setOnClickListener { saveOrUpdateRecipe() }
+    }
+
+    private fun saveOrUpdateRecipe() {
+        val name = binding.etRecipeName.text.toString().trim()
+        val descriptions = binding.etDescription.text.toString().trim()
+        val ingredients = binding.etIngredients.text.toString().trim()
+        val imageUrl = binding.etImageUrl.text.toString().trim()
+
+        val recipeRequest = RecipeRequestModel(name, descriptions, ingredients, imageUrl)
+
+        if (recipeId == null || recipeId == -1) {
+            viewModel.createRecipe(recipeRequest)
+        } else {
+            viewModel.updateRecipe(recipeRequest, recipeId!!)
+        }
+
+        findNavController().popBackStack()
     }
 }

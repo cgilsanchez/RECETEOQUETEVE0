@@ -8,37 +8,51 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.receteo.data.remote.models.RecipeData
+import com.example.receteo.data.remote.models.RecipeModel
 import com.example.receteo.databinding.ItemRecipeBinding
 import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
 
 class RecipeAdapter(
-    private val recipes: MutableList<RecipeData>,
-    private val onEditClick: (RecipeData) -> Unit,
-    private val onDeleteClick: (RecipeData) -> Unit
+    private val recipes: MutableList<RecipeModel>,
+    private val onEditClick: (RecipeModel) -> Unit,
+    private val onDeleteClick: (RecipeModel) -> Unit,
+    private val onFavoriteClick: (RecipeModel) -> Unit
 ) : RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder>() {
+
+    private val favoriteRecipes = mutableSetOf<Int>()
 
     inner class RecipeViewHolder(val binding: ItemRecipeBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(recipe: RecipeData) {
-            binding.tvRecipeName.text = recipe.attributes.name
-            binding.tvRecipeDescription.text = recipe.attributes.descriptions ?: "Sin descripción"
+        fun bind(recipe: RecipeModel) {
+            binding.tvRecipeName.text = recipe.name
+            binding.tvRecipeDescription.text = recipe.descriptions ?: "Sin descripción"
 
-            val imageUrl = recipe.attributes.image?.data?.attributes?.url ?: ""
+            val imageUrl = recipe.imageUrl ?: ""
             if (imageUrl.isNotEmpty()) {
                 LoadImageTask(binding.ivRecipeImage).execute(imageUrl)
             } else {
-                binding.ivRecipeImage.setImageResource(android.R.color.darker_gray) // Imagen de respaldo
+                binding.ivRecipeImage.setImageResource(android.R.color.darker_gray)
             }
 
             binding.btnEdit.setOnClickListener { onEditClick(recipe) }
+
             binding.btnDelete.setOnClickListener {
-                Log.d("RecipeAdapter", "Botón eliminar presionado para receta: ${recipe.attributes.name}")
+                Log.d("RecipeAdapter", "Botón eliminar presionado para receta: ${recipe.name}")
                 onDeleteClick(recipe)
             }
 
+            binding.btnFavorite.text = if (favoriteRecipes.contains(recipe.id)) "💖" else "❤"
+            binding.btnFavorite.setOnClickListener {
+                if (favoriteRecipes.contains(recipe.id)) {
+                    favoriteRecipes.remove(recipe.id)
+                } else {
+                    favoriteRecipes.add(recipe.id)
+                }
+                binding.btnFavorite.text = if (favoriteRecipes.contains(recipe.id)) "💖" else "❤"
+                onFavoriteClick(recipe)
+            }
         }
     }
 
@@ -48,28 +62,12 @@ class RecipeAdapter(
     }
 
     override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
-        val recipe = recipes[position]
-
-        Log.d("RecipeAdapter", "Asignando receta: ${recipe.attributes.name}")
-
-        holder.binding.tvRecipeName.text = recipe.attributes.name
-        holder.binding.tvRecipeDescription.text = recipe.attributes.descriptions ?: "Sin descripción"
-
-        val imageUrl = recipe.attributes.image?.data?.attributes?.url
-        Log.d("RecipeAdapter", "URL de la imagen: $imageUrl")
-
-        if (!imageUrl.isNullOrEmpty()) {
-            LoadImageTask(holder.binding.ivRecipeImage).execute(imageUrl)
-        } else {
-            Log.e("RecipeAdapter", "URL de imagen es nula o vacía")
-            holder.binding.ivRecipeImage.setImageResource(android.R.color.darker_gray)
-        }
+        holder.bind(recipes[position])
     }
-
 
     override fun getItemCount(): Int = recipes.size
 
-    fun updateData(newRecipes: List<RecipeData>) {
+    fun updateData(newRecipes: List<RecipeModel>) {
         recipes.clear()
         recipes.addAll(newRecipes)
         notifyDataSetChanged()
@@ -78,8 +76,6 @@ class RecipeAdapter(
     private class LoadImageTask(private val imageView: ImageView) : AsyncTask<String, Void, Bitmap?>() {
         override fun doInBackground(vararg params: String): Bitmap? {
             val url = params[0]
-            Log.d("RecipeAdapter", "Cargando imagen desde URL: $url")  // LOG PARA VERIFICAR LA URL
-
             return try {
                 val connection = URL(url).openConnection() as HttpURLConnection
                 connection.doInput = true
@@ -87,7 +83,6 @@ class RecipeAdapter(
                 val input: InputStream = connection.inputStream
                 BitmapFactory.decodeStream(input)
             } catch (e: Exception) {
-                Log.e("RecipeAdapter", "Error cargando imagen: ${e.message}")  // LOG PARA VERIFICAR ERRORES
                 e.printStackTrace()
                 null
             }
@@ -95,13 +90,10 @@ class RecipeAdapter(
 
         override fun onPostExecute(result: Bitmap?) {
             if (result != null) {
-                Log.d("RecipeAdapter", "Imagen cargada correctamente")
                 imageView.setImageBitmap(result)
             } else {
-                Log.e("RecipeAdapter", "Imagen no pudo ser cargada, asignando imagen de respaldo")
                 imageView.setImageResource(android.R.color.darker_gray)
             }
         }
-
     }
 }

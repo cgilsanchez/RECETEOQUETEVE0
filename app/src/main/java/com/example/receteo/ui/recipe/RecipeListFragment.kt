@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -22,7 +23,7 @@ class RecipeListFragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModel: RecipeViewModel by viewModels()
     private lateinit var adapter: RecipeAdapter
-    private val recipeList = mutableListOf<RecipeData>()
+    private val recipeList = mutableListOf<RecipeModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,7 +46,8 @@ class RecipeListFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        adapter = RecipeAdapter(recipeList,
+        adapter = RecipeAdapter(
+            recipeList.toMutableList(),
             onEditClick = { recipe ->
                 val bundle = Bundle().apply {
                     putInt("recipeId", recipe.id)
@@ -58,9 +60,13 @@ class RecipeListFragment : Fragment() {
                     .setMessage("¿Estás seguro de que deseas eliminar esta receta?")
                     .setPositiveButton("Eliminar") { _, _ ->
                         viewModel.deleteRecipe(recipe.id)
+                        Toast.makeText(requireContext(), "Receta eliminada", Toast.LENGTH_SHORT).show()
                     }
                     .setNegativeButton("Cancelar", null)
                     .show()
+            },
+            onFavoriteClick = { recipe ->
+                Toast.makeText(requireContext(), "Favorito actualizado", Toast.LENGTH_SHORT).show()
             }
         )
 
@@ -70,33 +76,17 @@ class RecipeListFragment : Fragment() {
         }
     }
 
+
+
     private fun observeViewModel() {
         viewModel.recipes.observe(viewLifecycleOwner) { recipes ->
-            Log.d("RecipeListFragment", "Número de recetas recibidas: ${recipes.size}")
+            Log.d("RecipeListFragment", "Recetas actualizadas: ${recipes.size}")
 
-            val convertedRecipes = recipes.map { recipeModel ->
-                RecipeData(
-                    id = recipeModel.id,
-                    attributes = RecipeAttributes(
-                        name = recipeModel.name,
-                        descriptions = recipeModel.descriptions,
-                        ingredients = recipeModel.ingredients,
-                        createdAt = recipeModel.createdAt,
-                        image = ImageData(
-                            data = ImageAttributes(
-                                attributes = ImageFormats(
-                                    url = recipeModel.imageUrl
-                                )
-                            )
-                        )
-                    )
-                )
+            if (recipes.isNotEmpty()) {
+                adapter.updateData(recipes)
+            } else {
+                Log.e("RecipeListFragment", "No se recibieron recetas de la API.")
             }
-
-            recipeList.clear()
-            recipeList.addAll(convertedRecipes)
-            Log.d("RecipeListFragment", "Adaptador actualizado con ${recipeList.size} recetas")
-            adapter.notifyDataSetChanged()
         }
     }
 
@@ -105,7 +95,4 @@ class RecipeListFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
-
-
 }
