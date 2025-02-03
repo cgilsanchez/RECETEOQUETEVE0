@@ -1,5 +1,6 @@
 package com.example.receteo.ui.recipe
 
+import android.util.Log
 import androidx.lifecycle.*
 import com.example.receteo.data.remote.models.*
 import com.example.receteo.data.repository.RecipeRepository
@@ -62,12 +63,16 @@ class RecipeViewModel @Inject constructor(
 
     fun deleteRecipe(recipeId: Int) {
         viewModelScope.launch {
-            try {
-                repository.deleteRecipe(recipeId)
-                fetchRecipes()
-            } catch (e: Exception) {
-                _errorMessage.postValue("Error al eliminar receta: ${e.message}")
+            Log.d("RecipeViewModel", "Llamando a repository.deleteRecipe($recipeId)")
+            val success = repository.deleteRecipe(recipeId)
+            if (success) {
+                Log.d("RecipeViewModel", "Receta eliminada correctamente, actualizando lista")
+                _recipes.value = _recipes.value?.filter { it.id != recipeId }?.toMutableList()
+            } else {
+                Log.e("RecipeViewModel", "Error eliminando la receta en la API")
             }
         }
     }
+
+
 }

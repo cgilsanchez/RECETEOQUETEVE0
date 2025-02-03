@@ -34,7 +34,11 @@ class RecipeAdapter(
             }
 
             binding.btnEdit.setOnClickListener { onEditClick(recipe) }
-            binding.btnDelete.setOnClickListener { onDeleteClick(recipe) }
+            binding.btnDelete.setOnClickListener {
+                Log.d("RecipeAdapter", "Botón eliminar presionado para receta: ${recipe.attributes.name}")
+                onDeleteClick(recipe)
+            }
+
         }
     }
 

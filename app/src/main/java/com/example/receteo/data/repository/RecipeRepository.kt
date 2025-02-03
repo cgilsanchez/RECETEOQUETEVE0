@@ -1,5 +1,6 @@
 package com.example.receteo.data.repository
 
+import android.util.Log
 import com.example.receteo.data.remote.RecipeApi
 import com.example.receteo.data.remote.models.*
 import javax.inject.Inject
@@ -62,10 +63,19 @@ class RecipeRepository @Inject constructor(private val api: RecipeApi) {
      */
     suspend fun deleteRecipe(recipeId: Int): Boolean {
         return try {
+            Log.d("RecipeRepository", "Realizando solicitud DELETE para receta ID: $recipeId")
             val response = api.deleteRecipe(recipeId)
-            response.isSuccessful
+            if (response.isSuccessful) {
+                Log.d("RecipeRepository", "Receta eliminada en Strapi")
+                true
+            } else {
+                Log.e("RecipeRepository", "Error en DELETE: ${response.errorBody()?.string()}")
+                false
+            }
         } catch (e: Exception) {
+            Log.e("RecipeRepository", "Excepción eliminando receta: ${e.message}")
             false
         }
     }
+
 }

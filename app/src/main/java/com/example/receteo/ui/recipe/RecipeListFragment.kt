@@ -1,5 +1,6 @@
 package com.example.receteo.ui.recipe
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -52,7 +53,14 @@ class RecipeListFragment : Fragment() {
                 findNavController().navigate(R.id.recipeCreateFragment, bundle)
             },
             onDeleteClick = { recipe ->
-                viewModel.deleteRecipe(recipe.id)
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Eliminar receta")
+                    .setMessage("¿Estás seguro de que deseas eliminar esta receta?")
+                    .setPositiveButton("Eliminar") { _, _ ->
+                        viewModel.deleteRecipe(recipe.id)
+                    }
+                    .setNegativeButton("Cancelar", null)
+                    .show()
             }
         )
 
@@ -97,4 +105,7 @@ class RecipeListFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
+
+
 }
