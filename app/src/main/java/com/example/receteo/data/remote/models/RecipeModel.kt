@@ -3,15 +3,12 @@ package com.example.receteo.data.remote.models
 data class RecipeModel(
     val id: Int,
     val name: String,
-    val descriptions: String,
     val ingredients: String,
-    val createdAt: String,
-    val imageUrl: String,
-    var isFavorite: Boolean
+    val descriptions: String,
+    val chef: String?,
+    val imageUrl: String?,
+    val isFavorite: Boolean = false // ✅ Se asegura de incluir el estado de favorito
 )
-
-
-
 
 data class RecipeResponse(
     val data: List<RecipeData>
@@ -26,8 +23,9 @@ data class RecipeAttributes(
     val name: String,
     val descriptions: String,
     val ingredients: String,
-    val createdAt: String,
-    val image: ImageData?
+    val chef: String?,
+    val image: ImageData?,
+    val isFavorite: Boolean = false
 )
 
 data class ImageData(
@@ -42,6 +40,6 @@ data class ImageFormats(
     val url: String?
 ) {
     fun getImageUrl(): String {
-        return url ?: ""  // Devuelve la URL de la imagen o un string vacío si no hay imagen
+        return url ?: ""
     }
 }

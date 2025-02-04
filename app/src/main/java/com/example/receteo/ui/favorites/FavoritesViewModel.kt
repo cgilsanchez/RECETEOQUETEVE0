@@ -3,7 +3,9 @@ package com.example.receteo.ui.favorites
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.receteo.data.remote.models.RecipeModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class FavoritesViewModel @Inject constructor() : ViewModel() {
@@ -15,27 +17,26 @@ class FavoritesViewModel @Inject constructor() : ViewModel() {
         val currentList = _favorites.value ?: mutableListOf()
 
         if (currentList.any { it.id == recipe.id }) {
-            currentList.removeAll { it.id == recipe.id } // Eliminar si ya está en favoritos
+            currentList.removeAll { it.id == recipe.id } // Si ya está, lo quitamos de favoritos
         } else {
-            currentList.add(recipe.copy(isFavorite = true)) // Agregar con isFavorite = true
+            currentList.add(recipe.copy(isFavorite = true)) // Si no está, lo agregamos
         }
 
-        _favorites.postValue(currentList)
+        _favorites.postValue(currentList.toMutableList()) // Actualizamos LiveData
     }
 
 
-    fun addFavorite(recipe: RecipeModel) {
-        val currentList = _favorites.value ?: mutableListOf()
-        if (!currentList.any { it.id == recipe.id }) {
-            currentList.add(recipe.copy(isFavorite = true))
-            _favorites.postValue(currentList)
-        }
+    fun getFavorites(): List<RecipeModel> {
+        return _favorites.value ?: emptyList()
     }
 
-    fun removeFavorite(recipe: RecipeModel) {
-        val currentList = _favorites.value ?: mutableListOf()
-        currentList.removeAll { it.id == recipe.id }
-        _favorites.postValue(currentList)
+    fun loadFavorites(allRecipes: List<RecipeModel>) {
+        _favorites.postValue(allRecipes.filter { it.isFavorite }.toMutableList())
     }
 
 }
+
+
+
+
+

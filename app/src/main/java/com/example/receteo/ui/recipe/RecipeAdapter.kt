@@ -2,6 +2,7 @@ package com.example.receteo.ui.recipe
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.os.AsyncTask
 import android.util.Log
 import android.view.LayoutInflater
@@ -42,9 +43,11 @@ class RecipeAdapter(
             }
 
             // 🔥 Botón de favoritos mejorado
+            updateFavoriteIcon(recipe.isFavorite)
+
             binding.btnFavorite.setOnClickListener {
-                onFavoriteClick(recipe) // 🔥 Notificar a `RecipeViewModel`
-                updateFavoriteIcon(!recipe.isFavorite) // Cambia el icono en la UI inmediatamente
+                onFavoriteClick(recipe) // Llama al ViewModel para cambiar el estado de favorito
+                updateFavoriteIcon(!recipe.isFavorite) // Cambia el icono inmediatamente en la UI
             }
 
 
@@ -52,7 +55,13 @@ class RecipeAdapter(
         }
 
         private fun updateFavoriteIcon(isFavorite: Boolean) {
-            binding.btnFavorite.text = if (isFavorite) "💖" else "❤"
+            binding.btnFavorite.setImageResource(
+                if (isFavorite) android.R.drawable.btn_star_big_on
+                else android.R.drawable.btn_star_big_off
+            )
+            binding.btnFavorite.setColorFilter(
+                if (isFavorite) Color.YELLOW else Color.GRAY
+            )
         }
     }
 

@@ -8,7 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import com.example.receteo.ui.recipe.RecipeViewModel
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.receteo.R
@@ -22,7 +24,7 @@ class RecipeListFragment : Fragment() {
     private val favoritesViewModel: FavoritesViewModel by viewModels()
     private var _binding: FragmentRecipeListBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: RecipeViewModel by viewModels()
+    private val viewModel: RecipeViewModel by activityViewModels()
     private lateinit var adapter: RecipeAdapter
     private val recipeList = mutableListOf<RecipeModel>()
 
@@ -60,12 +62,13 @@ class RecipeListFragment : Fragment() {
                     .setTitle("Eliminar receta")
                     .setMessage("¿Estás seguro de que deseas eliminar esta receta?")
                     .setPositiveButton("Eliminar") { _, _ ->
-                        viewModel.deleteRecipe(recipe.id)
+                        viewModel.deleteRecipe(recipe.id) // ✅ Ahora debe reconocer deleteRecipe correctamente
                         Toast.makeText(requireContext(), "Receta eliminada", Toast.LENGTH_SHORT).show()
                     }
                     .setNegativeButton("Cancelar", null)
                     .show()
-            },
+            }
+            ,
             onFavoriteClick = { recipe ->
                 favoritesViewModel.toggleFavorite(recipe) // 🔥 Usa la instancia correcta
             }

@@ -16,8 +16,9 @@ class FavoritesFragment : Fragment() {
     private lateinit var binding: FragmentFavoritesBinding
     private lateinit var adapter: RecipeAdapter
 
+    // Usamos activityViewModels para compartir la instancia con otros fragments
+    private val favoritesViewModel: FavoritesViewModel by activityViewModels()
     private val recipeViewModel: RecipeViewModel by activityViewModels()
-    private val favoritesViewModel: FavoritesViewModel by activityViewModels() // 🔥 Usamos el nuevo ViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,9 +33,9 @@ class FavoritesFragment : Fragment() {
 
         adapter = RecipeAdapter(
             mutableListOf(),
-            onEditClick = { /* Implementa la edición si es necesario */ },
-            onDeleteClick = { /* Implementa la eliminación si es necesario */ },
-            onFavoriteClick = { recipeViewModel.toggleFavorite(it.id) }
+            onEditClick = { /* Implementar edición */ },
+            onDeleteClick = { /* Implementar eliminación */ },
+            onFavoriteClick = { recipeViewModel.toggleFavorite(it) }
         )
 
         binding.recyclerViewFavorites.layoutManager = LinearLayoutManager(requireContext())
@@ -45,8 +46,8 @@ class FavoritesFragment : Fragment() {
 
     private fun observeViewModel() {
         favoritesViewModel.favorites.observe(viewLifecycleOwner) { favorites ->
-            adapter.updateData(favorites) // Actualiza los datos en el RecyclerView
-            binding.tvNoFavorites.visibility = if (favorites.isEmpty()) View.VISIBLE else View.GONE
+            adapter.updateData(favorites)
+            binding.textNoFavorites.visibility = if (favorites.isEmpty()) View.VISIBLE else View.GONE
         }
     }
 

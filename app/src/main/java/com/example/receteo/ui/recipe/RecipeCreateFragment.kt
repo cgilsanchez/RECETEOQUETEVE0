@@ -53,7 +53,24 @@ class RecipeCreateFragment : Fragment() {
         val ingredients = binding.etIngredients.text.toString().trim()
         val imageUrl = binding.etImageUrl.text.toString().trim()
 
-        val recipeRequest = RecipeRequestModel(name, descriptions, ingredients, imageUrl)
+        // Validación de campos vacíos
+        if (name.isEmpty() || descriptions.isEmpty() || ingredients.isEmpty() || imageUrl.isEmpty()) {
+            Toast.makeText(requireContext(), "Todos los campos son obligatorios", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val isFavorite = recipeId?.let { id ->
+            viewModel.selectedRecipe.value?.isFavorite ?: false // Mantiene el estado actual si es actualización
+        } ?: false // Si es nueva receta, comienza como NO favorita
+
+        val recipeRequest = RecipeRequestModel(
+            name = name,
+            descriptions = descriptions,
+            ingredients = ingredients,
+            chef = 1,  // 🔥 Asegúrate de poner el ID correcto del chef
+            imageUrl = imageUrl,
+            isFavorite = isFavorite
+        )
 
         if (recipeId == null || recipeId == -1) {
             viewModel.createRecipe(recipeRequest)
@@ -63,4 +80,6 @@ class RecipeCreateFragment : Fragment() {
 
         findNavController().popBackStack()
     }
+
+
 }

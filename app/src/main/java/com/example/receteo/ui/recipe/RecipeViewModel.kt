@@ -67,29 +67,30 @@ class RecipeViewModel @Inject constructor(
         }
     }
 
-    fun updateRecipe(recipeRequest: RecipeRequestModel, recipeId: Int) {
+
+
+    fun toggleFavorite(recipe: RecipeModel) {
         viewModelScope.launch {
-            try {
-                repository.updateRecipe(recipeRequest, recipeId)
-                fetchRecipes()
-            } catch (e: Exception) {
-                _errorMessage.postValue("Error al actualizar receta: ${e.message}")
-            }
+            val newFavoriteState = !recipe.isFavorite
+            repository.updateFavoriteStatus(recipe.id, newFavoriteState)
+            fetchRecipes() // 🔥 Volvemos a cargar los datos para reflejar el cambio
         }
     }
 
-    fun toggleFavorite(recipeId: Int) {
-        _recipes.value = _recipes.value?.map { recipe ->
-            if (recipe.id == recipeId) {
-                val newState = !recipe.isFavorite
-                if (newState) {
-                    favoritesViewModel.addFavorite(recipe.copy(isFavorite = true)) // 🔥 Usa la instancia inyectada
+
+    fun updateRecipe(recipeRequest: RecipeRequestModel, recipeId: Int) {
+        viewModelScope.launch {
+            try {
+                val success = repository.updateRecipe(recipeRequest, recipeId)
+                if (success) {
+                    fetchRecipes() // 🔄 Refresca la lista de recetas después de la actualización
                 } else {
-                    favoritesViewModel.removeFavorite(recipe) // 🔥 Usa la instancia inyectada
+                    _errorMessage.postValue("Error al actualizar la receta.")
                 }
-                recipe.copy(isFavorite = newState)
-            } else recipe
-        } ?: emptyList()
+            } catch (e: Exception) {
+                _errorMessage.postValue("Error al actualizar la receta: ${e.message}")
+            }
+        }
     }
 
 

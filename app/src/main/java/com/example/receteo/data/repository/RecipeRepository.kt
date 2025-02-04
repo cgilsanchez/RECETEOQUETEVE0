@@ -7,9 +7,6 @@ import javax.inject.Inject
 
 class RecipeRepository @Inject constructor(private val api: RecipeApi) {
 
-    /**
-     * Obtiene todas las recetas de la API y las convierte en RecipeModel.
-     */
     suspend fun getRecipes(): List<RecipeModel> {
         return try {
             val response = api.getRecipes()
@@ -20,9 +17,9 @@ class RecipeRepository @Inject constructor(private val api: RecipeApi) {
                         name = recipeData.attributes.name,
                         descriptions = recipeData.attributes.descriptions,
                         ingredients = recipeData.attributes.ingredients,
-                        createdAt = recipeData.attributes.createdAt,
+                        chef = recipeData.attributes.chef,
                         imageUrl = recipeData.attributes.image?.data?.attributes?.url ?: "",
-                        isFavorite = false // 🔥 Se asigna un valor por defecto
+                        isFavorite = recipeData.attributes.isFavorite ?: false
                     )
                 } ?: emptyList()
             } else {
@@ -35,20 +32,22 @@ class RecipeRepository @Inject constructor(private val api: RecipeApi) {
         }
     }
 
+    /**
+     * Obtiene una receta por ID y devuelve su estado actualizado.
+     */
     suspend fun getRecipeById(recipeId: Int): RecipeModel? {
         return try {
-            val response = api.getRecipeById(recipeId) // Llamada a la API
+            val response = api.getRecipeById(recipeId)
             if (response.isSuccessful) {
-                val recipeData = response.body()?.data?.firstOrNull() // 🔥 Acceder al primer elemento si es una lista
-                recipeData?.let {
+                response.body()?.data?.firstOrNull()?.let { recipeData ->
                     RecipeModel(
-                        id = it.id,
-                        name = it.attributes.name,
-                        descriptions = it.attributes.descriptions,
-                        ingredients = it.attributes.ingredients,
-                        createdAt = it.attributes.createdAt,
-                        imageUrl = it.attributes.image?.data?.attributes?.url ?: "",
-                        isFavorite = false // 🔥 Se asigna un valor por defecto
+                        id = recipeData.id,
+                        name = recipeData.attributes.name,
+                        descriptions = recipeData.attributes.descriptions,
+                        ingredients = recipeData.attributes.ingredients,
+                        chef = recipeData.attributes.chef,
+                        imageUrl = recipeData.attributes.image?.data?.attributes?.url ?: "",
+                        isFavorite = recipeData.attributes.isFavorite ?: false
                     )
                 }
             } else {
@@ -57,6 +56,43 @@ class RecipeRepository @Inject constructor(private val api: RecipeApi) {
         } catch (e: Exception) {
             Log.e("RecipeRepository", "Error al obtener receta: ${e.message}")
             null
+        }
+    }
+
+    /**
+     * Actualiza el estado de favorito de una receta en Strapi.
+     */
+    suspend fun updateFavoriteStatus(recipeId: Int, isFavorite: Boolean) {
+        try {
+            val requestBody = mapOf("data" to mapOf("isFavorite" to isFavorite))
+            val response = api.updateRecipe(recipeId, requestBody)
+
+            if (!response.isSuccessful) {
+                Log.e("RecipeRepository", "Error al actualizar favorito: ${response.errorBody()?.string()}")
+            }
+
+        } catch (e: Exception) {
+            Log.e("RecipeRepository", "Excepción al actualizar favorito: ${e.message}")
+        }
+    }
+
+    suspend fun updateRecipe(recipeRequest: RecipeRequestModel, recipeId: Int): Boolean {
+        return try {
+            val requestBody = mapOf(
+                "data" to mapOf(
+                    "name" to recipeRequest.name,
+                    "descriptions" to recipeRequest.descriptions,
+                    "ingredients" to recipeRequest.ingredients,
+                    "chef" to recipeRequest.chef,
+                    "imageUrl" to recipeRequest.imageUrl,
+                    "isFavorite" to recipeRequest.isFavorite
+                )
+            )
+
+            val response = api.updateRecipe(recipeId, requestBody)
+            response.isSuccessful
+        } catch (e: Exception) {
+            false
         }
     }
 
@@ -79,14 +115,6 @@ class RecipeRepository @Inject constructor(private val api: RecipeApi) {
     /**
      * Actualiza una receta existente por ID.
      */
-    suspend fun updateRecipe(recipeRequest: RecipeRequestModel, recipeId: Int): Boolean {
-        return try {
-            val response = api.updateRecipe(recipeId, recipeRequest)
-            response.isSuccessful
-        } catch (e: Exception) {
-            false
-        }
-    }
 
     /**
      * Elimina una receta por ID.
@@ -107,5 +135,14 @@ class RecipeRepository @Inject constructor(private val api: RecipeApi) {
             false
         }
     }
+
+
+
+
+
+
+
+
+
 
 }
