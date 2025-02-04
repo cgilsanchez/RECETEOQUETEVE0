@@ -73,9 +73,10 @@ class RecipeViewModel @Inject constructor(
         viewModelScope.launch {
             val newFavoriteState = !recipe.isFavorite
             repository.updateFavoriteStatus(recipe.id, newFavoriteState)
-            fetchRecipes() // 🔥 Volvemos a cargar los datos para reflejar el cambio
+            fetchRecipes() // 🔄 Recarga las recetas para reflejar el cambio
         }
     }
+
 
 
     fun updateRecipe(recipeRequest: RecipeRequestModel, recipeId: Int) {

@@ -16,9 +16,8 @@ interface RecipeApi {
     @POST("recetas")
     suspend fun createRecipe(@Body recipe: RecipeRequestModel): Response<RecipeResponse>
 
-    @PATCH("recetas/{id}") // Usamos PATCH en vez de PUT para actualizar solo algunos campos
+    @PUT("recetas/{id}")
     suspend fun updateRecipe(@Path("id") id: Int, @Body data: Map<String, Any>): Response<RecipeResponse>
-
 
     @DELETE("recetas/{id}")
     suspend fun deleteRecipe(@Path("id") id: Int): Response<Unit>

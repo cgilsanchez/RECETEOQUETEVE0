@@ -64,7 +64,12 @@ class RecipeRepository @Inject constructor(private val api: RecipeApi) {
      */
     suspend fun updateFavoriteStatus(recipeId: Int, isFavorite: Boolean) {
         try {
-            val requestBody = mapOf("data" to mapOf("isFavorite" to isFavorite))
+            val requestBody = mapOf(
+                "data" to mapOf(
+                    "isFavorite" to isFavorite
+                )
+            )
+
             val response = api.updateRecipe(recipeId, requestBody)
 
             if (!response.isSuccessful) {
@@ -75,6 +80,7 @@ class RecipeRepository @Inject constructor(private val api: RecipeApi) {
             Log.e("RecipeRepository", "Excepción al actualizar favorito: ${e.message}")
         }
     }
+
 
     suspend fun updateRecipe(recipeRequest: RecipeRequestModel, recipeId: Int): Boolean {
         return try {
