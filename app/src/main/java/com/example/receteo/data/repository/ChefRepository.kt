@@ -6,8 +6,10 @@ import com.example.receteo.data.remote.models.ChefDataRequest
 import com.example.receteo.data.remote.models.ChefModel
 import com.example.receteo.data.remote.models.ChefRequestModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
 
 class ChefRepository @Inject constructor(private val api: ChefApi) {
 
@@ -51,33 +53,46 @@ class ChefRepository @Inject constructor(private val api: ChefApi) {
     }
 
     suspend fun createChef(name: String): Boolean {
-        return withContext(Dispatchers.IO) {  // Evita cancelaciones prematuras
-            try {
-                val requestBody = ChefRequestModel(ChefDataRequest(name))
-                val response = api.createChef(requestBody)
-                Log.d("ChefRepository", "Respuesta al crear chef: ${response.code()} - ${response.errorBody()?.string()}")
-                response.isSuccessful
-            } catch (e: Exception) {
-                Log.e("ChefRepository", "Error al crear chef: ${e.message}")
-                false
+        return try {
+            val requestBody = ChefRequestModel(ChefDataRequest(name))
+            val response = api.createChef(requestBody)
+
+            Log.d("ChefRepository", "📨 Enviando solicitud: $requestBody")
+            Log.d("ChefRepository", "🔄 Código de respuesta: ${response.code()} - ${response.message()}")
+
+            if (!response.isSuccessful) {
+                Log.e("ChefRepository", "❌ Error en respuesta: ${response.errorBody()?.string()}")
+                return false
             }
+
+            delay(500) // Pequeño delay para evitar cancelación prematura
+            true
+
+        } catch (e: CancellationException) {
+            Log.w("ChefRepository", "⚠️ Corrutina cancelada después de la solicitud.")
+            false
+        } catch (e: Exception) {
+            Log.e("ChefRepository", "🚨 Error al crear chef: ${e.message}")
+            false
         }
     }
+
+
+
+
 
 
     suspend fun updateChef(id: Int, name: String): Boolean {
-        return withContext(Dispatchers.IO) {  // Forzar a ejecutarse en un hilo secundario
-            try {
-                val requestBody = ChefRequestModel(ChefDataRequest(name))
-                val response = api.updateChef(id, requestBody)
-                Log.d("ChefRepository", "Respuesta al actualizar chef: ${response.code()} - ${response.errorBody()?.string()}")
-                response.isSuccessful
-            } catch (e: Exception) {
-                Log.e("ChefRepository", "Error al actualizar chef: ${e.message}")
-                false
-            }
+        return try {
+            val requestBody = ChefRequestModel(ChefDataRequest(name))
+            val response = api.updateChef(id, requestBody)
+            response.isSuccessful
+        } catch (e: Exception) {
+            Log.e("ChefRepository", "Error al actualizar chef: ${e.message}")
+            false
         }
     }
+
 
 
 

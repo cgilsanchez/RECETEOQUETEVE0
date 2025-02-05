@@ -22,7 +22,6 @@ interface ChefApi {
     @PUT("chefs/{id}")
     suspend fun updateChef(@Path("id") id: Int, @Body chefRequest: ChefRequestModel): Response<ChefResponse>
 
-
     @DELETE("chefs/{id}")
     suspend fun deleteChef(@Path("id") id: Int): Response<Unit>
 }
