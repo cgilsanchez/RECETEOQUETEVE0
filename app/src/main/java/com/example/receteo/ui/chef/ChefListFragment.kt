@@ -1,38 +1,79 @@
 package com.example.receteo.ui.chef
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.navigation.Navigation
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.receteo.R
+import com.example.receteo.data.remote.models.ChefModel
+import com.example.receteo.databinding.FragmentChefListBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ChefListFragment : Fragment() {
+
+    private lateinit var binding: FragmentChefListBinding
+    private val viewModel: ChefViewModel by viewModels()
+    private lateinit var adapter: ChefAdapter
+    private val chefList = mutableListOf<ChefModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_chef_list, container, false)
+    ): View {
+        binding = FragmentChefListBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val recyclerView = view.findViewById<RecyclerView>(R.id.recycler_view_chefs)
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        setupRecyclerView()
+        observeChefs()
+        viewModel.fetchChefs()
 
-        val chefs = listOf("Chef 1", "Chef 2", "Chef 3")
-        val adapter = ChefAdapter(chefs) { chefName ->
-            // Navegar al detalle del chef si se implementa
+        binding.fabAddChef.setOnClickListener {
+            findNavController().navigate(R.id.chefCreateFragment)
         }
-        recyclerView.adapter = adapter
+    }
 
-        view.findViewById<View>(R.id.buttonAddChef).setOnClickListener {
-            Navigation.findNavController(view).navigate(R.id.action_chefListFragment_to_chefCreateFragment)
+    private fun setupRecyclerView() {
+        adapter = ChefAdapter(
+            chefList,
+            onEditClick = { chef ->
+                val bundle = Bundle().apply {
+                    putInt("chefId", chef.id)
+                }
+                findNavController().navigate(R.id.chefCreateFragment, bundle)
+            },
+            onDeleteClick = { chef ->
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Eliminar chef")
+                    .setMessage("¿Estás seguro de que deseas eliminar este chef?")
+                    .setPositiveButton("Eliminar") { _, _ ->
+                        viewModel.deleteChef(chef.id)
+                        Toast.makeText(requireContext(), "Chef eliminado", Toast.LENGTH_SHORT).show()
+                    }
+                    .setNegativeButton("Cancelar", null)
+                    .show()
+            }
+        )
+
+        binding.recyclerView.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = this@ChefListFragment.adapter
+        }
+    }
+
+    private fun observeChefs() {
+        viewModel.chefs.observe(viewLifecycleOwner) { chefs ->
+            adapter.updateData(chefs)
         }
     }
 }
