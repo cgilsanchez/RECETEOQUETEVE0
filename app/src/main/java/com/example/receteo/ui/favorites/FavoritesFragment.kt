@@ -41,15 +41,25 @@ class FavoritesFragment : Fragment() {
         binding.recyclerViewFavorites.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewFavorites.adapter = adapter
 
-        observeViewModel()
+        observeViewModel()  // Llama al método para observar el viewModel
     }
 
+
+    override fun onResume() {
+        super.onResume()
+        recipeViewModel.fetchRecipes() // Asegurarnos de actualizar la lista de recetas
+    }
+
+
+
     private fun observeViewModel() {
-        favoritesViewModel.favorites.observe(viewLifecycleOwner) { favorites ->
-            adapter.updateData(favorites)
-            binding.textNoFavorites.visibility = if (favorites.isEmpty()) View.VISIBLE else View.GONE
+        recipeViewModel.recipes.observe(viewLifecycleOwner) { recipes ->
+            val favoriteRecipes = recipes.filter { it.isFavorite } // Solo las recetas favoritas
+            adapter.updateData(favoriteRecipes)
+            binding.textNoFavorites.visibility = if (favoriteRecipes.isEmpty()) View.VISIBLE else View.GONE
         }
     }
+
 
 
 }

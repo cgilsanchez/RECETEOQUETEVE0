@@ -71,11 +71,31 @@ class RecipeViewModel @Inject constructor(
 
     fun toggleFavorite(recipe: RecipeModel) {
         viewModelScope.launch {
-            val newFavoriteState = !recipe.isFavorite
-            repository.updateFavoriteStatus(recipe.id, newFavoriteState)
-            fetchRecipes() // 🔄 Recarga las recetas para reflejar el cambio
+            try {
+                val newFavoriteState = !recipe.isFavorite
+
+                Log.d("RecipeViewModel", "Cambiando estado de favorito para receta ${recipe.id} a $newFavoriteState")
+
+                val response = repository.updateFavoriteStatus(recipe.id, newFavoriteState)
+
+                if (response != null) {
+                    fetchRecipes() // Recargamos la lista de recetas para reflejar los cambios
+                    Log.d("RecipeViewModel", "Receta ${recipe.id} actualizada en la API y lista recargada")
+                } else {
+                    Log.e("RecipeViewModel", "Error al actualizar receta en Strapi")
+                }
+            } catch (e: Exception) {
+                Log.e("RecipeViewModel", "Error en toggleFavorite: ${e.message}")
+            }
         }
     }
+
+
+
+
+
+
+
 
 
 
@@ -111,4 +131,6 @@ class RecipeViewModel @Inject constructor(
             }
         }
     }
+
+
 }

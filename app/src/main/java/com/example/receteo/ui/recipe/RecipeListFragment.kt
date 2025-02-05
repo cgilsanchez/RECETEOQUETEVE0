@@ -85,15 +85,16 @@ class RecipeListFragment : Fragment() {
 
     private fun observeViewModel() {
         viewModel.recipes.observe(viewLifecycleOwner) { recipes ->
-            Log.d("RecipeListFragment", "Recetas actualizadas: ${recipes.size}")
-
-            if (recipes.isNotEmpty()) {
-                adapter.updateData(recipes)
-            } else {
-                Log.e("RecipeListFragment", "No se recibieron recetas de la API.")
-            }
+            adapter.updateData(recipes) // Actualiza la lista de recetas con el estado actualizado
         }
     }
+
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.fetchRecipes() // Recarga las recetas cada vez que el fragmento es visible
+    }
+
 
 
     override fun onDestroyView() {

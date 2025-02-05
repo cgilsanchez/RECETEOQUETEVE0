@@ -81,7 +81,6 @@ class RecipeRepository @Inject constructor(private val api: RecipeApi) {
         }
     }
 
-
     suspend fun updateRecipe(recipeRequest: RecipeRequestModel, recipeId: Int): Boolean {
         return try {
             val requestBody = mapOf(
@@ -98,13 +97,10 @@ class RecipeRepository @Inject constructor(private val api: RecipeApi) {
             val response = api.updateRecipe(recipeId, requestBody)
             response.isSuccessful
         } catch (e: Exception) {
+            Log.e("RecipeRepository", "Error al actualizar receta: ${e.message}")
             false
         }
     }
-
-
-
-
 
     /**
      * Crea una nueva receta.
