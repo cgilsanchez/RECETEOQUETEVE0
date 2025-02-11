@@ -23,16 +23,41 @@
         android:layout_height="wrap_content"
         android:hint="Descripción" />
 
-    <EditText
-        android:id="@+id/etImageUrl"
+    <!-- Spinner para seleccionar el Chef -->
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="URL de la imagen" />
+        android:text="Selecciona un Chef"
+        android:paddingTop="8dp"/>
+
+    <Spinner
+        android:id="@+id/spinnerChef"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <!-- Botón para seleccionar imagen -->
+    <Button
+        android:id="@+id/btnSelectImage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Seleccionar Imagen"
+        android:backgroundTint="@android:color/holo_blue_dark"
+        android:layout_marginTop="8dp"/>
+
+    <!-- ImageView para mostrar la imagen seleccionada -->
+    <ImageView
+        android:id="@+id/ivRecipeImage"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:scaleType="centerCrop"
+        android:background="@android:color/darker_gray"
+        android:layout_marginTop="8dp"/>
 
     <Button
         android:id="@+id/btnSaveRecipe"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Guardar Receta"
-        android:backgroundTint="@android:color/holo_green_dark"/>
+        android:backgroundTint="@android:color/holo_green_dark"
+        android:layout_marginTop="16dp"/>
 </LinearLayout>

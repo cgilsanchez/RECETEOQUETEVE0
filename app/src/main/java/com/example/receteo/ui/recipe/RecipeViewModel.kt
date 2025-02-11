@@ -6,8 +6,12 @@ import com.example.receteo.data.remote.models.*
 import com.example.receteo.data.repository.RecipeRepository
 import com.example.receteo.ui.favorites.FavoritesViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
 import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
 
 @HiltViewModel
 class RecipeViewModel @Inject constructor(
@@ -23,6 +27,10 @@ class RecipeViewModel @Inject constructor(
 
     private val _errorMessage = MutableLiveData<String>()
     val errorMessage: LiveData<String> get() = _errorMessage
+
+    private val _creationState = MutableLiveData<Boolean>()
+    val creationState: LiveData<Boolean> get() = _creationState
+
 
     fun fetchRecipes() {
         viewModelScope.launch {
@@ -46,46 +54,37 @@ class RecipeViewModel @Inject constructor(
                 if (recipe != null) {
                     _selectedRecipe.postValue(recipe)
                 } else {
-                    _errorMessage.postValue("Receta no encontrada.")
+                    _errorMessage.postValue("❌ Receta no encontrada en Strapi")
                 }
             } catch (e: Exception) {
-                _errorMessage.postValue("Error al obtener la receta: ${e.message}")
+                _errorMessage.postValue("🚨 Error al obtener la receta: ${e.message}")
             }
         }
     }
 
 
-
-    fun createRecipe(recipeRequest: RecipeRequestModel) {
-        viewModelScope.launch {
+    fun createRecipe(recipeRequest: RecipeRequestModel, imageFile: File?) {
+        viewModelScope.launch(Dispatchers.IO) {  // 🚀 Se asegura que todo corre en IO
             try {
-                repository.createRecipe(recipeRequest)
-                fetchRecipes()
-            } catch (e: Exception) {
-                _errorMessage.postValue("Error al crear receta: ${e.message}")
-            }
-        }
-    }
+                Log.d("RecipeViewModel", "⏳ Enviando solicitud para crear receta...")
 
+                val success = repository.createRecipe(recipeRequest, imageFile)
 
-
-    fun toggleFavorite(recipe: RecipeModel) {
-        viewModelScope.launch {
-            try {
-                val newFavoriteState = !recipe.isFavorite
-
-                Log.d("RecipeViewModel", "Cambiando estado de favorito para receta ${recipe.id} a $newFavoriteState")
-
-                val response = repository.updateFavoriteStatus(recipe.id, newFavoriteState)
-
-                if (response != null) {
-                    fetchRecipes() // Recargamos la lista de recetas para reflejar los cambios
-                    Log.d("RecipeViewModel", "Receta ${recipe.id} actualizada en la API y lista recargada")
-                } else {
-                    Log.e("RecipeViewModel", "Error al actualizar receta en Strapi")
+                withContext(Dispatchers.Main) {
+                    if (success) {
+                        Log.d("RecipeViewModel", "✅ Receta creada correctamente")
+                        _creationState.postValue(true)
+                        fetchRecipes() // 🔄 Refresca la lista en segundo plano
+                    } else {
+                        Log.e("RecipeViewModel", "❌ Error al crear receta")
+                        _errorMessage.postValue("Error al crear la receta.")
+                    }
                 }
+            } catch (e: CancellationException) {
+                Log.e("RecipeViewModel", "🚨 Job cancelado: ${e.localizedMessage}")
             } catch (e: Exception) {
-                Log.e("RecipeViewModel", "Error en toggleFavorite: ${e.message}")
+                Log.e("RecipeViewModel", "🚨 Error inesperado: ${e.localizedMessage}")
+                _errorMessage.postValue("Error desconocido al crear la receta.")
             }
         }
     }
@@ -94,15 +93,10 @@ class RecipeViewModel @Inject constructor(
 
 
 
-
-
-
-
-
-    fun updateRecipe(recipeRequest: RecipeRequestModel, recipeId: Int) {
+    fun updateRecipe(recipeRequest: RecipeRequestModel, recipeId: Int, imageFile: File?) {
         viewModelScope.launch {
             try {
-                val success = repository.updateRecipe(recipeRequest, recipeId)
+                val success = repository.updateRecipe(recipeRequest, recipeId, imageFile)
                 if (success) {
                     fetchRecipes() // 🔄 Refresca la lista de recetas después de la actualización
                 } else {
@@ -113,9 +107,6 @@ class RecipeViewModel @Inject constructor(
             }
         }
     }
-
-
-
 
     fun deleteRecipe(recipeId: Int) {
         viewModelScope.launch {
@@ -129,6 +120,20 @@ class RecipeViewModel @Inject constructor(
             } catch (e: Exception) {
                 _errorMessage.postValue("Error eliminando la receta: ${e.message}")
             }
+        }
+    }
+
+
+    fun toggleFavorite(recipeId: Int) {
+        viewModelScope.launch {
+            val updatedRecipes = recipes.value?.map { recipe ->
+                if (recipe.id == recipeId) {
+                    recipe.copy(isFavorite = !recipe.isFavorite)
+                } else {
+                    recipe
+                }
+            } ?: emptyList() // 🔥 Si es null, usamos una lista vacía
+            _recipes.postValue(updatedRecipes)
         }
     }
 

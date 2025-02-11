@@ -5,9 +5,9 @@ data class RecipeModel(
     val name: String,
     val ingredients: String,
     val descriptions: String,
-    val chef: String?,
+    val chef: Int?, // 🔥 Corregido: `Int?` en lugar de `String?`
     val imageUrl: String?,
-    val isFavorite: Boolean = false // ✅ Se asegura de incluir el estado de favorito
+    val isFavorite: Boolean = false
 )
 
 data class RecipeResponse(
@@ -23,13 +23,13 @@ data class RecipeAttributes(
     val name: String,
     val descriptions: String,
     val ingredients: String,
-    val chef: String?,
+    val chef: Int?, // 🔥 Corregido: `Int?` en lugar de `String?`
     val image: ImageData?,
     val isFavorite: Boolean = false
 )
 
 data class ImageData(
-    val data: ImageAttributes?
+    val data: ImageAttributes? // 🔥 Corregido: `data` puede ser null
 )
 
 data class ImageAttributes(
@@ -40,6 +40,6 @@ data class ImageFormats(
     val url: String?
 ) {
     fun getImageUrl(): String {
-        return url ?: ""
+        return url ?: "" // 🔥 Devuelve un string vacío si la URL es null
     }
 }

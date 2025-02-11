@@ -3,7 +3,24 @@ package com.example.receteo.data.repository
 import android.util.Log
 import com.example.receteo.data.remote.RecipeApi
 import com.example.receteo.data.remote.models.*
+import com.google.gson.Gson
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+
+import java.io.File
 import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 class RecipeRepository @Inject constructor(private val api: RecipeApi) {
 
@@ -32,9 +49,6 @@ class RecipeRepository @Inject constructor(private val api: RecipeApi) {
         }
     }
 
-    /**
-     * Obtiene una receta por ID y devuelve su estado actualizado.
-     */
     suspend fun getRecipeById(recipeId: Int): RecipeModel? {
         return try {
             val response = api.getRecipeById(recipeId)
@@ -59,42 +73,51 @@ class RecipeRepository @Inject constructor(private val api: RecipeApi) {
         }
     }
 
-    /**
-     * Actualiza el estado de favorito de una receta en Strapi.
-     */
-    suspend fun updateFavoriteStatus(recipeId: Int, isFavorite: Boolean) {
-        try {
-            val requestBody = mapOf(
-                "data" to mapOf(
-                    "isFavorite" to isFavorite
-                )
-            )
 
-            val response = api.updateRecipe(recipeId, requestBody)
+    suspend fun createRecipe(recipeRequest: RecipeRequestModel, imageFile: File?): Boolean {
+        return withContext(Dispatchers.IO) {
+            try {
+                Log.d("RecipeRepository", "📤 Enviando solicitud para crear receta...")
 
-            if (!response.isSuccessful) {
-                Log.e("RecipeRepository", "Error al actualizar favorito: ${response.errorBody()?.string()}")
+                // 🔹 Enviar JSON correctamente formateado con la estructura esperada por Strapi
+                val jsonMap = mapOf("data" to recipeRequest)
+                val jsonBody = Gson().toJson(jsonMap)
+                    .toRequestBody("application/json".toMediaTypeOrNull())
+
+                // 🔹 Preparar la imagen (si existe)
+                val imagePart = imageFile?.let {
+                    MultipartBody.Part.createFormData(
+                        "files.image", it.name, it.asRequestBody("image/*".toMediaTypeOrNull())
+                    )
+                }
+
+                Log.d("RecipeRepository", "⏳ Enviando petición a Strapi...")
+
+                val response = api.createRecipe(jsonBody, imagePart)
+
+                if (response.isSuccessful) {
+                    Log.d("RecipeRepository", "✅ Receta creada correctamente en Strapi")
+                    return@withContext true
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    Log.e("RecipeRepository", "❌ Error en la API: $errorBody")
+                    return@withContext false
+                }
+            } catch (e: Exception) {
+                Log.e("RecipeRepository", "🚨 Excepción al crear receta: ${e.localizedMessage}")
+                return@withContext false
             }
-
-        } catch (e: Exception) {
-            Log.e("RecipeRepository", "Excepción al actualizar favorito: ${e.message}")
         }
     }
 
-    suspend fun updateRecipe(recipeRequest: RecipeRequestModel, recipeId: Int): Boolean {
-        return try {
-            val requestBody = mapOf(
-                "data" to mapOf(
-                    "name" to recipeRequest.name,
-                    "descriptions" to recipeRequest.descriptions,
-                    "ingredients" to recipeRequest.ingredients,
-                    "chef" to recipeRequest.chef,
-                    "imageUrl" to recipeRequest.imageUrl,
-                    "isFavorite" to recipeRequest.isFavorite
-                )
-            )
 
-            val response = api.updateRecipe(recipeId, requestBody)
+
+
+
+    suspend fun updateRecipe(recipeRequest: RecipeRequestModel, recipeId: Int, imageFile: File?): Boolean {
+        return try {
+            val imagePart = imageFile?.toMultipartBody()
+            val response = api.updateRecipe(recipeId, recipeRequest, imagePart)
             response.isSuccessful
         } catch (e: Exception) {
             Log.e("RecipeRepository", "Error al actualizar receta: ${e.message}")
@@ -102,49 +125,26 @@ class RecipeRepository @Inject constructor(private val api: RecipeApi) {
         }
     }
 
-    /**
-     * Crea una nueva receta.
-     */
-    suspend fun createRecipe(recipeRequest: RecipeRequestModel): Boolean {
-        return try {
-            val response = api.createRecipe(recipeRequest)
-            response.isSuccessful
-        } catch (e: Exception) {
-            false
-        }
-    }
 
-    /**
-     * Actualiza una receta existente por ID.
-     */
-
-    /**
-     * Elimina una receta por ID.
-     */
     suspend fun deleteRecipe(recipeId: Int): Boolean {
         return try {
-            Log.d("RecipeRepository", "Realizando solicitud DELETE para receta ID: $recipeId")
             val response = api.deleteRecipe(recipeId)
-            if (response.isSuccessful) {
-                Log.d("RecipeRepository", "Receta eliminada en Strapi")
-                true
-            } else {
-                Log.e("RecipeRepository", "Error en DELETE: ${response.errorBody()?.string()}")
-                false
-            }
+            response.isSuccessful
         } catch (e: Exception) {
             Log.e("RecipeRepository", "Excepción eliminando receta: ${e.message}")
             false
         }
     }
 
+    // 🟢 Convierte RecipeRequestModel en RequestBody para enviarlo como JSON
+    private fun RecipeRequestModel.toJsonRequestBody(): RequestBody {
+        val json = Gson().toJson(this)
+        return json.toRequestBody("application/json".toMediaType())
+    }
 
-
-
-
-
-
-
-
-
+    // 🟢 Convierte un archivo en MultipartBody.Part para enviar imágenes
+    private fun File.toMultipartBody(): MultipartBody.Part {
+        val requestFile = this.asRequestBody("image/*".toMediaType())
+        return MultipartBody.Part.createFormData("files.image", this.name, requestFile)
+    }
 }

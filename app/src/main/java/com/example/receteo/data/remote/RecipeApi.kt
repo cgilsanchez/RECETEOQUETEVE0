@@ -1,8 +1,9 @@
 package com.example.receteo.data.remote
 
-import com.example.receteo.data.remote.models.RecipeData
 import com.example.receteo.data.remote.models.RecipeResponse
 import com.example.receteo.data.remote.models.RecipeRequestModel
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -14,14 +15,19 @@ interface RecipeApi {
     @GET("recetas/{id}")
     suspend fun getRecipeById(@Path("id") id: Int): Response<RecipeResponse>
 
+    @Multipart
     @POST("recetas")
-    suspend fun createRecipe(@Body recipe: RecipeRequestModel): Response<RecipeResponse>
+    suspend fun createRecipe(
+        @Part("data") recipe: RequestBody,
+        @Part image: MultipartBody.Part?
+    ): Response<RecipeResponse>
 
-
-    @PUT("recipes/{id}")
+    @Multipart
+    @PUT("recetas/{id}")
     suspend fun updateRecipe(
         @Path("id") recipeId: Int,
-        @Body requestBody: Map<String, Any> // Corregido para permitir datos dinámicos
+        @Part("data") recipe: RecipeRequestModel,
+        @Part image: MultipartBody.Part?
     ): Response<RecipeResponse>
 
 

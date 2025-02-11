@@ -35,7 +35,8 @@ class FavoritesFragment : Fragment() {
             mutableListOf(),
             onEditClick = { /* Implementar edición */ },
             onDeleteClick = { /* Implementar eliminación */ },
-            onFavoriteClick = { recipeViewModel.toggleFavorite(it) }
+            onFavoriteClick = { recipeViewModel.toggleFavorite(it.id) }
+
         )
 
         binding.recyclerViewFavorites.layoutManager = LinearLayoutManager(requireContext())

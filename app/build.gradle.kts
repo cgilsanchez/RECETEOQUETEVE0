@@ -35,8 +35,7 @@ android {
 }
 
 dependencies {
-    implementation("com.github.bumptech.glide:glide:4.15.1")
-    kapt("com.github.bumptech.glide:compiler:4.15.1")
+
     implementation(libs.core.ktx.v1120)
     implementation(libs.androidx.appcompat)
     implementation(libs.material.v1100)
@@ -55,6 +54,18 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
 
+    dependencies {
+        // Glide para cargar imágenes
+        implementation("com.github.bumptech.glide:glide:4.15.1")
+        kapt("com.github.bumptech.glide:compiler:4.15.1")
+    }
+
+    // 🟢 Añadir OkHttp (si falta)
+    implementation("com.squareup.okhttp3:okhttp:4.10.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
+
+    // 🟢 Retrofit con soporte para Multipart y RequestBody
+    implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
 }
 
 kapt {
