@@ -2,13 +2,14 @@ package com.example.receteo.data.remote.models
 
 data class RecipeModel(
     val id: Int,
-    val name: String,
-    val ingredients: String,
-    val descriptions: String,
-    val chef: Int?, // 🔥 Corregido: `Int?` en lugar de `String?`
+    val name: String?,
+    val descriptions: String?,
+    val ingredients: String?,
+    val chef: Int?,
     val imageUrl: String?,
-    val isFavorite: Boolean = false
+    val isFavorite: Boolean
 )
+
 
 data class RecipeResponse(
     val data: List<RecipeData>

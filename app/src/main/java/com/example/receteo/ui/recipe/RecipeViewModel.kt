@@ -128,7 +128,8 @@ class RecipeViewModel @Inject constructor(
         viewModelScope.launch {
             val updatedRecipes = recipes.value?.map { recipe ->
                 if (recipe.id == recipeId) {
-                    recipe.copy(isFavorite = !recipe.isFavorite)
+                    recipe.copy(isFavorite = !(recipe.isFavorite ?: false))
+
                 } else {
                     recipe
                 }

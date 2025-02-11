@@ -43,12 +43,14 @@ class RecipeAdapter(
             }
 
             // 🔥 Botón de favoritos mejorado
-            updateFavoriteIcon(recipe.isFavorite)
+            updateFavoriteIcon(recipe.isFavorite ?: false)
+
 
             binding.btnFavorite.setOnClickListener {
                 onFavoriteClick(recipe) // Esto llama a la función toggleFavorite en RecipeViewModel
             // Llama al ViewModel para cambiar el estado de favorito
-                updateFavoriteIcon(!recipe.isFavorite) // Cambia el icono inmediatamente en la UI
+                updateFavoriteIcon(!(recipe.isFavorite ?: false))
+                // Cambia el icono inmediatamente en la UI
             }
 
 
