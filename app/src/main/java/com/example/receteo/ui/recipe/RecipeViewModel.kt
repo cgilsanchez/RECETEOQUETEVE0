@@ -32,6 +32,9 @@ class RecipeViewModel @Inject constructor(
     private val _creationState = MutableLiveData<Boolean>()
     val creationState: LiveData<Boolean> get() = _creationState
 
+    // Se añade successMessage para corregir el error de referencia no resuelta
+    private val _successMessage = MutableLiveData<String>()
+    val successMessage: LiveData<String> get() = _successMessage
 
     fun fetchRecipes() {
         viewModelScope.launch {
@@ -63,7 +66,6 @@ class RecipeViewModel @Inject constructor(
         }
     }
 
-
     fun createRecipe(recipeRequest: RecipeRequestModel, imageFile: File?) {
         viewModelScope.launch(SupervisorJob()) {
             try {
@@ -72,7 +74,8 @@ class RecipeViewModel @Inject constructor(
                 val success = repository.createRecipe(recipeRequest, imageFile)
 
                 if (success) {
-                    Log.d("RecipeViewModel", "✅ Receta creada con éxito")
+                    _successMessage.postValue("✅ Receta creada con éxito") // Mensaje de éxito
+                    fetchRecipes() // Refrescar la lista tras la creación
                 } else {
                     _errorMessage.postValue("❌ Error al crear receta")
                 }
@@ -86,15 +89,12 @@ class RecipeViewModel @Inject constructor(
         }
     }
 
-
-
-
-
     fun updateRecipe(recipeRequest: RecipeRequestModel, recipeId: Int, imageFile: File?) {
         viewModelScope.launch {
             try {
                 val success = repository.updateRecipe(recipeRequest, recipeId, imageFile)
                 if (success) {
+                    _successMessage.postValue("✅ Receta actualizada con éxito") // Mensaje de éxito
                     fetchRecipes() // 🔄 Refresca la lista de recetas después de la actualización
                 } else {
                     _errorMessage.postValue("Error al actualizar la receta.")
@@ -120,7 +120,6 @@ class RecipeViewModel @Inject constructor(
         }
     }
 
-
     fun toggleFavorite(recipeId: Int) {
         viewModelScope.launch {
             val updatedRecipes = recipes.value?.map { recipe ->
@@ -134,6 +133,4 @@ class RecipeViewModel @Inject constructor(
             _recipes.postValue(updatedRecipes)
         }
     }
-
-
 }

@@ -32,10 +32,11 @@ class RecipeCreateFragment : Fragment() {
 
     private lateinit var binding: FragmentRecipeCreateBinding
     private val viewModel: RecipeViewModel by viewModels()
-    private val chefViewModel: ChefViewModel by viewModels() // ViewModel para obtener chefs
+    private val chefViewModel: ChefViewModel by viewModels()
     private var recipeId: Int? = null
     private var selectedChefId: Int? = null
     private var selectedImageFile: File? = null
+    private var selectedImageUrl: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,48 +51,22 @@ class RecipeCreateFragment : Fragment() {
 
         recipeId = arguments?.getInt("recipeId", -1)
 
-        // 🟢 Cargar la lista de chefs para el Spinner
         chefViewModel.fetchChefs()
         chefViewModel.chefs.observe(viewLifecycleOwner) { chefs ->
             setupChefSpinner(chefs)
         }
 
-        // 🟢 Si se está editando, cargar la receta existente
         if (recipeId != null && recipeId != -1) {
-            viewModel.getRecipeById(recipeId!!) // Asegurar que se obtienen los datos de la receta
+            viewModel.getRecipeById(recipeId!!)
             viewModel.selectedRecipe.observe(viewLifecycleOwner) { recipe ->
-                recipe?.let {
-                    binding.etRecipeName.setText(it.name)
-                    binding.etDescription.setText(it.descriptions)
-                    binding.etIngredients.setText(it.ingredients)
-
-                    // 🟢 Seleccionar el chef en el Spinner
-                    selectedChefId = it.chef
-                    chefViewModel.chefs.observe(viewLifecycleOwner) { chefs ->
-                        val chefPosition = chefs.indexOfFirst { chef -> chef.id == it.chef }
-                        if (chefPosition != -1) {
-                            binding.spinnerChef.setSelection(chefPosition)
-                        }
-                    }
-
-                    // 🟢 Mostrar imagen con Glide
-                    if (!it.imageUrl.isNullOrEmpty()) {
-                        Glide.with(this)
-                            .load(it.imageUrl)
-                            .into(binding.ivRecipeImage)
-                    }
-                }
+                recipe?.let { loadRecipeData(it) }
             }
         }
 
-        // 🟢 Botón para seleccionar imagen
         binding.btnSelectImage.setOnClickListener { openGallery() }
-
         binding.btnSaveRecipe.setOnClickListener { saveOrUpdateRecipe() }
     }
 
-
-    // 🟢 Configura el Spinner con la lista de chefs
     private fun setupChefSpinner(chefs: List<ChefModel>) {
         val chefNames = chefs.map { it.name }
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, chefNames)
@@ -111,8 +86,9 @@ class RecipeCreateFragment : Fragment() {
         binding.etRecipeName.setText(recipe.name)
         binding.etDescription.setText(recipe.descriptions)
         binding.etIngredients.setText(recipe.ingredients)
+        selectedChefId = recipe.chef
+        selectedImageUrl = recipe.imageUrl
 
-        // 🔹 Seleccionar el chef correcto en el Spinner
         chefViewModel.chefs.observe(viewLifecycleOwner) { chefs ->
             val position = chefs.indexOfFirst { it.id == recipe.chef }
             if (position != -1) {
@@ -120,7 +96,6 @@ class RecipeCreateFragment : Fragment() {
             }
         }
 
-        // 🔹 Cargar la imagen si la receta tiene una
         if (!recipe.imageUrl.isNullOrEmpty()) {
             Glide.with(this)
                 .load(recipe.imageUrl)
@@ -128,15 +103,11 @@ class RecipeCreateFragment : Fragment() {
         }
     }
 
-
-
-    // 🟢 Abre la galería para seleccionar una imagen
     private fun openGallery() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         imagePickerLauncher.launch(intent)
     }
 
-    // 🟢 Maneja la imagen seleccionada
     private val imagePickerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             val imageUri = result.data?.data
@@ -147,7 +118,6 @@ class RecipeCreateFragment : Fragment() {
         }
     }
 
-    // 🟢 Convierte la URI en un archivo para enviarlo a la API
     private fun uriToFile(uri: Uri): File? {
         val inputStream: InputStream? = requireContext().contentResolver.openInputStream(uri)
         val file = File(requireContext().cacheDir, "recipe_image.jpg")
@@ -179,7 +149,7 @@ class RecipeCreateFragment : Fragment() {
                 descriptions = descriptions,
                 ingredients = ingredients,
                 chef = selectedChefId!!,
-                image = emptyList(), // ✅ Se asignará después de subir la imagen
+                image = emptyList(),
                 isFavorite = isFavorite
             )
         )
@@ -190,13 +160,14 @@ class RecipeCreateFragment : Fragment() {
             viewModel.updateRecipe(recipeRequest, recipeId!!, selectedImageFile)
         }
 
+        viewModel.successMessage.observe(viewLifecycleOwner) { successMessage ->
+            Toast.makeText(requireContext(), successMessage, Toast.LENGTH_SHORT).show()
+            viewModel.fetchRecipes()
+            findNavController().popBackStack()
+        }
+
         viewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
             Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
         }
-
-        viewModel.fetchRecipes()
-        findNavController().popBackStack()
     }
-
-
 }

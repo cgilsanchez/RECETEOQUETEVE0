@@ -12,8 +12,14 @@ data class RecipeModel(
 
 
 data class RecipeResponse(
-    val data: List<RecipeData>
+    val data: List<RecipeData> // ✅ Debería ser una lista de `RecipeData`
 )
+
+
+data class RecipeRespons( // Para obtener UNA receta por ID (Objeto único)
+    val data: RecipeData
+)
+
 
 data class RecipeData(
     val id: Int,
@@ -24,7 +30,7 @@ data class RecipeAttributes(
     val name: String,
     val descriptions: String,
     val ingredients: String,
-    val chef: Int?, // 🔥 Corregido: `Int?` en lugar de `String?`
+    val chef: ChefDataa?, // 🔥 Corregido: `Int?` en lugar de `String?`
     val image: ImageData?,
     val isFavorite: Boolean = false
 )
@@ -45,5 +51,13 @@ data class ImageFormats(
     }
 }
 
+
+data class ChefDataa(
+    val data: ChefInfo? // ✅ Aquí `data` es un objeto con `id`
+)
+
+data class ChefInfo(
+    val id: Int // ✅ Aquí está el `id` correcto del chef
+)
 
 

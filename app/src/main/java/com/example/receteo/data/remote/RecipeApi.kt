@@ -1,5 +1,6 @@
 package com.example.receteo.data.remote
 
+import com.example.receteo.data.remote.models.RecipeRespons
 import com.example.receteo.data.remote.models.RecipeResponse
 import com.example.receteo.data.remote.models.UploadResponse
 import okhttp3.MultipartBody
@@ -12,8 +13,9 @@ interface RecipeApi {
     @GET("recetas?populate=image")
     suspend fun getRecipes(): Response<RecipeResponse>
 
-    @GET("recetas/{id}")
-    suspend fun getRecipeById(@Path("id") id: Int): Response<RecipeResponse>
+    @GET("recetas/{id}?populate=image,chef")
+    suspend fun getRecipeById(@Path("id") id: Int): Response<RecipeRespons>
+
 
     @Multipart
     @POST("upload")
