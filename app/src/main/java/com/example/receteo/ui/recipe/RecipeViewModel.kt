@@ -7,6 +7,7 @@ import com.example.receteo.data.repository.RecipeRepository
 import com.example.receteo.ui.favorites.FavoritesViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -64,27 +65,23 @@ class RecipeViewModel @Inject constructor(
 
 
     fun createRecipe(recipeRequest: RecipeRequestModel, imageFile: File?) {
-        viewModelScope.launch(Dispatchers.IO) {  // 🚀 Se asegura que todo corre en IO
+        viewModelScope.launch(SupervisorJob()) {
             try {
-                Log.d("RecipeViewModel", "⏳ Enviando solicitud para crear receta...")
+                Log.d("RecipeViewModel", "📤 Creando receta...")
 
                 val success = repository.createRecipe(recipeRequest, imageFile)
 
-                withContext(Dispatchers.Main) {
-                    if (success) {
-                        Log.d("RecipeViewModel", "✅ Receta creada correctamente")
-                        _creationState.postValue(true)
-                        fetchRecipes() // 🔄 Refresca la lista en segundo plano
-                    } else {
-                        Log.e("RecipeViewModel", "❌ Error al crear receta")
-                        _errorMessage.postValue("Error al crear la receta.")
-                    }
+                if (success) {
+                    Log.d("RecipeViewModel", "✅ Receta creada con éxito")
+                } else {
+                    _errorMessage.postValue("❌ Error al crear receta")
                 }
             } catch (e: CancellationException) {
-                Log.e("RecipeViewModel", "🚨 Job cancelado: ${e.localizedMessage}")
+                Log.e("RecipeViewModel", "❌ Corrutina cancelada en ViewModel: ${e.message}")
+                _errorMessage.postValue("❌ Operación cancelada")
             } catch (e: Exception) {
-                Log.e("RecipeViewModel", "🚨 Error inesperado: ${e.localizedMessage}")
-                _errorMessage.postValue("Error desconocido al crear la receta.")
+                Log.e("RecipeViewModel", "❌ Excepción en ViewModel: ${e.message}")
+                _errorMessage.postValue("❌ Error en la creación de receta")
             }
         }
     }

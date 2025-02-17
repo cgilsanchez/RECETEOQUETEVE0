@@ -6,6 +6,8 @@ import com.example.receteo.data.remote.models.*
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
@@ -16,6 +18,8 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 
 import java.io.File
+import java.io.IOException
+import java.net.SocketTimeoutException
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.coroutines.resume
@@ -74,38 +78,92 @@ class RecipeRepository @Inject constructor(private val api: RecipeApi) {
     }
 
 
+
+
     suspend fun createRecipe(recipeRequest: RecipeRequestModel, imageFile: File?): Boolean {
-        return withContext(Dispatchers.IO) {
+        return withContext(Dispatchers.IO + SupervisorJob()) {
             try {
-                Log.d("RecipeRepository", "📤 Enviando solicitud para crear receta...")
+                Log.d("RecipeRepository", "📤 Creando receta...")
 
-                // 🔹 Enviar JSON correctamente formateado con la estructura esperada por Strapi
-                val jsonMap = mapOf("data" to recipeRequest)
-                val jsonBody = Gson().toJson(jsonMap)
-                    .toRequestBody("application/json".toMediaTypeOrNull())
-
-                // 🔹 Preparar la imagen (si existe)
-                val imagePart = imageFile?.let {
-                    MultipartBody.Part.createFormData(
-                        "files.image", it.name, it.asRequestBody("image/*".toMediaTypeOrNull())
-                    )
-                }
-
-                Log.d("RecipeRepository", "⏳ Enviando petición a Strapi...")
-
-                val response = api.createRecipe(jsonBody, imagePart)
-
-                if (response.isSuccessful) {
-                    Log.d("RecipeRepository", "✅ Receta creada correctamente en Strapi")
-                    return@withContext true
-                } else {
-                    val errorBody = response.errorBody()?.string()
-                    Log.e("RecipeRepository", "❌ Error en la API: $errorBody")
+                val imageId = imageFile?.let { uploadImage(it) }
+                if (imageId == null && imageFile != null) {
+                    Log.e("RecipeRepository", "❌ No se pudo subir la imagen")
                     return@withContext false
                 }
+
+                val updatedRequest = recipeRequest.copy(
+                    data = recipeRequest.data.copy(image = imageId?.let { listOf(it) } ?: emptyList())
+                )
+
+                val jsonBody = Gson().toJson(updatedRequest).toRequestBody("application/json".toMediaTypeOrNull())
+
+                Log.d("RecipeRepository", "📤 Enviando request de creación de receta: $jsonBody")
+
+                val response = api.createRecipe(jsonBody)
+
+                if (response.isSuccessful) {
+                    Log.d("RecipeRepository", "✅ Receta creada con éxito")
+                    true
+                } else {
+                    Log.e("RecipeRepository", "❌ Error en la API al crear receta: ${response.errorBody()?.string()}")
+                    false
+                }
+            } catch (e: CancellationException) {
+                Log.e("RecipeRepository", "❌ Corrutina cancelada en createRecipe: ${e.message}")
+                false
             } catch (e: Exception) {
-                Log.e("RecipeRepository", "🚨 Excepción al crear receta: ${e.localizedMessage}")
-                return@withContext false
+                Log.e("RecipeRepository", "❌ Excepción en createRecipe: ${e.message}")
+                false
+            }
+        }
+    }
+
+
+    suspend fun updateRecipe(recipeRequest: RecipeRequestModel, recipeId: Int, imageFile: File?): Boolean {
+            return withContext(Dispatchers.IO) {
+                try {
+                    val imageId = imageFile?.let { uploadImage(it) }
+                    val updatedRequest = recipeRequest.copy(
+                        data = recipeRequest.data.copy(image = imageId?.let { listOf(it) } ?: emptyList())
+                    )
+                    val jsonBody = Gson().toJson(updatedRequest).toRequestBody("application/json".toMediaType())
+                    val response = api.updateRecipe(recipeId, jsonBody)
+                    response.isSuccessful
+                } catch (e: Exception) {
+                    Log.e("RecipeRepository", "❌ Error actualizando receta: ${e.message}")
+                    false
+                }
+            }
+        }
+
+    suspend fun uploadImage(imageFile: File): Int? {
+        return withContext(Dispatchers.IO + SupervisorJob()) {
+            try {
+                val requestFile = imageFile.asRequestBody("image/*".toMediaTypeOrNull())
+                val body = MultipartBody.Part.createFormData("files", imageFile.name, requestFile)
+
+                Log.d("RecipeRepository", "📤 Intentando subir imagen: ${imageFile.name}")
+
+                val response = api.uploadImage(body)
+
+                if (response.isSuccessful) {
+                    val uploadedId = response.body()?.firstOrNull()?.id
+                    Log.d("RecipeRepository", "✅ Imagen subida con éxito. ID: $uploadedId")
+                    uploadedId
+                } else {
+                    Log.e("RecipeRepository", "❌ Error en la subida de imagen: ${response.errorBody()?.string()}")
+                    null
+                }
+            } catch (e: SocketTimeoutException) {
+                Log.e("RecipeRepository", "❌ Timeout en uploadImage: Reintentando...")
+                delay(2000)  // Espera 2 segundos antes de reintentar
+                uploadImage(imageFile)  // Reintento automático
+            } catch (e: IOException) {
+                Log.e("RecipeRepository", "❌ Error de red en uploadImage: ${e.message}")
+                null
+            } catch (e: Exception) {
+                Log.e("RecipeRepository", "❌ Excepción en uploadImage: ${e.message}")
+                null
             }
         }
     }
@@ -114,16 +172,6 @@ class RecipeRepository @Inject constructor(private val api: RecipeApi) {
 
 
 
-    suspend fun updateRecipe(recipeRequest: RecipeRequestModel, recipeId: Int, imageFile: File?): Boolean {
-        return try {
-            val imagePart = imageFile?.toMultipartBody()
-            val response = api.updateRecipe(recipeId, recipeRequest, imagePart)
-            response.isSuccessful
-        } catch (e: Exception) {
-            Log.e("RecipeRepository", "Error al actualizar receta: ${e.message}")
-            false
-        }
-    }
 
 
     suspend fun deleteRecipe(recipeId: Int): Boolean {

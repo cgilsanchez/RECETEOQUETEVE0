@@ -44,3 +44,6 @@ data class ImageFormats(
         return url ?: "" // 🔥 Devuelve un string vacío si la URL es null
     }
 }
+
+
+

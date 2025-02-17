@@ -159,7 +159,6 @@ class RecipeCreateFragment : Fragment() {
         return file
     }
 
-    // 🟢 Guardar o actualizar la receta
     private fun saveOrUpdateRecipe() {
         val name = binding.etRecipeName.text.toString().trim()
         val descriptions = binding.etDescription.text.toString().trim()
@@ -180,12 +179,10 @@ class RecipeCreateFragment : Fragment() {
                 descriptions = descriptions,
                 ingredients = ingredients,
                 chef = selectedChefId!!,
-                imageUrl = null, // ✅ Ahora sí permite valores nulos en Strapi
-                // 🔹 Se manejará la imagen aparte
+                image = emptyList(), // ✅ Se asignará después de subir la imagen
                 isFavorite = isFavorite
             )
         )
-
 
         if (recipeId == null || recipeId == -1) {
             viewModel.createRecipe(recipeRequest, selectedImageFile)
@@ -197,8 +194,9 @@ class RecipeCreateFragment : Fragment() {
             Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
         }
 
-        viewModel.fetchRecipes() // 🔄 Recargar la lista de recetas
+        viewModel.fetchRecipes()
         findNavController().popBackStack()
     }
+
 
 }
