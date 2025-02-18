@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.example.receteo.R
 import com.example.receteo.data.remote.models.RecipeRequestModel
 import com.example.receteo.data.remote.models.ChefModel
 import com.example.receteo.data.remote.models.RecipeDataRequest
@@ -163,11 +164,12 @@ class RecipeCreateFragment : Fragment() {
         viewModel.successMessage.observe(viewLifecycleOwner) { successMessage ->
             Toast.makeText(requireContext(), successMessage, Toast.LENGTH_SHORT).show()
             viewModel.fetchRecipes()
-            findNavController().popBackStack()
         }
 
         viewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
             Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
         }
+        findNavController().navigate(R.id.action_recipeCreateFragment_to_recipeListFragment2)
+
     }
 }

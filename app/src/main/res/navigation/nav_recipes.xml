@@ -42,5 +42,9 @@
         android:id="@+id/recipeCreateFragment"
         android:name="com.example.receteo.ui.recipe.RecipeCreateFragment"
         android:label="Crear Receta"
-        tools:layout="@layout/fragment_recipe_create" />
+        tools:layout="@layout/fragment_recipe_create" >
+        <action
+            android:id="@+id/action_recipeCreateFragment_to_recipeListFragment2"
+            app:destination="@id/recipeListFragment2" />
+    </fragment>
 </navigation>
