@@ -1,8 +1,10 @@
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
     id("kotlin-kapt") // Para Room y Hilt
     id("com.google.dagger.hilt.android")
+    id("androidx.navigation.safeargs.kotlin")
+    alias(libs.plugins.google.android.libraries.mapsplatform.secrets.gradle.plugin)
 }
 
 android {
@@ -11,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.receteo"
-        minSdk = 21
+        minSdk = 23
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -35,7 +37,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.core.ktx.v1120)
     implementation(libs.androidx.appcompat)
     implementation(libs.material.v1100)
@@ -53,7 +54,10 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
-
+    implementation(libs.play.services.location)
+    implementation(libs.places.v410)
+    implementation(libs.transportation.consumer.v300)
+    implementation(libs.androidx.tools.core)
     dependencies {
         // Glide para cargar imágenes
         implementation("com.github.bumptech.glide:glide:4.15.1")
@@ -70,4 +74,20 @@ dependencies {
 
 kapt {
     correctErrorTypes = true
+}
+secrets {
+    // To add your Maps API key to this project:
+    // 1. If the secrets.properties file does not exist, create it in the same folder as the local.properties file.
+    // 2. Add this line, where YOUR_API_KEY is your API key:
+    //        MAPS_API_KEY=YOUR_API_KEY
+    propertiesFileName = "secrets.properties"
+
+    // A properties file containing default secret values. This file can be
+    // checked in version control.
+    defaultPropertiesFileName = "local.defaults.properties"
+
+    // Configure which keys should be ignored by the plugin by providing regular expressions.
+    // "sdk.dir" is ignored by default.
+    ignoreList.add("keyToIgnore") // Ignore the key "keyToIgnore"
+    ignoreList.add("sdk.*")       // Ignore all keys matching the regexp "sdk.*"
 }
