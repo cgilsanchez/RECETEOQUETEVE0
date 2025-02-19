@@ -101,6 +101,16 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     }
 
 
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        try {
+            (placesClient as? java.io.Closeable)?.close()
+        } catch (e: Exception) {
+            Log.e("MapaFragment", "Error cerrando placesClient: ${e.message}")
+        }
+    }
+
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
         checkLocationPermissions()
@@ -269,7 +279,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                     } catch (e: Exception) {
                         Toast.makeText(
                             requireContext(),
-                            "Error en la solicitud: ${e.message}",
+                            "Mapa cerrado",
                             Toast.LENGTH_SHORT
                         ).show()
                     }
