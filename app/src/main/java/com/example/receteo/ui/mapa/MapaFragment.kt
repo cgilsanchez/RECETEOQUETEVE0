@@ -80,8 +80,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         val apiKey = BuildConfig.MAPS_API_KEY
         Places.initialize(requireContext(), apiKey)
 
-
-
         // Verifica si la API Key está definida correctamente
         if (apiKey.isNotEmpty()) {
             if (!Places.isInitialized()) {
@@ -93,6 +91,9 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
         // Inicializar el cliente de Places
         placesClient = Places.createClient(requireContext())
+
+        // **Inicializar el cliente de ubicación antes de cualquier uso**
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
 
         // Configurar el mapa
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as? SupportMapFragment
