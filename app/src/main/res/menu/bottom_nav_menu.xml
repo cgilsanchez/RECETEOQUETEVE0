@@ -17,7 +17,7 @@
         android:title="Cocineros" />
     <item
         android:id="@+id/nav_map"
-        android:icon="@drawable/ic_user"
+        android:icon="@drawable/ic_map_background"
         android:title="Mapa" />
 
     <item
