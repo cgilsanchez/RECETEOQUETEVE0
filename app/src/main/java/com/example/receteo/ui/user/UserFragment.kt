@@ -1,40 +1,47 @@
 package com.example.receteo.ui.user
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.example.receteo.R
+import com.example.receteo.ui.auth.AuthViewModel
 import com.example.receteo.ui.auth.LoginFragment
+import dagger.hilt.android.AndroidEntryPoint
 
-class UserFragment : Fragment() {
+@AndroidEntryPoint
+class UserFragment : Fragment(R.layout.fragment_user) {
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_user, container, false)
-    }
+    private val authViewModel: AuthViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Simulación de datos del usuario
-        val userName = "Carlos Pérez"
-        val userEmail = "carlos.perez@example.com"
+        val sharedPreferences = requireActivity().getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+        val token = sharedPreferences.getString("jwt", null)
 
-        // Mostrar nombre y correo del usuario
-        view.findViewById<TextView>(R.id.tv_user_name).text = userName
-        view.findViewById<TextView>(R.id.tv_user_email).text = userEmail
+        val usernameTextView: TextView = view.findViewById(R.id.tv_user_name)
+        val emailTextView: TextView = view.findViewById(R.id.tv_user_email)
+        val logoutButton: Button = view.findViewById(R.id.btn_logout)
 
-        // Configurar el botón de cerrar sesión
-        val logoutButton = view.findViewById<Button>(R.id.btn_logout)
+        if (!token.isNullOrEmpty()) {
+            authViewModel.getUserData(token)
+        }
+
+        authViewModel.userData.observe(viewLifecycleOwner) { user ->
+            if (user != null) {
+                usernameTextView.text = user.username
+                emailTextView.text = user.email
+            }
+        }
+
+        // Cerrar sesión
         logoutButton.setOnClickListener {
-            // Redirigir a la pantalla de inicio de sesión
+            sharedPreferences.edit().clear().apply()  // Borra el token
             val intent = Intent(requireContext(), LoginFragment::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
