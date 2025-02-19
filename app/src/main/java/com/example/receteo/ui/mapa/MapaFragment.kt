@@ -211,8 +211,8 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                             service.getNearbyCinemas(
                                 "${currentLatLng.latitude},${currentLatLng.longitude}",
                                 20000,
-                                "movie_theater",
-                                "cinema|movie theater",
+                                "restaurant",
+                                "restaurant|food",
                                 apiKey
                             )
                         }
@@ -230,13 +230,13 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                                 return@launch
                             }
 
-                            val cinemaList = results.map { "${it.name} - ${it.vicinity}" }
+                            val restaurantes = results.map { "${it.name} - ${it.vicinity}" }
 
                             // Mostrar los cines en la lista
                             val adapter = ArrayAdapter(
                                 requireContext(),
                                 android.R.layout.simple_list_item_1,
-                                cinemaList
+                                restaurantes
                             )
                             binding.listCines.adapter = adapter
 
