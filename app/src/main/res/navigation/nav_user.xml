@@ -3,8 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_user"
     app:startDestination="@id/userFragment">
+
     <fragment
         android:id="@+id/userFragment"
         android:name="com.example.receteo.ui.user.UserFragment"
-        android:label="UserFragment" />
+        android:label="UserFragment">
+        <action
+            android:id="@+id/action_userFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/userFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
+
 </navigation>

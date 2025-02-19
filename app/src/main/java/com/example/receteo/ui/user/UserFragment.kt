@@ -1,16 +1,15 @@
 package com.example.receteo.ui.user
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.example.receteo.R
 import com.example.receteo.ui.auth.AuthViewModel
-import com.example.receteo.ui.auth.LoginFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -39,12 +38,10 @@ class UserFragment : Fragment(R.layout.fragment_user) {
             }
         }
 
-        // Cerrar sesión
+        // Cerrar sesión correctamente con NavController
         logoutButton.setOnClickListener {
             sharedPreferences.edit().clear().apply()  // Borra el token
-            val intent = Intent(requireContext(), LoginFragment::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
+            findNavController().navigate(R.id.action_userFragment_to_loginFragment) // Navega al LoginFragment
         }
     }
 }
