@@ -1,3 +1,15 @@
+val properties = java.util.Properties()
+val secretsFile = rootProject.file("secrets.properties")
+if (secretsFile.exists()) {
+    properties.load(secretsFile.inputStream())
+}
+
+properties.forEach { key, value ->
+    extra[key.toString()] = value.toString()
+}
+
+
+
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.kotlin.android) apply false
@@ -7,6 +19,9 @@ plugins {
 
 
 }
+
+
+
 
 buildscript {
     repositories {

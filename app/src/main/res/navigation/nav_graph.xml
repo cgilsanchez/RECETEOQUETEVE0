@@ -67,5 +67,6 @@
     <include app:graph="@navigation/nav_chefs" />
     <include app:graph="@navigation/nav_favorites" />
     <include app:graph="@navigation/nav_user" />
+    <include app:graph="@navigation/nav_map" />
 
 </navigation>

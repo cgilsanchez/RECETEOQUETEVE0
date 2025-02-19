@@ -37,8 +37,8 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import android.provider.Settings
 import android.util.Log
-import com.android.volley.BuildConfig
 import com.example.receteo.databinding.FragmentMapaBinding
+import com.example.receteo.BuildConfig
 
 
 @AndroidEntryPoint
@@ -78,6 +78,9 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
         // Obtiene la API Key de BuildConfig
         val apiKey = BuildConfig.MAPS_API_KEY
+        Places.initialize(requireContext(), apiKey)
+
+
 
         // Verifica si la API Key está definida correctamente
         if (apiKey.isNotEmpty()) {

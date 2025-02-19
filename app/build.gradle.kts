@@ -17,7 +17,7 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
-        buildConfigField("String", "MAPS_API_KEY", "\"${project.findProperty("MAPS_API_KEY") ?: ""}\"")
+        buildConfigField("String", "MAPS_API_KEY", "\"${properties["MAPS_API_KEY"] ?: ""}\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -27,7 +27,8 @@ android {
 
     buildFeatures {
         viewBinding = true
-        dataBinding = true // Habilita Data Binding
+        dataBinding = true
+        buildConfig = true// Habilita Data Binding
     }
 
     compileOptions {
@@ -64,6 +65,7 @@ dependencies {
     implementation(libs.places.v410)
     implementation(libs.transportation.consumer.v300)
     implementation(libs.androidx.tools.core)
+    implementation(libs.play.services.maps)
     dependencies {
         // Glide para cargar imágenes
         implementation("com.github.bumptech.glide:glide:4.15.1")
