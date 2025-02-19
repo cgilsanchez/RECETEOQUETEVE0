@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.example.receteo.R
 import com.example.receteo.databinding.FragmentChefCreateBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -54,10 +55,11 @@ class ChefCreateFragment : Fragment() {
 
         if (chefId == null || chefId == -1) {
             viewModel.createChef(name)
+            Toast.makeText(requireContext(), "Chef creado correctamente", Toast.LENGTH_SHORT).show()
         } else {
             viewModel.updateChef(chefId!!, name)
+            Toast.makeText(requireContext(), "Chef actualizado correctamente", Toast.LENGTH_SHORT).show()
         }
-
-        findNavController().popBackStack()
+        findNavController().navigate(R.id.action_chefCreateFragment_to_chefListFragment)
     }
 }

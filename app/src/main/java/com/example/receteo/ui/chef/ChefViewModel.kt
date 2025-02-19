@@ -24,55 +24,51 @@ class ChefViewModel @Inject constructor(
     private val _selectedChef = MutableLiveData<ChefModel?>()
     val selectedChef: LiveData<ChefModel?> get() = _selectedChef
 
+
     fun fetchChefs() {
         viewModelScope.launch {
-            _chefs.value = repository.getChefs()
+            val chefsList = repository.getChefs()
+            withContext(Dispatchers.Main) {
+                _chefs.value = chefsList
+            }
         }
     }
 
     fun createChef(name: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                Log.d("ChefViewModel", "📨 Intentando crear chef: $name")
-
+                Log.d("ChefViewModel", "📨 Creando chef: $name")
                 val success = repository.createChef(name)
 
-                withContext(Dispatchers.Main) {
-                    if (success) {
-                        fetchChefs() // Refresca la lista en la UI
-                        Log.d("ChefViewModel", "✅ Chef creado correctamente.")
-                    } else {
-                        Log.e("ChefViewModel", "❌ Error al crear el chef.")
-                    }
+                if (success) {
+                    fetchChefs() // Refresca la lista
+                    Log.d("ChefViewModel", "✅ Chef creado correctamente.")
+                } else {
+                    Log.e("ChefViewModel", "❌ Error al crear el chef.")
                 }
-
-            } catch (e: CancellationException) {
-                Log.w("ChefViewModel", "⚠️ Corrutina cancelada después de crear el chef.")
             } catch (e: Exception) {
                 Log.e("ChefViewModel", "🚨 Excepción en createChef: ${e.message}")
             }
         }
     }
 
-
-
-
-
-
-
     fun updateChef(id: Int, name: String) {
-        viewModelScope.launch {
-            val success = repository.updateChef(id, name)
-            if (success) {
-                fetchChefs()  // Recargar lista de chefs después de actualizar
-                Log.d("ChefViewModel", "Chef actualizado correctamente.")
-            } else {
-                Log.e("ChefViewModel", "Error al actualizar el chef.")
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                Log.d("ChefViewModel", "📨 Actualizando chef ID: $id con nombre: $name")
+                val success = repository.updateChef(id, name)
+
+                if (success) {
+                    fetchChefs() // Refresca la lista
+                    Log.d("ChefViewModel", "✅ Chef actualizado correctamente.")
+                } else {
+                    Log.e("ChefViewModel", "❌ Error al actualizar el chef.")
+                }
+            } catch (e: Exception) {
+                Log.e("ChefViewModel", "🚨 Excepción en updateChef: ${e.message}")
             }
         }
     }
-
-
 
     fun deleteChef(id: Int) {
         viewModelScope.launch {

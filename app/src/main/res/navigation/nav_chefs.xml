@@ -20,6 +20,10 @@
         android:id="@+id/chefCreateFragment"
         android:name="com.example.receteo.ui.chef.ChefCreateFragment"
         android:label="Crear Chef"
-        tools:layout="@layout/fragment_chef_create" />
+        tools:layout="@layout/fragment_chef_create" >
+        <action
+            android:id="@+id/action_chefCreateFragment_to_chefListFragment"
+            app:destination="@id/chefListFragment" />
+    </fragment>
 </navigation>
 
