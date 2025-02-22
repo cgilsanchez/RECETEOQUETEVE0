@@ -21,6 +21,7 @@ class RecipeAdapter(
     private val onEditClick: (RecipeModel) -> Unit,
     private val onDeleteClick: (RecipeModel) -> Unit,
     private val onFavoriteClick: (RecipeModel) -> Unit,
+    private val onRecipeClick: (RecipeModel) -> Unit,
     private val onShareClick: (RecipeModel) -> Unit
 ) : RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder>() {
 
@@ -47,6 +48,14 @@ class RecipeAdapter(
             binding.btnShare.visibility = View.VISIBLE
             binding.btnShare.setOnClickListener {
                 onShareClick(recipe)
+            }
+
+            binding.root.setOnClickListener {
+                if (it.id != binding.btnEdit.id &&
+                    it.id != binding.btnDelete.id &&
+                    it.id != binding.btnShare.id) {
+                    onRecipeClick(recipe)
+                }
             }
 
         }

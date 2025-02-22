@@ -7,7 +7,9 @@ import android.view.ViewGroup
 import android.content.Intent
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.receteo.R
 import com.example.receteo.data.remote.models.RecipeModel
 import com.example.receteo.databinding.FragmentFavoritesBinding
 import com.example.receteo.ui.recipe.RecipeAdapter
@@ -38,7 +40,13 @@ class FavoritesFragment : Fragment() {
             onEditClick = { /* Implementar edición */ },
             onDeleteClick = { /* Implementar eliminación */ },
             onFavoriteClick = { recipeViewModel.toggleFavorite(it.id) },
-            onShareClick = { recipe -> compartirReceta(recipe) }
+            onShareClick = { recipe -> compartirReceta(recipe) },
+            onRecipeClick = { recipe ->  // ✅ Agregado para manejar el clic en la tarjeta completa
+                val bundle = Bundle().apply {
+                    putInt("recipeId", recipe.id)
+                }
+                findNavController().navigate(R.id.recipeDetailFragment, bundle)
+            }
         )
 
         binding.recyclerViewFavorites.layoutManager = LinearLayoutManager(requireContext())

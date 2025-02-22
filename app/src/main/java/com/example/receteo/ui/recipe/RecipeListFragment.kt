@@ -72,7 +72,18 @@ class RecipeListFragment : Fragment() {
             },
             onShareClick = { recipe ->
                 compartirReceta(recipe)
+            },
+            onRecipeClick = { recipe ->
+                val bundle = Bundle().apply {
+                    putInt("recipeId", recipe.id)
+                    putString("recipeName", recipe.name)
+                    putString("recipeIngredients", recipe.ingredients)
+                    putString("recipeDescription", recipe.descriptions)
+                    putString("recipeImageUrl", recipe.imageUrl)
+                }
+                findNavController().navigate(R.id.recipeDetailFragment, bundle)
             }
+
         )
 
         binding.recyclerView.apply {
@@ -80,6 +91,7 @@ class RecipeListFragment : Fragment() {
             adapter = this@RecipeListFragment.adapter
         }
     }
+
 
     private fun observeViewModel() {
         viewModel.recipes.observe(viewLifecycleOwner) { recipes ->

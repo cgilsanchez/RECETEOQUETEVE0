@@ -66,6 +66,8 @@ dependencies {
     implementation(libs.transportation.consumer.v300)
     implementation(libs.androidx.tools.core)
     implementation(libs.play.services.maps)
+
+    
     dependencies {
         // Glide para cargar imágenes
         implementation("com.github.bumptech.glide:glide:4.15.1")
