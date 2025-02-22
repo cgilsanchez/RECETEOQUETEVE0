@@ -42,30 +42,16 @@ class RecipeAdapter(
                 onDeleteClick(recipe)
             }
 
-            // 🔥 Botón de favoritos mejorado
-            updateFavoriteIcon(recipe.isFavorite ?: false)
 
 
-            binding.btnFavorite.setOnClickListener {
-                onFavoriteClick(recipe) // Esto llama a la función toggleFavorite en RecipeViewModel
-            // Llama al ViewModel para cambiar el estado de favorito
-                updateFavoriteIcon(!(recipe.isFavorite ?: false))
-                // Cambia el icono inmediatamente en la UI
-            }
+
+
 
 
 
         }
 
-        private fun updateFavoriteIcon(isFavorite: Boolean) {
-            binding.btnFavorite.setImageResource(
-                if (isFavorite) android.R.drawable.btn_star_big_on
-                else android.R.drawable.btn_star_big_off
-            )
-            binding.btnFavorite.setColorFilter(
-                if (isFavorite) Color.YELLOW else Color.GRAY
-            )
-        }
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecipeViewHolder {

@@ -54,16 +54,5 @@
                 android:text="ELIMINAR" />
         </LinearLayout>
 
-        <ImageButton
-            android:id="@+id/btnFavorite"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_alignParentEnd="true"
-            android:layout_margin="8dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@android:drawable/btn_star_big_off"
-            android:contentDescription="Favorito"
-            app:tint="@color/gray" />
-
     </LinearLayout>
 </androidx.cardview.widget.CardView>
