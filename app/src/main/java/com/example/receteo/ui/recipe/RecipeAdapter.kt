@@ -1,11 +1,12 @@
 package com.example.receteo.ui.recipe
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Color
 import android.os.AsyncTask
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
@@ -19,7 +20,8 @@ class RecipeAdapter(
     private val recipes: MutableList<RecipeModel>,
     private val onEditClick: (RecipeModel) -> Unit,
     private val onDeleteClick: (RecipeModel) -> Unit,
-    private val onFavoriteClick: (RecipeModel) -> Unit
+    private val onFavoriteClick: (RecipeModel) -> Unit,
+    private val onShareClick: (RecipeModel) -> Unit
 ) : RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder>() {
 
     inner class RecipeViewHolder(val binding: ItemRecipeBinding) :
@@ -42,16 +44,12 @@ class RecipeAdapter(
                 onDeleteClick(recipe)
             }
 
-
-
-
-
-
-
+            binding.btnShare.visibility = View.VISIBLE
+            binding.btnShare.setOnClickListener {
+                onShareClick(recipe)
+            }
 
         }
-
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecipeViewHolder {

@@ -4,9 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.content.Intent
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.receteo.data.remote.models.RecipeModel
 import com.example.receteo.databinding.FragmentFavoritesBinding
 import com.example.receteo.ui.recipe.RecipeAdapter
 import com.example.receteo.ui.recipe.RecipeViewModel
@@ -35,8 +37,8 @@ class FavoritesFragment : Fragment() {
             mutableListOf(),
             onEditClick = { /* Implementar edición */ },
             onDeleteClick = { /* Implementar eliminación */ },
-            onFavoriteClick = { recipeViewModel.toggleFavorite(it.id) }
-
+            onFavoriteClick = { recipeViewModel.toggleFavorite(it.id) },
+            onShareClick = { recipe -> compartirReceta(recipe) }
         )
 
         binding.recyclerViewFavorites.layoutManager = LinearLayoutManager(requireContext())
@@ -45,13 +47,10 @@ class FavoritesFragment : Fragment() {
         observeViewModel()  // Llama al método para observar el viewModel
     }
 
-
     override fun onResume() {
         super.onResume()
         recipeViewModel.fetchRecipes() // Asegurarnos de actualizar la lista de recetas
     }
-
-
 
     private fun observeViewModel() {
         recipeViewModel.recipes.observe(viewLifecycleOwner) { recipes ->
@@ -61,6 +60,23 @@ class FavoritesFragment : Fragment() {
         }
     }
 
+    private fun compartirReceta(recipe: RecipeModel) {
+        val textoCompartir = """
+            🍽️ *${recipe.name}*
+            
+            📝 *Ingredientes:*
+            ${recipe.ingredients}
+            
+            📝 *Descripción:*
+            ${recipe.descriptions}
+            
+            📲 Compartido desde *Receteo*
+        """.trimIndent()
 
-
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, textoCompartir)
+        }
+        startActivity(Intent.createChooser(intent, "Compartir receta vía"))
+    }
 }

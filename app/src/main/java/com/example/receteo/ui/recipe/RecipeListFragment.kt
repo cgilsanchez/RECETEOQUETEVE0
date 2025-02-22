@@ -1,8 +1,8 @@
 package com.example.receteo.ui.recipe
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +10,6 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import com.example.receteo.ui.recipe.RecipeViewModel
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.receteo.R
@@ -62,17 +61,18 @@ class RecipeListFragment : Fragment() {
                     .setTitle("Eliminar receta")
                     .setMessage("¿Estás seguro de que deseas eliminar esta receta?")
                     .setPositiveButton("Eliminar") { _, _ ->
-                        viewModel.deleteRecipe(recipe.id) // ✅ Ahora debe reconocer deleteRecipe correctamente
+                        viewModel.deleteRecipe(recipe.id)
                         Toast.makeText(requireContext(), "Receta eliminada", Toast.LENGTH_SHORT).show()
                     }
                     .setNegativeButton("Cancelar", null)
                     .show()
-            }
-            ,
+            },
             onFavoriteClick = { recipe ->
-                favoritesViewModel.toggleFavorite(recipe) // 🔥 Usa la instancia correcta
+                favoritesViewModel.toggleFavorite(recipe)
+            },
+            onShareClick = { recipe ->
+                compartirReceta(recipe)
             }
-
         )
 
         binding.recyclerView.apply {
@@ -81,21 +81,36 @@ class RecipeListFragment : Fragment() {
         }
     }
 
-
-
     private fun observeViewModel() {
         viewModel.recipes.observe(viewLifecycleOwner) { recipes ->
-            adapter.updateData(recipes) // Actualiza la lista de recetas con el estado actualizado
+            adapter.updateData(recipes)
         }
     }
 
-
     override fun onResume() {
         super.onResume()
-        viewModel.fetchRecipes() // Recarga las recetas cada vez que el fragmento es visible
+        viewModel.fetchRecipes()
     }
 
+    private fun compartirReceta(recipe: RecipeModel) {
+        val textoCompartir = """
+            🍽️ *${recipe.name}*
+            
+            📝 *Ingredientes:*
+            ${recipe.ingredients}
+            
+            📝 *Descripción:*
+            ${recipe.descriptions}
+            
+            📲 Compartido desde *Receteo*
+        """.trimIndent()
 
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, textoCompartir)
+        }
+        startActivity(Intent.createChooser(intent, "Compartir receta vía"))
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

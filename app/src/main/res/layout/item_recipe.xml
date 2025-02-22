@@ -35,7 +35,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
             <Button
                 android:id="@+id/btnEdit"
@@ -52,7 +53,15 @@
                 android:layout_weight="1"
                 android:backgroundTint="@android:color/holo_red_light"
                 android:text="ELIMINAR" />
-        </LinearLayout>
 
+            <ImageView
+                android:id="@+id/btnShare"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="8dp"
+                android:src="@drawable/ic_share"
+                android:contentDescription="Compartir"
+                android:tint="@color/black" />
+        </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>
