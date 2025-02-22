@@ -29,7 +29,7 @@ class RecipeAdapter(
         RecyclerView.ViewHolder(binding.root) {
         fun bind(recipe: RecipeModel) {
             binding.tvRecipeName.text = recipe.name
-            binding.tvRecipeDescription.text = recipe.descriptions ?: "Sin descripción"
+
 
             val imageUrl = recipe.imageUrl ?: ""
             if (imageUrl.isNotEmpty()) {
