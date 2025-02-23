@@ -66,6 +66,14 @@ dependencies {
     implementation(libs.transportation.consumer.v300)
     implementation(libs.androidx.tools.core)
     implementation(libs.play.services.maps)
+    implementation("androidx.hilt:hilt-work:1.0.0")
+    implementation("androidx.work:work-runtime-ktx:2.8.1")
+
+    // Para usar Hilt con WorkManager
+    kapt("androidx.hilt:hilt-compiler:1.0.0")
+
+    // Dependencias de notificaciones
+    implementation("androidx.core:core-ktx:1.9.0")
 
     
     dependencies {

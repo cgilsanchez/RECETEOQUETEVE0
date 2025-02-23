@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.receteo.R
@@ -17,6 +18,7 @@ import com.example.receteo.data.remote.models.*
 import com.example.receteo.databinding.FragmentRecipeListBinding
 import com.example.receteo.ui.favorites.FavoritesViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class RecipeListFragment : Fragment() {
@@ -83,7 +85,6 @@ class RecipeListFragment : Fragment() {
                 }
                 findNavController().navigate(R.id.recipeDetailFragment, bundle)
             }
-
         )
 
         binding.recyclerView.apply {
@@ -92,12 +93,21 @@ class RecipeListFragment : Fragment() {
         }
     }
 
-
     private fun observeViewModel() {
         viewModel.recipes.observe(viewLifecycleOwner) { recipes ->
             adapter.updateData(recipes)
+            adapter.notifyDataSetChanged() // 🔥 Fuerza la actualización del RecyclerView para recargar las imágenes
+        }
+
+        viewModel.successMessage.observe(viewLifecycleOwner) { message ->
+            message?.let {
+                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                viewModel.fetchRecipes() // 🔄 Vuelve a cargar la lista después de editar
+            }
         }
     }
+
+
 
     override fun onResume() {
         super.onResume()

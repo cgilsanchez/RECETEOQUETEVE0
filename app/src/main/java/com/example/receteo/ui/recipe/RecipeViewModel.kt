@@ -94,8 +94,16 @@ class RecipeViewModel @Inject constructor(
             try {
                 val success = repository.updateRecipe(recipeRequest, recipeId, imageFile)
                 if (success) {
-                    _successMessage.postValue("✅ Receta actualizada con éxito") // Mensaje de éxito
-                    fetchRecipes() // 🔄 Refresca la lista de recetas después de la actualización
+                    _successMessage.postValue("✅ Receta actualizada con éxito")
+
+                    // 🔥 Obtiene SOLO la receta actualizada en lugar de refrescar TODAS
+                    getRecipeById(recipeId)
+
+                    // 🔥 Si la imagen cambió, fuerza la actualización de la UI
+                    val updatedRecipe = repository.getRecipeById(recipeId)
+                    updatedRecipe?.let { updated ->
+                        _recipes.postValue(_recipes.value?.map { if (it.id == recipeId) updated else it })
+                    }
                 } else {
                     _errorMessage.postValue("Error al actualizar la receta.")
                 }
@@ -104,6 +112,9 @@ class RecipeViewModel @Inject constructor(
             }
         }
     }
+
+
+
 
     fun deleteRecipe(recipeId: Int) {
         viewModelScope.launch {

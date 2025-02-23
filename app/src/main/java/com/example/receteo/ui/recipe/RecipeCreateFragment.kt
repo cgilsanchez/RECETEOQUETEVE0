@@ -88,7 +88,7 @@ class RecipeCreateFragment : Fragment() {
         binding.etDescription.setText(recipe.descriptions)
         binding.etIngredients.setText(recipe.ingredients)
         selectedChefId = recipe.chef
-        selectedImageUrl = recipe.imageUrl
+        selectedImageUrl = recipe.imageUrl // ✅ Guarda la URL de la imagen
 
         chefViewModel.chefs.observe(viewLifecycleOwner) { chefs ->
             val position = chefs.indexOfFirst { it.id == recipe.chef }
@@ -100,9 +100,10 @@ class RecipeCreateFragment : Fragment() {
         if (!recipe.imageUrl.isNullOrEmpty()) {
             Glide.with(this)
                 .load(recipe.imageUrl)
-                .into(binding.ivRecipeImage)
+                .into(binding.ivRecipeImage) // ✅ Carga la imagen existente
         }
     }
+
 
     private fun openGallery() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
