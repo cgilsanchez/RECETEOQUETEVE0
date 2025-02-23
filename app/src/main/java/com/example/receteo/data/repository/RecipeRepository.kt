@@ -3,6 +3,7 @@ package com.example.receteo.data.repository
 import android.content.Context
 import android.util.Log
 import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkManager
 import com.example.receteo.RecipeWorker
 import com.example.receteo.data.remote.RecipeApi
@@ -90,13 +91,18 @@ class RecipeRepository @Inject constructor(private val api: RecipeApi,private va
 
 
     private fun scheduleNotificationWorker() {
-        Log.d("RecipeRepository", "🔄 Programando Worker para notificación...")
+        Log.d("RecipeRepository", "🔄 Intentando programar WorkManager...")
 
-        val workRequest = OneTimeWorkRequestBuilder<RecipeWorker>().build()
+        val workRequest = OneTimeWorkRequestBuilder<RecipeWorker>()
+            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST) // 🔥 Forzar ejecución inmediata
+            .build()
+
         WorkManager.getInstance(context).enqueue(workRequest)
 
-        Log.d("RecipeRepository", "✅ Worker programado correctamente")
+        Log.d("RecipeRepository", "✅ Worker programado correctamente con ID: ${workRequest.id}")
     }
+
+
 
 
 
@@ -150,31 +156,28 @@ class RecipeRepository @Inject constructor(private val api: RecipeApi,private va
             try {
                 Log.d("RecipeRepository", "📤 Iniciando actualización de receta...")
 
-                val imageId = imageFile?.let { uploadImage(it) } ?: null
+                // 📌 Si hay una nueva imagen, la subimos; si no, mantenemos la imagen actual
+                val imageId = imageFile?.let { uploadImage(it) } ?: recipeRequest.data.image?.firstOrNull()
 
                 val updatedRequest = mapOf(
                     "data" to mapOf(
                         "chef" to recipeRequest.data.chef,
                         "descriptions" to recipeRequest.data.descriptions,
-                        "image" to (if (imageId != null) listOf(imageId) else recipeRequest.data.image), // ✅ Mantiene la imagen anterior si no se cambia
+                        "image" to (imageId?.let { listOf(it) } ?: emptyList()), // 🔥 Aquí se mantiene la imagen anterior si no se cambia
                         "ingredients" to recipeRequest.data.ingredients,
                         "isFavorite" to recipeRequest.data.isFavorite,
                         "name" to recipeRequest.data.name
                     )
                 )
 
-                val jsonBody = Gson().toJson(updatedRequest)
+                val jsonBody = Gson().toJson(updatedRequest).toRequestBody("application/json".toMediaTypeOrNull())
                 Log.d("RecipeRepository", "📤 JSON Enviado: $jsonBody")
 
-                val requestBody = jsonBody.toRequestBody("application/json".toMediaTypeOrNull())
-                val response = api.updateRecipe(recipeId, requestBody)
+                val response = api.updateRecipe(recipeId, jsonBody)
 
                 if (response.isSuccessful) {
                     Log.d("RecipeRepository", "✅ Receta actualizada con éxito")
-                    scheduleNotificationWorker()
-
-                    getRecipeById(recipeId)
-
+                    scheduleNotificationWorker() // Notificación después de actualizar
                     true
                 } else {
                     val errorResponse = response.errorBody()?.string()
@@ -187,6 +190,7 @@ class RecipeRepository @Inject constructor(private val api: RecipeApi,private va
             }
         }
     }
+
 
 
 
