@@ -35,10 +35,7 @@ class RecipeWorker @AssistedInject constructor(
                 prefs.edit().putBoolean(KEY_WELCOME_SENT, true).apply()
             } else {
                 Log.d("RecipeWorker", "📢 Enviando notificación de actualización de receta...")
-                val notificationCount = Random.nextInt(1, 3)
-                for (i in 1..notificationCount) {
-                    showRegularNotification(i)
-                }
+                showRegularNotification(Random.nextInt(1, 3))
             }
             Log.d("RecipeWorker", "✅ Notificación enviada con éxito")
             Result.success()
@@ -47,6 +44,7 @@ class RecipeWorker @AssistedInject constructor(
             Result.failure()
         }
     }
+
 
 
     private fun showWelcomeNotification() {
