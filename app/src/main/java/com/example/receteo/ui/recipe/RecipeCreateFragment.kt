@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.receteo.R
 import com.example.receteo.data.remote.models.RecipeRequestModel
 import com.example.receteo.data.remote.models.ChefModel
@@ -100,7 +101,12 @@ class RecipeCreateFragment : Fragment() {
         if (!recipe.imageUrl.isNullOrEmpty()) {
             Glide.with(this)
                 .load(recipe.imageUrl)
-                .into(binding.ivRecipeImage) // ✅ Carga la imagen existente
+                .placeholder(R.drawable.placeholder_image)
+                .error(R.drawable.image_error)
+                .diskCacheStrategy(DiskCacheStrategy.NONE) // 🔥 Evita imágenes antiguas en caché
+                .skipMemoryCache(true) // 🔥 Carga la imagen más reciente de Strapi
+                .into(binding.ivRecipeImage)
+
         }
     }
 
@@ -146,16 +152,27 @@ class RecipeCreateFragment : Fragment() {
             viewModel.selectedRecipe.value?.isFavorite ?: false
         } ?: false
 
+        val previousImage = viewModel.selectedRecipe.value?.imageUrl
+
+        val imageList = if (selectedImageFile != null) {
+            emptyList() // 🔥 Strapi manejará la nueva imagen cuando se suba
+        } else if (!previousImage.isNullOrEmpty()) {
+            listOf(previousImage) // 🔥 Mantener la imagen anterior si no se cambia
+        } else {
+            emptyList()
+        }
+
         val recipeRequest = RecipeRequestModel(
             data = RecipeDataRequest(
                 name = name,
                 descriptions = descriptions,
                 ingredients = ingredients,
                 chef = selectedChefId!!,
-                image = emptyList(),
+                image = imageList,
                 isFavorite = isFavorite
             )
         )
+
 
         if (recipeId == null || recipeId == -1) {
             viewModel.createRecipe(recipeRequest, selectedImageFile)

@@ -47,7 +47,7 @@ class RecipeRepository @Inject constructor(private val api: RecipeApi,private va
                         descriptions = recipeData.attributes.descriptions,
                         ingredients = recipeData.attributes.ingredients,
                         chef = recipeData.attributes.chef?.data?.id ?: 0,
-                        imageUrl = recipeData.attributes.image?.data?.attributes?.url ?: "",
+                        imageUrl = recipeData.attributes.image?.data?.attributes?.url ?: "", // ✅ Siempre obtenemos la imagen correcta
                         isFavorite = recipeData.attributes.isFavorite ?: false
                     )
                 } ?: emptyList()
@@ -60,6 +60,7 @@ class RecipeRepository @Inject constructor(private val api: RecipeApi,private va
             emptyList()
         }
     }
+
 
 
 
@@ -145,27 +146,31 @@ class RecipeRepository @Inject constructor(private val api: RecipeApi,private va
     }
 
 
-
     suspend fun updateRecipe(recipeRequest: RecipeRequestModel, recipeId: Int, imageFile: File?): Boolean {
         return withContext(Dispatchers.IO) {
             try {
-                Log.d("RecipeRepository", "📤 Iniciando actualización de receta...")
+                Log.d("RecipeRepository", "📤 Iniciando actualización de receta en Strapi...")
 
-                // Intentar subir una nueva imagen
-                val imageId = imageFile?.let { uploadImage(it) }
+                // ✅ Obtener la receta actual antes de actualizar
+                val existingRecipe = getRecipeById(recipeId)
+                val previousImageId = existingRecipe?.imageUrl?.takeIf { it.isNotBlank() }
 
-                // 🔥 Corregir `image` para que sea **siempre un array**
-                val imageList: List<Map<String, Int>> = when {
-                    imageId != null -> listOf(mapOf("id" to imageId)) // ✅ Nueva imagen subida
-                    !recipeRequest.data.image.isNullOrEmpty() -> recipeRequest.data.image!!.map { mapOf("id" to it) } // ✅ Mantener imágenes previas
-                    else -> emptyList() // ✅ Enviar lista vacía si no hay imágenes
+                // 🔥 Si el usuario no seleccionó una nueva imagen, mantener la anterior
+                val imageId = imageFile?.let { uploadImage(it) } ?: previousImageId
+
+                // 🔥 Asegurar que `image` siempre sea un array correcto para Strapi
+                val imageList = if (imageId != null) {
+                    listOf(mapOf("id" to imageId.toString().toInt()))
+                } else {
+                    emptyList()
                 }
+
 
                 val updatedRequest = mapOf(
                     "data" to mapOf(
                         "chef" to recipeRequest.data.chef,
                         "descriptions" to recipeRequest.data.descriptions,
-                        "image" to imageList, // ✅ 🔥 Strapi ahora recibe correctamente un array
+                        "image" to imageList, // ✅ Strapi siempre recibe un array correcto
                         "ingredients" to recipeRequest.data.ingredients,
                         "isFavorite" to recipeRequest.data.isFavorite,
                         "name" to recipeRequest.data.name
@@ -187,7 +192,7 @@ class RecipeRepository @Inject constructor(private val api: RecipeApi,private va
 
             } catch (e: Exception) {
                 Log.e("RecipeRepository", "⚠️ Excepción en updateRecipe: ${e.message}")
-                triggerNotification("update")
+                triggerNotification("update") // 🔔 Notificación de actualización
                 false
             }
         }

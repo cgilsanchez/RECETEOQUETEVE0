@@ -65,7 +65,11 @@ class RecipeViewModel @Inject constructor(
             try {
                 val recipe = repository.getRecipeById(recipeId)
                 if (recipe != null) {
-                    _selectedRecipe.postValue(recipe)
+                    // 🔥 Asegurar que la imagen siempre tenga un valor correcto
+                    val fixedRecipe = recipe.copy(imageUrl = recipe.imageUrl ?: "")
+
+                    _selectedRecipe.postValue(fixedRecipe)
+                    Log.d("RecipeViewModel", "📥 Receta obtenida con imagen: ${fixedRecipe.imageUrl}")
                 } else {
                     _errorMessage.postValue("❌ Receta no encontrada en Strapi")
                 }
@@ -74,6 +78,7 @@ class RecipeViewModel @Inject constructor(
             }
         }
     }
+
 
 
     fun createRecipe(recipeRequest: RecipeRequestModel, imageFile: File?) {

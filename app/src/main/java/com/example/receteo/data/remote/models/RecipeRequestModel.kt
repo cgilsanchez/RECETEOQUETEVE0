@@ -9,6 +9,6 @@ data class RecipeDataRequest(
     val ingredients: String,
     val descriptions: String,
     val chef: Int,
-    val image: List<Int>?, // ✅ Ahora Strapi recibirá correctamente el ID de la imagen
+    val image: List<String>?, // ✅ Ahora Strapi recibirá correctamente el ID de la imagen
     val isFavorite: Boolean
 )
