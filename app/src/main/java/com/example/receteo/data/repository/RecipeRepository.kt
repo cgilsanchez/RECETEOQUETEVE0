@@ -151,30 +151,39 @@ class RecipeRepository @Inject constructor(private val api: RecipeApi,private va
             try {
                 Log.d("RecipeRepository", "📤 Iniciando actualización de receta en Strapi...")
 
-                // ✅ Obtener la receta actual antes de actualizar
+
                 val existingRecipe = getRecipeById(recipeId)
-                val previousImageId = existingRecipe?.imageUrl?.takeIf { it.isNotBlank() }
 
-                // 🔥 Si el usuario no seleccionó una nueva imagen, mantener la anterior
-                val imageId = imageFile?.let { uploadImage(it) } ?: previousImageId
 
-                // 🔥 Asegurar que `image` siempre sea un array correcto para Strapi
-                val imageList = if (imageId != null) {
-                    listOf(mapOf("id" to imageId.toString().toInt()))
+                val imageList = if (imageFile != null) {
+                    val newImageId = uploadImage(imageFile)
+                    if (newImageId != null) {
+                        listOf(mapOf("id" to newImageId))
+                    } else {
+                        // Falló al cargar la nueva imagen
+                        emptyList()
+                    }
+                } else if (existingRecipe?.imageUrl?.isNotBlank() == true) {
+                    emptyList()
                 } else {
                     emptyList()
                 }
-
 
                 val updatedRequest = mapOf(
                     "data" to mapOf(
                         "chef" to recipeRequest.data.chef,
                         "descriptions" to recipeRequest.data.descriptions,
-                        "image" to imageList, // ✅ Strapi siempre recibe un array correcto
                         "ingredients" to recipeRequest.data.ingredients,
                         "isFavorite" to recipeRequest.data.isFavorite,
                         "name" to recipeRequest.data.name
-                    )
+
+                    ).let { map ->
+                        if (imageFile != null) {
+                            map + ("image" to imageList)
+                        } else {
+                            map
+                        }
+                    }
                 )
 
                 val jsonBody = Gson().toJson(updatedRequest).toRequestBody("application/json".toMediaTypeOrNull())
@@ -183,17 +192,15 @@ class RecipeRepository @Inject constructor(private val api: RecipeApi,private va
                 val response = api.updateRecipe(recipeId, jsonBody)
                 return@withContext if (response.isSuccessful) {
                     Log.d("RecipeRepository", "✅ Receta actualizada con éxito")
-
                     true
                 } else {
                     Log.e("RecipeRepository", "❌ Error en la API: ${response.errorBody()?.string()}")
                     false
                 }
-
             } catch (e: Exception) {
                 Log.e("RecipeRepository", "⚠️ Excepción en updateRecipe: ${e.message}")
-                triggerNotification("update") // 🔔 Notificación de actualización
-                false
+                triggerNotification("update")
+                false  // Cambiado de true a false ya que hubo una excepción
             }
         }
     }
