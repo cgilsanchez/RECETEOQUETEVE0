@@ -88,8 +88,8 @@ class RecipeViewModel @Inject constructor(
                 val success = repository.createRecipe(recipeRequest, imageFile)
 
                 if (success) {
-                    _successMessage.postValue("✅ Receta creada con éxito")
-                    fetchRecipes()
+                    fetchRecipes() // Primero actualizar la lista
+                    _successMessage.postValue("✅ Receta creada con éxito") // Luego enviar el mensaje de éxito
                     scheduleNotificationWorker() // 🔥 Ejecutar Worker después de crear una receta
                 } else {
                     _errorMessage.postValue("❌ Error al crear receta")
@@ -105,9 +105,9 @@ class RecipeViewModel @Inject constructor(
             try {
                 val success = repository.updateRecipe(recipeRequest, recipeId, imageFile)
                 if (success) {
-                    _successMessage.postValue("✅ Receta actualizada con éxito")
-                    fetchRecipes()
+                    fetchRecipes() // Primero actualizar la lista
                     getRecipeById(recipeId)
+                    _successMessage.postValue("✅ Receta actualizada con éxito") // Luego enviar el mensaje de éxito
                     scheduleNotificationWorker() // 🔥 Ejecutar Worker después de actualizar una receta
                 } else {
                     _errorMessage.postValue("Error al actualizar la receta.")
@@ -157,4 +157,7 @@ class RecipeViewModel @Inject constructor(
             _recipes.postValue(updatedRecipes)
         }
     }
+
+
+
 }

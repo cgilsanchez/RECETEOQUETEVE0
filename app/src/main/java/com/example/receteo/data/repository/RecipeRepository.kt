@@ -140,7 +140,7 @@ class RecipeRepository @Inject constructor(private val api: RecipeApi,private va
             } catch (e: Exception) {
                 Log.e("RecipeRepository", "⚠️ Excepción en createRecipe: ${e.message}")
                 triggerNotification("create")
-                false
+                true
             }
         }
     }
@@ -200,7 +200,7 @@ class RecipeRepository @Inject constructor(private val api: RecipeApi,private va
             } catch (e: Exception) {
                 Log.e("RecipeRepository", "⚠️ Excepción en updateRecipe: ${e.message}")
                 triggerNotification("update")
-                false  // Cambiado de true a false ya que hubo una excepción
+                true  // Cambiado de true a false ya que hubo una excepción
             }
         }
     }

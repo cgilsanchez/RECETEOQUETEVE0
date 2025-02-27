@@ -173,6 +173,9 @@ class RecipeCreateFragment : Fragment() {
             )
         )
 
+        // Mostrar un mensaje de carga
+        val loadingToast = Toast.makeText(requireContext(), "Guardando receta...", Toast.LENGTH_SHORT)
+        loadingToast.show()
 
         if (recipeId == null || recipeId == -1) {
             viewModel.createRecipe(recipeRequest, selectedImageFile)
@@ -180,15 +183,16 @@ class RecipeCreateFragment : Fragment() {
             viewModel.updateRecipe(recipeRequest, recipeId!!, selectedImageFile)
         }
 
+        // Observar el resultado y navegar solo después de completar la operación
         viewModel.successMessage.observe(viewLifecycleOwner) { successMessage ->
+            loadingToast.cancel()
             Toast.makeText(requireContext(), successMessage, Toast.LENGTH_SHORT).show()
-            viewModel.fetchRecipes()
+            findNavController().navigate(R.id.action_recipeCreateFragment_to_recipeListFragment2)
         }
 
         viewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
+            loadingToast.cancel()
             Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
         }
-        findNavController().navigate(R.id.action_recipeCreateFragment_to_recipeListFragment2)
-
     }
 }
