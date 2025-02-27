@@ -8,6 +8,7 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
+import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import dagger.assisted.Assisted
@@ -59,6 +60,21 @@ class RecipeWorker @AssistedInject constructor(
             Log.e("RecipeWorker", "❌ Error en Worker: ${e.message}")
             Result.failure()
         }
+    }
+
+    override suspend fun getForegroundInfo(): ForegroundInfo {
+        val channelId = "recipe_notifications"
+        val notificationId = 1
+
+        val notification = NotificationCompat.Builder(applicationContext, channelId)
+            .setSmallIcon(android.R.drawable.ic_dialog_info)
+            .setContentTitle("Receteo en ejecución")
+            .setContentText("Procesando notificación de recetas...")
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setAutoCancel(true)
+            .build()
+
+        return ForegroundInfo(notificationId, notification)
     }
 
     private fun showWelcomeNotification() {

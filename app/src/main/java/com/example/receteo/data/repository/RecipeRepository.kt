@@ -209,12 +209,14 @@ class RecipeRepository @Inject constructor(private val api: RecipeApi,private va
 
     private fun triggerNotification(actionType: String) {
         val workRequest = OneTimeWorkRequestBuilder<RecipeWorker>()
+            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST) // 🔥 Evita fallos en primer plano
             .setInputData(workDataOf("action_type" to actionType))
             .build()
 
         WorkManager.getInstance(context).enqueue(workRequest)
         Log.d("RecipeRepository", "🔔 Notificación programada: Acción -> $actionType")
     }
+
 
 
 
