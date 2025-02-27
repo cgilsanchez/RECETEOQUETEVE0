@@ -5,10 +5,12 @@ import android.util.Log
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkManager
-import com.example.receteo.RecipeWorker
+import androidx.work.workDataOf
 import com.example.receteo.data.remote.RecipeApi
 import com.example.receteo.data.remote.models.*
+import com.example.receteo.ui.notification.RecipeWorker
 import com.google.gson.Gson
+import dagger.hilt.android.internal.Contexts.getApplication
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -25,6 +27,7 @@ import okhttp3.RequestBody
 import java.io.File
 import java.io.IOException
 import java.net.SocketTimeoutException
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.coroutines.resume
@@ -90,20 +93,6 @@ class RecipeRepository @Inject constructor(private val api: RecipeApi,private va
 
 
 
-    private fun scheduleNotificationWorker() {
-        Log.d("RecipeRepository", "🔄 Intentando programar WorkManager...")
-
-        val workRequest = OneTimeWorkRequestBuilder<RecipeWorker>()
-            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST) // 🔥 Forzar ejecución inmediata
-            .build()
-
-        WorkManager.getInstance(context).enqueue(workRequest)
-
-        Log.d("RecipeRepository", "✅ Worker programado correctamente con ID: ${workRequest.id}")
-    }
-
-
-
 
 
     suspend fun createRecipe(recipeRequest: RecipeRequestModel, imageFile: File?): Boolean {
@@ -111,44 +100,50 @@ class RecipeRepository @Inject constructor(private val api: RecipeApi,private va
             try {
                 Log.d("RecipeRepository", "📤 Creando receta...")
 
+                // Intentar subir imagen si existe
                 val imageId = imageFile?.let { uploadImage(it) }
                 if (imageId == null && imageFile != null) {
                     Log.e("RecipeRepository", "❌ No se pudo subir la imagen")
                     return@withContext false
                 }
 
+                // 🔥 Asegurar que `image` tenga el formato correcto `List<Map<String, Int>>`
+                val imageList = mutableListOf<Map<String, Int>>()
+                imageId?.let { imageList.add(mapOf("id" to it)) } // ✅ Si hay nueva imagen, agregar
+
                 val updatedRequest = mapOf(
-                    "data" to mapOf( // ✅ `data` ahora es un objeto, no una lista
+                    "data" to mapOf(
                         "chef" to recipeRequest.data.chef,
                         "descriptions" to recipeRequest.data.descriptions,
-                        "image" to (if (imageId != null) listOf(imageId) else emptyList()),
+                        "image" to imageList, // ✅ Siempre en formato `List<Map<String, Int>>`
                         "ingredients" to recipeRequest.data.ingredients,
                         "isFavorite" to recipeRequest.data.isFavorite,
                         "name" to recipeRequest.data.name
                     )
                 )
 
+                val jsonBody = Gson().toJson(updatedRequest).toRequestBody("application/json".toMediaTypeOrNull())
+                Log.d("RecipeRepository", "📤 JSON Enviado: $jsonBody")
 
-                val jsonBody = Gson().toJson(updatedRequest)
-                Log.d("RecipeRepository", "📤 Enviando request de creación de receta: $jsonBody")
+                val response = api.createRecipe(jsonBody)
 
-                val requestBody = jsonBody.toRequestBody("application/json".toMediaTypeOrNull())
-                val response = api.createRecipe(requestBody)
-
-                if (response.isSuccessful) {
+                return@withContext if (response.isSuccessful) {
                     Log.d("RecipeRepository", "✅ Receta creada con éxito")
-                    scheduleNotificationWorker()
+                    triggerNotification("Receta creada con éxito") // 🔥 Activar notificación después de la creación
                     true
                 } else {
-                    Log.e("RecipeRepository", "❌ Error en la API al crear receta: ${response.errorBody()?.string()}")
+                    Log.e("RecipeRepository", "❌ Error en la API: ${response.errorBody()?.string()}")
                     false
                 }
+
             } catch (e: Exception) {
-                Log.e("RecipeRepository", "❌ Excepción en createRecipe: ${e.message}")
+                Log.e("RecipeRepository", "⚠️ Excepción en createRecipe: ${e.message}")
+                triggerNotification("create")
                 false
             }
         }
     }
+
 
 
     suspend fun updateRecipe(recipeRequest: RecipeRequestModel, recipeId: Int, imageFile: File?): Boolean {
@@ -156,14 +151,21 @@ class RecipeRepository @Inject constructor(private val api: RecipeApi,private va
             try {
                 Log.d("RecipeRepository", "📤 Iniciando actualización de receta...")
 
-                // 📌 Si hay una nueva imagen, la subimos; si no, mantenemos la imagen actual
-                val imageId = imageFile?.let { uploadImage(it) } ?: recipeRequest.data.image?.firstOrNull()
+                // Intentar subir una nueva imagen
+                val imageId = imageFile?.let { uploadImage(it) }
+
+                // 🔥 Corregir `image` para que sea **siempre un array**
+                val imageList: List<Map<String, Int>> = when {
+                    imageId != null -> listOf(mapOf("id" to imageId)) // ✅ Nueva imagen subida
+                    !recipeRequest.data.image.isNullOrEmpty() -> recipeRequest.data.image!!.map { mapOf("id" to it) } // ✅ Mantener imágenes previas
+                    else -> emptyList() // ✅ Enviar lista vacía si no hay imágenes
+                }
 
                 val updatedRequest = mapOf(
                     "data" to mapOf(
                         "chef" to recipeRequest.data.chef,
                         "descriptions" to recipeRequest.data.descriptions,
-                        "image" to (imageId?.let { listOf(it) } ?: emptyList()), // 🔥 Aquí se mantiene la imagen anterior si no se cambia
+                        "image" to imageList, // ✅ 🔥 Strapi ahora recibe correctamente un array
                         "ingredients" to recipeRequest.data.ingredients,
                         "isFavorite" to recipeRequest.data.isFavorite,
                         "name" to recipeRequest.data.name
@@ -174,23 +176,33 @@ class RecipeRepository @Inject constructor(private val api: RecipeApi,private va
                 Log.d("RecipeRepository", "📤 JSON Enviado: $jsonBody")
 
                 val response = api.updateRecipe(recipeId, jsonBody)
-
-                if (response.isSuccessful) {
+                return@withContext if (response.isSuccessful) {
                     Log.d("RecipeRepository", "✅ Receta actualizada con éxito")
-                    scheduleNotificationWorker() // Notificación después de actualizar
+
                     true
                 } else {
-                    val errorResponse = response.errorBody()?.string()
-                    Log.e("RecipeRepository", "❌ Error en la API al actualizar receta: $errorResponse")
+                    Log.e("RecipeRepository", "❌ Error en la API: ${response.errorBody()?.string()}")
                     false
                 }
+
             } catch (e: Exception) {
-                Log.e("RecipeRepository", "❌ Excepción en updateRecipe: ${e.message}")
+                Log.e("RecipeRepository", "⚠️ Excepción en updateRecipe: ${e.message}")
+                triggerNotification("update")
                 false
             }
         }
     }
 
+
+
+    private fun triggerNotification(actionType: String) {
+        val workRequest = OneTimeWorkRequestBuilder<RecipeWorker>()
+            .setInputData(workDataOf("action_type" to actionType))
+            .build()
+
+        WorkManager.getInstance(context).enqueue(workRequest)
+        Log.d("RecipeRepository", "🔔 Notificación programada: Acción -> $actionType")
+    }
 
 
 

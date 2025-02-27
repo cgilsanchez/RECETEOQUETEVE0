@@ -1,10 +1,17 @@
 package com.example.receteo.ui.recipe
 
+import android.app.Application
 import android.util.Log
 import androidx.lifecycle.*
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.OutOfQuotaPolicy
+import androidx.work.WorkManager
+
 import com.example.receteo.data.remote.models.*
 import com.example.receteo.data.repository.RecipeRepository
 import com.example.receteo.ui.favorites.FavoritesViewModel
+import com.example.receteo.ui.notification.RecipeWorker
+import dagger.hilt.android.internal.Contexts.getApplication
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -14,11 +21,13 @@ import java.io.File
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 
+
 @HiltViewModel
 class RecipeViewModel @Inject constructor(
     private val repository: RecipeRepository,
-    private val favoritesViewModel: FavoritesViewModel
-) : ViewModel() {
+    private val favoritesViewModel: FavoritesViewModel,
+    application: Application
+) : AndroidViewModel(application) {
 
     private val _recipes = MutableLiveData<List<RecipeModel>>()
     val recipes: LiveData<List<RecipeModel>> get() = _recipes
@@ -66,25 +75,22 @@ class RecipeViewModel @Inject constructor(
         }
     }
 
+
     fun createRecipe(recipeRequest: RecipeRequestModel, imageFile: File?) {
-        viewModelScope.launch(SupervisorJob()) {
+        viewModelScope.launch {
             try {
                 Log.d("RecipeViewModel", "📤 Creando receta...")
-
                 val success = repository.createRecipe(recipeRequest, imageFile)
 
                 if (success) {
-                    _successMessage.postValue("✅ Receta creada con éxito") // Mensaje de éxito
-                    fetchRecipes() // Refrescar la lista tras la creación
+                    _successMessage.postValue("✅ Receta creada con éxito")
+                    fetchRecipes()
+                    scheduleNotificationWorker() // 🔥 Ejecutar Worker después de crear una receta
                 } else {
                     _errorMessage.postValue("❌ Error al crear receta")
                 }
-            } catch (e: CancellationException) {
-                Log.e("RecipeViewModel", "❌ Corrutina cancelada en ViewModel: ${e.message}")
-                _errorMessage.postValue("❌ Operación cancelada")
             } catch (e: Exception) {
-                Log.e("RecipeViewModel", "❌ Excepción en ViewModel: ${e.message}")
-                _errorMessage.postValue("❌ Error en la creación de receta")
+                _errorMessage.postValue("❌ Error en la creación de receta: ${e.message}")
             }
         }
     }
@@ -95,8 +101,9 @@ class RecipeViewModel @Inject constructor(
                 val success = repository.updateRecipe(recipeRequest, recipeId, imageFile)
                 if (success) {
                     _successMessage.postValue("✅ Receta actualizada con éxito")
-                    fetchRecipes() // 🔄 Recarga la lista de recetas para actualizar la imagen
-                    getRecipeById(recipeId) // 🔥 Recarga los datos de la receta después de la actualización
+                    fetchRecipes()
+                    getRecipeById(recipeId)
+                    scheduleNotificationWorker() // 🔥 Ejecutar Worker después de actualizar una receta
                 } else {
                     _errorMessage.postValue("Error al actualizar la receta.")
                 }
@@ -106,8 +113,15 @@ class RecipeViewModel @Inject constructor(
         }
     }
 
+    fun scheduleNotificationWorker() {
+        val context = getApplication<Application>().applicationContext
+        val workRequest = OneTimeWorkRequestBuilder<RecipeWorker>()
+            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST) // 🔥 Se ejecuta inmediatamente
+            .build()
 
-
+        WorkManager.getInstance(context).enqueue(workRequest)
+        Log.d("RecipeWorker", "✅ Worker programado correctamente desde ViewModel")
+    }
 
 
     fun deleteRecipe(recipeId: Int) {

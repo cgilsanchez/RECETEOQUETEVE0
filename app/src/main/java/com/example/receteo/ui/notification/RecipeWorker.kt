@@ -1,4 +1,4 @@
-package com.example.receteo
+package com.example.receteo.ui.notification
 
 import android.content.Context
 import android.app.NotificationChannel
@@ -9,9 +9,9 @@ import androidx.core.app.NotificationCompat
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import kotlin.random.Random
 
 @HiltWorker
 class RecipeWorker @AssistedInject constructor(
@@ -29,14 +29,30 @@ class RecipeWorker @AssistedInject constructor(
             val prefs = applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
             val isWelcomeSent = prefs.getBoolean(KEY_WELCOME_SENT, false)
 
-            if (!isWelcomeSent) {
-                Log.d("RecipeWorker", "📢 Enviando notificación de bienvenida...")
-                showWelcomeNotification()
-                prefs.edit().putBoolean(KEY_WELCOME_SENT, true).apply()
-            } else {
-                Log.d("RecipeWorker", "📢 Enviando notificación de actualización de receta...")
-                showRegularNotification(Random.nextInt(1, 3))
+            val actionType = inputData.getString("action_type") ?: ""
+
+            when {
+                !isWelcomeSent && actionType.isEmpty() -> { // Solo la primera vez sin acción específica
+                    Log.d("RecipeWorker", "📢 Enviando notificación de bienvenida...")
+                    showWelcomeNotification()
+                    prefs.edit().putBoolean(KEY_WELCOME_SENT, true).apply()
+                }
+
+                actionType == "create" -> {
+                    Log.d("RecipeWorker", "📢 Enviando notificación de creación de receta...")
+                    showNotification("Tu nueva receta ha sido guardada con éxito! 🍲")
+                }
+
+                actionType == "update" -> {
+                    Log.d("RecipeWorker", "📢 Enviando notificación de actualización de receta...")
+                    showNotification("¡Has editado una receta! No olvides compartirla. 🍽️")
+                }
+
+                else -> {
+                    Log.d("RecipeWorker", "📢 No se envió ninguna notificación")
+                }
             }
+
             Log.d("RecipeWorker", "✅ Notificación enviada con éxito")
             Result.success()
         } catch (e: Exception) {
@@ -45,9 +61,11 @@ class RecipeWorker @AssistedInject constructor(
         }
     }
 
-
-
     private fun showWelcomeNotification() {
+        showNotification("¡Bienvenido a Receteo! Recibirás notificaciones sobre tus recetas y actualizaciones importantes.")
+    }
+
+    private fun showNotification(message: String) {
         val channelId = "recipe_notifications"
         val notificationManager =
             applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -63,37 +81,12 @@ class RecipeWorker @AssistedInject constructor(
 
         val notification = NotificationCompat.Builder(applicationContext, channelId)
             .setSmallIcon(android.R.drawable.ic_dialog_info)
-            .setContentTitle("¡Bienvenido a Receteo!")
-            .setContentText("Recibirás notificaciones sobre tus recetas y actualizaciones importantes.")
+            .setContentTitle("📢 Receteo")
+            .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
             .build()
 
-        notificationManager.notify(1, notification)
-    }
-
-    private fun showRegularNotification(notificationId: Int) {
-        val channelId = "recipe_notifications"
-        val notificationManager =
-            applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-        val messages = listOf(
-            "Tu nueva receta ha sido guardada con éxito! 🍲",
-            "¡Has editado una receta! No olvides compartirla. 🍽️",
-            "Revisa las nuevas recetas de la comunidad! 🔥",
-
-        )
-
-        val randomMessage = messages.random()
-
-        val notification = NotificationCompat.Builder(applicationContext, channelId)
-            .setSmallIcon(android.R.drawable.ic_dialog_info)
-            .setContentTitle("📢 Receteo - Notificación")
-            .setContentText(randomMessage)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setAutoCancel(true)
-            .build()
-
-        notificationManager.notify(100 + notificationId, notification)
+        notificationManager.notify(System.currentTimeMillis().toInt(), notification)
     }
 }
