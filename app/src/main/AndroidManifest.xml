@@ -1,14 +1,17 @@
-<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.receteo"
-    xmlns:tools="http://schemas.android.com/tools">
-    <uses-permission android:name="android.permission.INTERNET"/>
+    package="com.example.receteo">
 
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!-- 📌 Permisos necesarios -->
+    <uses-permission android:name="android.permission.INTERNET"/> <!-- Para subir imágenes a la BD remota -->
+    <uses-permission android:name="android.permission.CAMERA"/> <!-- Para capturar imágenes -->
 
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <!-- 📌 Permisos para almacenamiento (para el futuro, pero sin afectar ahora) -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
 
+    <!-- 📌 Habilitar cualquier tipo de cámara (frontal o trasera) -->
+    <uses-feature android:name="android.hardware.camera.any"/>
 
     <application
         android:name=".RecipeApplication"
@@ -19,6 +22,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Receteo"
         android:usesCleartextTraffic="true">
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:grantUriPermissions="true"
+            android:exported="false">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"/>
+        </provider>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -34,8 +47,6 @@
         </activity>
 
 
-
     </application>
 
 </manifest>
-

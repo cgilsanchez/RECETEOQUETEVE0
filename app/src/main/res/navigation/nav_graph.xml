@@ -61,6 +61,16 @@
             android:name="recipeName"
             app:argType="string" />
     </action>
+        <!-- CameraFragment -->
+        <fragment
+            android:id="@+id/cameraFragment"
+            android:name="com.example.receteo.ui.CameraFragment"
+            tools:layout="@layout/fragment_camera">
+            <action
+                android:id="@+id/action_cameraFragment_to_recipeCreateFragment"
+                app:destination="@id/recipeCreateFragment" />
+        </fragment>
+
 
     </fragment>
     <include app:graph="@navigation/nav_recipes" />

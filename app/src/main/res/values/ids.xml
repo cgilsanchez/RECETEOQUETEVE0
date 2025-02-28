@@ -42,4 +42,8 @@
     <item name="chefCreateFragment" type="id" />
     <item name="editTextUsername" type="id" />
     <item name="button_favorite_recipe" type="id" />
+    <item name="imageView" type="id" />
+    <item name="btnTakePhoto" type="id" />
+    <item name="btnChooseFromGallery" type="id" />
+    <item name="btnUploadImage" type="id" />
 </resources>

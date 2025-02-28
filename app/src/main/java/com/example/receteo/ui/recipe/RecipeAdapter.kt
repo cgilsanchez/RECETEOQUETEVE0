@@ -31,6 +31,7 @@ class RecipeAdapter(
             binding.tvRecipeName.text = recipe.name
 
 
+
             val imageUrl = recipe.imageUrl ?: ""
             if (imageUrl.isNotEmpty()) {
                 LoadImageTask(binding.ivRecipeImage).execute(imageUrl)

@@ -75,7 +75,26 @@ dependencies {
     // Dependencias de notificaciones
     implementation("androidx.core:core-ktx:1.9.0")
 
-    
+    val camerax_version = "1.5.0-alpha06" // 📌 Según la documentación
+
+// Core de CameraX
+    implementation("androidx.camera:camera-core:$camerax_version")
+    implementation("androidx.camera:camera-camera2:$camerax_version")
+
+// Manejo de ciclo de vida
+    implementation("androidx.camera:camera-lifecycle:$camerax_version")
+
+// Para mostrar la vista previa con PreviewView
+    implementation("androidx.camera:camera-view:$camerax_version")
+
+// Extensiones para filtros avanzados
+    implementation("androidx.camera:camera-extensions:$camerax_version")
+
+// Para grabación de video (opcional)
+    implementation("androidx.camera:camera-video:$camerax_version")
+
+
+
     dependencies {
         // Glide para cargar imágenes
         implementation("com.github.bumptech.glide:glide:4.15.1")
