@@ -89,13 +89,9 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             Log.e("MapaFragment", "Error: MAPS_API_KEY no está definido en BuildConfig")
         }
 
-        // Inicializar el cliente de Places
+
         placesClient = Places.createClient(requireContext())
-
-        // **Inicializar el cliente de ubicación antes de cualquier uso**
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-
-        // Configurar el mapa
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as? SupportMapFragment
         mapFragment?.getMapAsync(this)
     }
@@ -220,7 +216,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                         val response = withContext(Dispatchers.IO) {
                             service.getNearbyCinemas(
                                 "${currentLatLng.latitude},${currentLatLng.longitude}",
-                                20000,
+                                10000,
                                 "restaurant",
                                 "restaurant|food",
                                 apiKey
@@ -234,7 +230,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                             if (results.isEmpty()) {
                                 Toast.makeText(
                                     requireContext(),
-                                    "No se encontraron cines cercanos",
+                                    "No se encontraron restaurantes cercanos",
                                     Toast.LENGTH_SHORT
                                 ).show()
                                 return@launch
@@ -242,15 +238,15 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
                             val restaurantes = results.map { "${it.name} - ${it.vicinity}" }
 
-                            // Mostrar los cines en la lista
+
                             val adapter = ArrayAdapter(
                                 requireContext(),
                                 android.R.layout.simple_list_item_1,
                                 restaurantes
                             )
-                            binding.listCines.adapter = adapter
 
-                            // Añadir marcadores al mapa
+
+
                             results.forEach { place ->
                                 place.geometry?.location?.let {
                                     googleMap.addMarker(
@@ -261,14 +257,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                                 }
                             }
 
-                            // Mover la cámara al primer cine encontrado
-                            results.firstOrNull()?.geometry?.location?.let {
-                                googleMap.animateCamera(
-                                    CameraUpdateFactory.newLatLngZoom(
-                                        LatLng(it.lat, it.lng), 12f
-                                    )
-                                )
-                            }
+
                         } else {
                             Toast.makeText(
                                 requireContext(),
