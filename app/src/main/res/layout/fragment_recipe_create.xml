@@ -50,7 +50,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Seleccionar Imagen"
-        android:backgroundTint="@android:color/holo_blue_dark"
+        android:backgroundTint="@color/orange_light"
         android:layout_marginTop="8dp"/>
 
     <!-- ImageView para mostrar la imagen seleccionada -->
@@ -67,7 +67,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Guardar Receta"
-        android:backgroundTint="@android:color/holo_green_dark"
+        android:backgroundTint="@color/orange_light"
         android:layout_marginTop="16dp"/>
 </LinearLayout>
 </ScrollView>

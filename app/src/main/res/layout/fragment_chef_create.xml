@@ -15,5 +15,5 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Guardar Chef"
-        android:backgroundTint="@android:color/holo_green_dark"/>
+        android:backgroundTint="@color/orange_light"/>
 </LinearLayout>
