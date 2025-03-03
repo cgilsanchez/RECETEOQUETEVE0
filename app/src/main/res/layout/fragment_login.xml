@@ -1,38 +1,28 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="50dp">
+
 
     <EditText
         android:id="@+id/editTextUsername"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="156dp"
+        android:layout_marginTop="19dp"
         android:hint="Correo Electronico"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <EditText
-        android:id="@+id/editTextPassword"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:hint="Contraseña"
-        android:inputType="textPassword"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editTextUsername" />
+        app:layout_constraintTop_toBottomOf="@+id/logoImageView" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/buttonLogin"
         android:layout_width="313dp"
         android:layout_height="39dp"
-        android:layout_marginTop="57dp"
+        android:layout_marginTop="44dp"
         android:backgroundTint="@color/orange_light"
         android:text="Iniciar Sesión"
         app:layout_constraintEnd_toEndOf="parent"
@@ -42,15 +32,42 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/buttonRegister"
-        android:layout_width="262dp"
-        android:layout_height="39dp"
-        android:layout_marginTop="55dp"
+        android:layout_width="315dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="48dp"
         android:backgroundTint="@color/orange_light"
         android:text="Registrarse"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.489"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/buttonLogin" />
+
+    <ImageView
+        android:id="@+id/logoImageView"
+        android:layout_width="113dp"
+        android:layout_height="106dp"
+        android:background="@drawable/circle_background"
+        android:contentDescription="Logo de la app"
+        android:scaleType="centerInside"
+        android:src="@mipmap/ic_launcher"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/editTextUsername"
+        android:layout_marginTop="50dp"/>
+
+
+    <EditText
+        android:id="@+id/editTextPassword"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:hint="Contraseña"
+        android:inputType="textPassword"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/editTextUsername" />
 
     <!-- Agregamos el botón de registro para que no de error -->
 
