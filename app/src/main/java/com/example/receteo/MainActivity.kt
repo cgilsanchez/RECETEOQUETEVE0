@@ -1,6 +1,7 @@
 package com.example.receteo
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -40,8 +41,8 @@ class MainActivity : AppCompatActivity() {
             val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
             bottomNavigationView.setupWithNavController(navController)
 
-            if (isUserLoggedIn()) {
-                navController.navigate(R.id.nav_recipes) // Navegar a la pantalla principal si está logueado
+            if (!isUserLoggedIn()) {
+                navController.navigate(R.id.loginFragment) // Si no hay sesión, ir al login
             }
 
             navController.addOnDestinationChangedListener { _, destination, _ ->
@@ -54,9 +55,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun isUserLoggedIn(): Boolean {
-        val sharedPreferences = getSharedPreferences("auth_prefs", MODE_PRIVATE)
+        val sharedPreferences = getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
         return sharedPreferences.getString("jwt", null) != null
     }
-
-
 }

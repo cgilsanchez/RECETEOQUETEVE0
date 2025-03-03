@@ -68,29 +68,14 @@ dependencies {
     implementation(libs.play.services.maps)
     implementation("androidx.hilt:hilt-work:1.0.0")
     implementation("androidx.work:work-runtime-ktx:2.8.1")
-
-    // Para usar Hilt con WorkManager
     kapt("androidx.hilt:hilt-compiler:1.0.0")
-
-    // Dependencias de notificaciones
     implementation("androidx.core:core-ktx:1.9.0")
-
     val camerax_version = "1.5.0-alpha06" // 📌 Según la documentación
-
-// Core de CameraX
     implementation("androidx.camera:camera-core:$camerax_version")
     implementation("androidx.camera:camera-camera2:$camerax_version")
-
-// Manejo de ciclo de vida
     implementation("androidx.camera:camera-lifecycle:$camerax_version")
-
-// Para mostrar la vista previa con PreviewView
     implementation("androidx.camera:camera-view:$camerax_version")
-
-// Extensiones para filtros avanzados
     implementation("androidx.camera:camera-extensions:$camerax_version")
-
-// Para grabación de video (opcional)
     implementation("androidx.camera:camera-video:$camerax_version")
 
 
@@ -101,11 +86,8 @@ dependencies {
         kapt("com.github.bumptech.glide:compiler:4.15.1")
     }
 
-    // 🟢 Añadir OkHttp (si falta)
     implementation("com.squareup.okhttp3:okhttp:4.10.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
-
-    // 🟢 Retrofit con soporte para Multipart y RequestBody
     implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
 }
 

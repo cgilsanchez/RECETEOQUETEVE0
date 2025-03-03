@@ -21,6 +21,13 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentLoginBinding.bind(view)
 
+        // Verificar si el usuario ya está logueado
+        val sharedPreferences = requireActivity().getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+        if (sharedPreferences.getString("jwt", null) != null) {
+            findNavController().navigate(R.id.action_loginFragment_to_nav_recipes)
+            return
+        }
+
         binding.apply {
             buttonLogin.setOnClickListener {
                 val identifier = editTextUsername?.text?.toString()?.trim()
@@ -31,13 +38,12 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                     return@setOnClickListener
                 }
 
-                authViewModel.login(identifier, password) { user ->
-                    if (user != null) { // Verificamos si la respuesta es válida
-                        saveToken(user.jwt)  // Guardamos el token
+                authViewModel.login(identifier, password, requireContext()) { user ->
+                    if (user != null) {
                         Toast.makeText(requireContext(), "Login exitoso", Toast.LENGTH_SHORT).show()
                         findNavController().navigate(R.id.action_loginFragment_to_nav_recipes)
                     } else {
-                        Toast.makeText(requireContext(), "Error en el login", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), "Usuario o contraseña incorrectos", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -46,10 +52,5 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
             }
         }
-    }
-
-    private fun saveToken(token: String) {
-        val sharedPreferences = requireActivity().getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
-        sharedPreferences.edit().putString("jwt", token).apply()
     }
 }

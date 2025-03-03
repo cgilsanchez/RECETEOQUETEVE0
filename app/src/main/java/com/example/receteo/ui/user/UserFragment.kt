@@ -40,8 +40,13 @@ class UserFragment : Fragment(R.layout.fragment_user) {
 
         // Cerrar sesión correctamente con NavController
         logoutButton.setOnClickListener {
-            sharedPreferences.edit().clear().apply()  // Borra el token
-            findNavController().navigate(R.id.action_userFragment_to_loginFragment) // Navega al LoginFragment
+            logout()
         }
+    }
+
+    private fun logout() {
+        val sharedPreferences = requireActivity().getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+        sharedPreferences.edit().remove("jwt").apply()
+        findNavController().navigate(R.id.action_userFragment_to_loginFragment)
     }
 }
