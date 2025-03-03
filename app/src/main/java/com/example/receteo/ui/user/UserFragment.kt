@@ -38,7 +38,7 @@ class UserFragment : Fragment(R.layout.fragment_user) {
             }
         }
 
-        // Cerrar sesión correctamente con NavController
+
         logoutButton.setOnClickListener {
             logout()
         }

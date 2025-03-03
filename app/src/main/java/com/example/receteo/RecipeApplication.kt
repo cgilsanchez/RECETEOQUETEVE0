@@ -16,8 +16,8 @@ class RecipeApplication : Application(), Configuration.Provider {
 
     override fun onCreate() {
         super.onCreate()
-        WorkManager.getInstance(this).pruneWork() // Elimina trabajos previos para evitar conflictos
-        Log.d("RecipeWorker", "⚙️ WorkManager inicializado correctamente")
+        WorkManager.getInstance(this).pruneWork()
+        Log.d("RecipeWorker", "WorkManager inicializado correctamente")
     }
 
 

@@ -5,7 +5,7 @@ import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-interface GooglePlacesService {
+interface PlacesService {
     @GET("nearbysearch/json")
     suspend fun getNearbyCinemas(
         @Query("location") location: String,

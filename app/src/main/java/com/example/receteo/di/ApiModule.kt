@@ -17,7 +17,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object ApiModule {
 
-    private const val BASE_URL = "https://people-service-6bwq.onrender.com/api/" // Asegúrate de usar la URL correcta de la API
+    private const val BASE_URL = "https://people-service-6bwq.onrender.com/api/"
 
     @Provides
     @Singleton
@@ -26,15 +26,6 @@ object ApiModule {
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-
-
-    private fun provideOkHttpClient(): OkHttpClient {
-        return OkHttpClient.Builder()
-            .connectTimeout(60, TimeUnit.SECONDS)  // Tiempo de conexión
-            .readTimeout(60, TimeUnit.SECONDS)     // Tiempo de lectura
-            .writeTimeout(60, TimeUnit.SECONDS)    // Tiempo de escritura
-            .build()
-    }
 
 
 

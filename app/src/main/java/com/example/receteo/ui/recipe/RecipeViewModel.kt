@@ -41,7 +41,7 @@ class RecipeViewModel @Inject constructor(
     private val _creationState = MutableLiveData<Boolean>()
     val creationState: LiveData<Boolean> get() = _creationState
 
-    // Se añade successMessage para corregir el error de referencia no resuelta
+
     private val _successMessage = MutableLiveData<String>()
     val successMessage: LiveData<String> get() = _successMessage
 
@@ -65,7 +65,7 @@ class RecipeViewModel @Inject constructor(
             try {
                 val recipe = repository.getRecipeById(recipeId)
                 if (recipe != null) {
-                    // 🔥 Asegurar que la imagen siempre tenga un valor correcto
+
                     val fixedRecipe = recipe.copy(imageUrl = recipe.imageUrl ?: "")
 
                     _selectedRecipe.postValue(fixedRecipe)
@@ -88,14 +88,14 @@ class RecipeViewModel @Inject constructor(
                 val success = repository.createRecipe(recipeRequest, imageFile)
 
                 if (success) {
-                    fetchRecipes() // Primero actualizar la lista
-                    _successMessage.postValue("✅ Receta creada con éxito") // Luego enviar el mensaje de éxito
-                    scheduleNotificationWorker() // 🔥 Ejecutar Worker después de crear una receta
+                    fetchRecipes()
+                    _successMessage.postValue("Receta creada con éxito")
+                    scheduleNotificationWorker()
                 } else {
-                    _errorMessage.postValue("❌ Error al crear receta")
+                    _errorMessage.postValue("Error al crear receta")
                 }
             } catch (e: Exception) {
-                _errorMessage.postValue("❌ Error en la creación de receta: ${e.message}")
+                _errorMessage.postValue("Error en la creación de receta: ${e.message}")
             }
         }
     }
@@ -105,10 +105,10 @@ class RecipeViewModel @Inject constructor(
             try {
                 val success = repository.updateRecipe(recipeRequest, recipeId, imageFile)
                 if (success) {
-                    fetchRecipes() // Primero actualizar la lista
+                    fetchRecipes()
                     getRecipeById(recipeId)
-                    _successMessage.postValue("✅ Receta actualizada con éxito") // Luego enviar el mensaje de éxito
-                    scheduleNotificationWorker() // 🔥 Ejecutar Worker después de actualizar una receta
+                    _successMessage.postValue("Receta actualizada con éxito")
+                    scheduleNotificationWorker()
                 } else {
                     _errorMessage.postValue("Error al actualizar la receta.")
                 }
@@ -121,11 +121,11 @@ class RecipeViewModel @Inject constructor(
     fun scheduleNotificationWorker() {
         val context = getApplication<Application>().applicationContext
         val workRequest = OneTimeWorkRequestBuilder<RecipeWorker>()
-            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST) // 🔥 Se ejecuta inmediatamente
+            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
             .build()
 
         WorkManager.getInstance(context).enqueue(workRequest)
-        Log.d("RecipeWorker", "✅ Worker programado correctamente desde ViewModel")
+        Log.d("RecipeWorker", "Worker programado correctamente desde ViewModel")
     }
 
 
@@ -153,7 +153,7 @@ class RecipeViewModel @Inject constructor(
                 } else {
                     recipe
                 }
-            } ?: emptyList() // 🔥 Si es null, usamos una lista vacía
+            } ?: emptyList()
             _recipes.postValue(updatedRecipes)
         }
     }

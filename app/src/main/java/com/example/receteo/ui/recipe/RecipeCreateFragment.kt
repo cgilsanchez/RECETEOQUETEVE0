@@ -92,9 +92,9 @@ class RecipeCreateFragment : Fragment() {
                 .setTitle("Selecciona una opción")
                 .setItems(options) { dialog, which ->
                     when (which) {
-                        0 -> checkCameraPermission()  // 📸 Tomar foto
-                        1 -> openGallery()           // 🖼 Elegir de la galería
-                        2 -> dialog.dismiss()        // ❌ Cancelar
+                        0 -> checkCameraPermission()
+                        1 -> openGallery()
+                        2 -> dialog.dismiss()
                     }
                 }
                 .show()
@@ -124,8 +124,7 @@ class RecipeCreateFragment : Fragment() {
         binding.etDescription.setText(recipe.descriptions)
         binding.etIngredients.setText(recipe.ingredients)
         selectedChefId = recipe.chef
-        selectedImageUrl = recipe.imageUrl // ✅ Guarda la URL de la imagen
-
+        selectedImageUrl = recipe.imageUrl
         chefViewModel.chefs.observe(viewLifecycleOwner) { chefs ->
             val position = chefs.indexOfFirst { it.id == recipe.chef }
             if (position != -1) {
@@ -138,8 +137,8 @@ class RecipeCreateFragment : Fragment() {
                 .load(recipe.imageUrl)
                 .placeholder(R.drawable.placeholder_image)
                 .error(R.drawable.image_error)
-                .diskCacheStrategy(DiskCacheStrategy.NONE) // 🔥 Evita imágenes antiguas en caché
-                .skipMemoryCache(true) // 🔥 Carga la imagen más reciente de Strapi
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
                 .into(binding.ivRecipeImage)
 
         }
@@ -149,7 +148,7 @@ class RecipeCreateFragment : Fragment() {
     private fun checkCameraPermission() {
         when {
             ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED -> {
-                openCamera() // ✅ Si ya tiene permisos, abrir la cámara
+                openCamera()
             }
             shouldShowRequestPermissionRationale(Manifest.permission.CAMERA) -> {
                 AlertDialog.Builder(requireContext())
@@ -167,12 +166,12 @@ class RecipeCreateFragment : Fragment() {
         }
     }
 
-    // ✅ Manejar la respuesta del usuario al otorgar permisos
+
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == CAMERA_REQUEST_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                openCamera() // 📸 Si acepta el permiso, abrir la cámara
+                openCamera()
             } else {
                 Toast.makeText(requireContext(), "Permiso de cámara denegado", Toast.LENGTH_SHORT).show()
             }

@@ -96,13 +96,13 @@ class RecipeListFragment : Fragment() {
     private fun observeViewModel() {
         viewModel.recipes.observe(viewLifecycleOwner) { recipes ->
             adapter.updateData(recipes)
-            adapter.notifyDataSetChanged() // 🔥 Fuerza la actualización del RecyclerView para recargar las imágenes
+            adapter.notifyDataSetChanged() // Fuerza la actualización del RecyclerView para recargar las imágenes
         }
 
         viewModel.successMessage.observe(viewLifecycleOwner) { message ->
             message?.let {
                 Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
-                viewModel.fetchRecipes() // 🔄 Vuelve a cargar la lista después de editar
+                viewModel.fetchRecipes()
             }
         }
     }

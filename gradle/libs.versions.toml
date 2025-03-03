@@ -7,6 +7,7 @@ coreKtxVersion = "1.15.0"
 espressoCore = "3.6.1"
 espressoCoreVersion = "3.6.1"
 googleMaterial = "1.12.0"
+googleMaterialVersion = "1.11.0"
 hiltAndroid = "2.51.1"
 hiltAndroidCompiler = "2.51.1"
 junit = "4.13.2"
@@ -77,6 +78,7 @@ androidx-room-runtime = { group = "androidx.room", name = "room-runtime", versio
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 material-v1100 = { module = "com.google.android.material:material", version.ref = "googleMaterial" }
+material-v1110 = { module = "com.google.android.material:material", version.ref = "googleMaterialVersion" }
 material-v190 = { module = "com.google.android.material:material", version.ref = "materialVersion" }
 places-v410 = { module = "com.google.android.libraries.places:places", version.ref = "placesVersion" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }

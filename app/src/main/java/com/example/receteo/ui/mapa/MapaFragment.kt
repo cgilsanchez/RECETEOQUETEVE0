@@ -18,7 +18,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.receteo.R
-import com.example.receteo.data.remote.GooglePlacesService
+import com.example.receteo.data.remote.PlacesService
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -80,14 +80,14 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         val apiKey = BuildConfig.MAPS_API_KEY
         Places.initialize(requireContext(), apiKey)
 
-        // Verifica si la API Key está definida correctamente
+
         if (apiKey.isNotEmpty()) {
             if (!Places.isInitialized()) {
                 Places.initialize(requireContext(), apiKey)
             }
-        } else {
-            Log.e("MapaFragment", "Error: MAPS_API_KEY no está definido en BuildConfig")
         }
+
+
 
 
         placesClient = Places.createClient(requireContext())
@@ -124,7 +124,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) -> {
                 AlertDialog.Builder(requireContext())
                     .setTitle("Se necesitan permisos de ubicación")
-                    .setMessage("Esta app necesita acceso a la ubicación para encontrar cines cercanos")
+                    .setMessage("Esta app necesita acceso a la ubicación")
                     .setPositiveButton("OK") { _, _ -> requestLocationPermissions() }
                     .create()
                     .show()
@@ -175,7 +175,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     private fun showEnableLocationDialog() {
         AlertDialog.Builder(requireContext())
             .setTitle("Ubicación desactivada")
-            .setMessage("Para encontrar cines cercanos, necesitas activar la ubicación. ¿Deseas activarla?")
+            .setMessage("Necesitas activar la ubicación. ¿Deseas activarla?")
             .setPositiveButton("Activar") { _, _ ->
                 val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                 startActivity(intent)
@@ -208,9 +208,9 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                     .addConverterFactory(GsonConverterFactory.create())
                     .build()
 
-                val service = retrofit.create(GooglePlacesService::class.java)
+                val service = retrofit.create(PlacesService::class.java)
 
-                // Usar coroutines para la llamada a la API
+
                 lifecycleScope.launch {
                     try {
                         val response = withContext(Dispatchers.IO) {

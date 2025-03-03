@@ -24,7 +24,6 @@ class ChefRepository @Inject constructor(private val api: ChefApi) {
                     )
                 } ?: emptyList()
             } else {
-                Log.e("ChefRepository", "Error en la API: ${response.code()}")
                 emptyList()
             }
         } catch (e: Exception) {
@@ -57,22 +56,17 @@ class ChefRepository @Inject constructor(private val api: ChefApi) {
             val requestBody = ChefRequestModel(ChefDataRequest(name))
             val response = api.createChef(requestBody)
 
-            Log.d("ChefRepository", "📨 Enviando solicitud: $requestBody")
-            Log.d("ChefRepository", "🔄 Código de respuesta: ${response.code()} - ${response.message()}")
-
             if (!response.isSuccessful) {
-                Log.e("ChefRepository", "❌ Error en respuesta: ${response.errorBody()?.string()}")
+                Log.e("ChefRepository", "Error en respuesta: ${response.errorBody()?.string()}")
                 return false
             }
 
-            delay(500) // Pequeño delay para evitar cancelación prematura
+            delay(500)
             true
 
         } catch (e: CancellationException) {
-            Log.w("ChefRepository", "⚠️ Corrutina cancelada después de la solicitud.")
             false
         } catch (e: Exception) {
-            Log.e("ChefRepository", "🚨 Error al crear chef: ${e.message}")
             false
         }
     }

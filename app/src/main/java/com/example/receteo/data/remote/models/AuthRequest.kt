@@ -5,6 +5,6 @@ package com.example.receteo.data.remote.models
 
 
 data class AuthRequest(
-    val identifier: String, // Email o username
+    val identifier: String,
     val password: String
 )

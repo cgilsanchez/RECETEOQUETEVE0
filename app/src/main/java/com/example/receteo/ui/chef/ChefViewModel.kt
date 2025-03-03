@@ -41,13 +41,13 @@ class ChefViewModel @Inject constructor(
                 val success = repository.createChef(name)
 
                 if (success) {
-                    fetchChefs() // Refresca la lista
-                    Log.d("ChefViewModel", "✅ Chef creado correctamente.")
+                    fetchChefs()
+                    Log.d("ChefViewModel", "Chef creado correctamente.")
                 } else {
-                    Log.e("ChefViewModel", "❌ Error al crear el chef.")
+                    Log.e("ChefViewModel", "Error al crear el chef.")
                 }
             } catch (e: Exception) {
-                Log.e("ChefViewModel", "🚨 Excepción en createChef: ${e.message}")
+                Log.e("ChefViewModel", "Excepción en createChef: ${e.message}")
             }
         }
     }
@@ -55,17 +55,16 @@ class ChefViewModel @Inject constructor(
     fun updateChef(id: Int, name: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                Log.d("ChefViewModel", "📨 Actualizando chef ID: $id con nombre: $name")
                 val success = repository.updateChef(id, name)
 
                 if (success) {
-                    fetchChefs() // Refresca la lista
-                    Log.d("ChefViewModel", "✅ Chef actualizado correctamente.")
+                    fetchChefs()
+                    Log.d("ChefViewModel", "Chef actualizado correctamente.")
                 } else {
-                    Log.e("ChefViewModel", "❌ Error al actualizar el chef.")
+                    Log.e("ChefViewModel", "Error al actualizar el chef.")
                 }
             } catch (e: Exception) {
-                Log.e("ChefViewModel", "🚨 Excepción en updateChef: ${e.message}")
+                Log.e("ChefViewModel", "Excepción en updateChef: ${e.message}")
             }
         }
     }
@@ -73,7 +72,7 @@ class ChefViewModel @Inject constructor(
     fun deleteChef(id: Int) {
         viewModelScope.launch {
             repository.deleteChef(id)
-            fetchChefs() // Recargar lista tras la eliminación
+            fetchChefs()
         }
     }
 }

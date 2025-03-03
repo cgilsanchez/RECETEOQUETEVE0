@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // ✅ SOLICITAR PERMISOS DE NOTIFICACIÓN EN ANDROID 13+
+        // SOLICITAR PERMISOS DE NOTIFICACIÓN EN ANDROID
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
             bottomNavigationView.setupWithNavController(navController)
 
             if (!isUserLoggedIn()) {
-                navController.navigate(R.id.loginFragment) // Si no hay sesión, ir al login
+                navController.navigate(R.id.loginFragment)
             }
 
             navController.addOnDestinationChangedListener { _, destination, _ ->

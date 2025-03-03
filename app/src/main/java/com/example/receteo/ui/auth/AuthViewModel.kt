@@ -46,12 +46,6 @@ class AuthViewModel @Inject constructor(
     fun register(username: String, email: String, password: String, context: Context, onResult: (UserModel?) -> Unit) {
         viewModelScope.launch {
             val user = authRepository.register(username, email, password)
-            if (user != null) {
-                saveToken(context, user.jwt)
-                _authState.postValue(true)
-            } else {
-                _authState.postValue(false)
-            }
             onResult(user)
         }
     }

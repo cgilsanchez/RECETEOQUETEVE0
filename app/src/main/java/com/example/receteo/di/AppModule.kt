@@ -20,9 +20,9 @@ object AppModule {
     @Singleton
     fun provideRecipeRepository(
         recipeApi: RecipeApi,
-        @ApplicationContext context: Context  // 🔥 Inyectamos el Context
+        @ApplicationContext context: Context
     ): RecipeRepository {
-        return RecipeRepository(recipeApi, context)  // 🔥 Pasamos el Context
+        return RecipeRepository(recipeApi, context)
     }
 
     @Provides

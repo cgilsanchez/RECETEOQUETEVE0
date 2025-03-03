@@ -28,7 +28,6 @@ class CameraFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Ejemplo de cómo podrías recibir una imagen desde otro fragmento
         arguments?.getParcelable<Uri>("imageUri")?.let { uri ->
             imageUri = uri
             imageFile = uriToFile(uri)
@@ -49,10 +48,9 @@ class CameraFragment : Fragment() {
 
             if (uploadedImageId != null) {
                 Toast.makeText(requireContext(), "Imagen subida correctamente", Toast.LENGTH_SHORT).show()
-                Log.d("CameraFragment", "✅ Imagen subida con éxito, ID: $uploadedImageId")
             } else {
                 Toast.makeText(requireContext(), "Error al subir la imagen", Toast.LENGTH_SHORT).show()
-                Log.e("CameraFragment", "❌ Error subiendo la imagen")
+
             }
         }
     }
@@ -71,7 +69,7 @@ class CameraFragment : Fragment() {
 
             file
         } catch (e: Exception) {
-            Log.e("CameraFragment", "❌ Error convirtiendo URI a File: ${e.message}")
+            Log.e("CameraFragment", " Error convirtiendo URI a File: ${e.message}")
             null
         }
     }

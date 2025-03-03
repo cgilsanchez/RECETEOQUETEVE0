@@ -21,7 +21,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentLoginBinding.bind(view)
 
-        // Verificar si el usuario ya está logueado
+
         val sharedPreferences = requireActivity().getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
         if (sharedPreferences.getString("jwt", null) != null) {
             findNavController().navigate(R.id.action_loginFragment_to_nav_recipes)
