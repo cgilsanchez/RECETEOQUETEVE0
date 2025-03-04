@@ -1,7 +1,6 @@
 package com.example.receteo.ui.recipe
 
 import android.content.ContentResolver
-import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log

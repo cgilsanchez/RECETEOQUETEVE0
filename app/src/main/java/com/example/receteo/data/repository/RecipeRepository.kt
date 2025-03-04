@@ -10,12 +10,10 @@ import com.example.receteo.data.remote.RecipeApi
 import com.example.receteo.data.remote.models.*
 import com.example.receteo.ui.notification.RecipeWorker
 import com.google.gson.Gson
-import dagger.hilt.android.internal.Contexts.getApplication
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -23,16 +21,11 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-
 import java.io.File
 import java.io.IOException
 import java.net.SocketTimeoutException
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import kotlin.coroutines.cancellation.CancellationException
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
+
 
 class RecipeRepository @Inject constructor(private val api: RecipeApi,private val context: Context) {
 

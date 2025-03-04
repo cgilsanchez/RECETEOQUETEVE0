@@ -10,7 +10,6 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
-import androidx.work.workDataOf
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
@@ -33,7 +32,7 @@ class RecipeWorker @AssistedInject constructor(
             val actionType = inputData.getString("action_type") ?: ""
 
             when {
-                !isWelcomeSent && actionType.isEmpty() -> { // Solo la primera vez sin acción específica
+                !isWelcomeSent && actionType.isEmpty() -> {
                     Log.d("RecipeWorker", "📢 Enviando notificación de bienvenida...")
                     showWelcomeNotification()
                     prefs.edit().putBoolean(KEY_WELCOME_SENT, true).apply()

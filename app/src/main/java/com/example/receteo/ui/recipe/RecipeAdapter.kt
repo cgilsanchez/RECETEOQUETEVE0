@@ -1,6 +1,4 @@
 package com.example.receteo.ui.recipe
-
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.AsyncTask

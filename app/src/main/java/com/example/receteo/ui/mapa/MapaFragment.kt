@@ -103,7 +103,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         try {
             (placesClient as? java.io.Closeable)?.close()
         } catch (e: Exception) {
-            Log.e("MapaFragment", "Error cerrando placesClient: ${e.message}")
+            Log.e("MapaFragment", "Error cerrando: ${e.message}")
         }
     }
 

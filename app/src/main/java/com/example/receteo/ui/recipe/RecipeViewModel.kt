@@ -6,20 +6,15 @@ import androidx.lifecycle.*
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkManager
-
 import com.example.receteo.data.remote.models.*
 import com.example.receteo.data.repository.RecipeRepository
 import com.example.receteo.ui.favorites.FavoritesViewModel
 import com.example.receteo.ui.notification.RecipeWorker
-import dagger.hilt.android.internal.Contexts.getApplication
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
-import kotlin.coroutines.cancellation.CancellationException
+
 
 
 @HiltViewModel
