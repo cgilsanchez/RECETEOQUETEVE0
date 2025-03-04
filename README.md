@@ -5,6 +5,7 @@
 Receteo es una aplicación en Android/Kotlin que permite gestionar recetas y chefs con una interfaz moderna basada en Material Design 3.
 
 🎯 Funcionalidades
+
 ✔ Registro e inicio de sesión con manejo seguro de sesiones 🔐
 
 ✔ Gestión de recetas y chefs 📜
@@ -17,6 +18,7 @@ Receteo es una aplicación en Android/Kotlin que permite gestionar recetas y che
 
 
 🛠 Tecnologías Utilizadas
+
 Kotlin
 
 Material Design 3
