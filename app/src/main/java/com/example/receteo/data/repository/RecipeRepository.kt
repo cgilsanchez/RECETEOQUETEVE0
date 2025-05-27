@@ -6,6 +6,8 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkManager
 import androidx.work.workDataOf
+import com.example.receteo.data.local.RecipeDao
+import com.example.receteo.data.local.RecipeEntity
 import com.example.receteo.data.remote.RecipeApi
 import com.example.receteo.data.remote.models.*
 import com.example.receteo.ui.notification.RecipeWorker
@@ -13,7 +15,7 @@ import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
-
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -27,12 +29,15 @@ import java.net.SocketTimeoutException
 import javax.inject.Inject
 
 
-class RecipeRepository @Inject constructor(private val api: RecipeApi,private val context: Context) {
+class RecipeRepository @Inject constructor(private val api: RecipeApi,
+                                           private val recipeDao: RecipeDao, private val context: Context) {
+
+
 
     suspend fun getRecipes(): List<RecipeModel> {
         return try {
             val response = api.getRecipes()
-            if (response.isSuccessful) {
+            val recipes = if (response.isSuccessful) {
                 response.body()?.data?.map { recipeData ->
                     RecipeModel(
                         id = recipeData.id,
@@ -47,9 +52,37 @@ class RecipeRepository @Inject constructor(private val api: RecipeApi,private va
             } else {
                 emptyList()
             }
+
+            // Guardar en Room
+            recipeDao.insertAll(
+                recipes.map {
+                    RecipeEntity(
+                        id = it.id,
+                        name = it.name ?: "",
+                        descriptions = it.descriptions ?: "",
+                        ingredients = it.ingredients ?: "",
+                        image = it.imageUrl ?: "",
+                        isFavorite = it.isFavorite
+                    )
+                }
+            )
+
+            recipes
         } catch (e: Exception) {
-            Log.e("RecipeRepository", "Excepción obteniendo recetas: ${e.message}")
-            emptyList()
+            Log.e("RecipeRepository", "🔌 Fallo de red, usando Room: ${e.message}")
+
+
+            recipeDao.getAll().first().map {
+                RecipeModel(
+                    id = it.id,
+                    name = it.name,
+                    descriptions = it.descriptions,
+                    ingredients = it.ingredients,
+                    chef = null,
+                    imageUrl = it.image,
+                    isFavorite = it.isFavorite
+                )
+            }
         }
     }
 

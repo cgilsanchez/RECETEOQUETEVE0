@@ -12,11 +12,11 @@ data class RecipeModel(
 
 
 data class RecipeResponse(
-    val data: List<RecipeData> // ✅ Debería ser una lista de `RecipeData`
+    val data: List<RecipeData>
 )
 
 
-data class RecipeRespons( // Para obtener UNA receta por ID (Objeto único)
+data class RecipeRespons(
     val data: RecipeData
 )
 
@@ -30,13 +30,13 @@ data class RecipeAttributes(
     val name: String,
     val descriptions: String,
     val ingredients: String,
-    val chef: ChefDataa?, // 🔥 Corregido: `Int?` en lugar de `String?`
+    val chef: ChefDataa?,
     val image: ImageData?,
     val isFavorite: Boolean = false
 )
 
 data class ImageData(
-    val data: ImageAttributes? // 🔥 Corregido: `data` puede ser null
+    val data: ImageAttributes?
 )
 
 data class ImageAttributes(
@@ -47,17 +47,17 @@ data class ImageFormats(
     val url: String?
 ) {
     fun getImageUrl(): String {
-        return url ?: "" // 🔥 Devuelve un string vacío si la URL es null
+        return url ?: ""
     }
 }
 
 
 data class ChefDataa(
-    val data: ChefInfo? // ✅ Aquí `data` es un objeto con `id`
+    val data: ChefInfo?
 )
 
 data class ChefInfo(
-    val id: Int // ✅ Aquí está el `id` correcto del chef
+    val id: Int
 )
 
 
