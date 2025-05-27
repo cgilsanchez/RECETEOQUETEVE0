@@ -1,6 +1,7 @@
 package com.example.receteo.di
 
 import android.content.Context
+import com.example.receteo.data.local.ChefDao
 import com.example.receteo.data.local.RecipeDao
 import com.example.receteo.data.remote.ChefApi
 import com.example.receteo.data.remote.RecipeApi
@@ -30,7 +31,13 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideChefRepository(chefApi: ChefApi): ChefRepository {
-        return ChefRepository(chefApi)
+    fun provideChefRepository(
+        chefApi: ChefApi,
+        chefDao: ChefDao
+    ): ChefRepository {
+        return ChefRepository(chefApi, chefDao)
     }
+
+
+
 }

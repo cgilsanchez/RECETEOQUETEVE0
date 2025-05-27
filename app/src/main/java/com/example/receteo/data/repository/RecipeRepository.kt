@@ -69,7 +69,7 @@ class RecipeRepository @Inject constructor(private val api: RecipeApi,
 
             recipes
         } catch (e: Exception) {
-            Log.e("RecipeRepository", "🔌 Fallo de red, usando Room: ${e.message}")
+            Log.e("RecipeRepository", "Fallo de red, usando Room: ${e.message}")
 
 
             recipeDao.getAll().first().map {

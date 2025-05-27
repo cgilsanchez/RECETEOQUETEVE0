@@ -1,20 +1,26 @@
 package com.example.receteo.data.repository
 
 import android.util.Log
+import com.example.receteo.data.local.ChefDao
+import com.example.receteo.data.local.ChefEntity
 import com.example.receteo.data.remote.ChefApi
 import com.example.receteo.data.remote.models.ChefDataRequest
 import com.example.receteo.data.remote.models.ChefModel
 import com.example.receteo.data.remote.models.ChefRequestModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 
-class ChefRepository @Inject constructor(private val api: ChefApi) {
+class ChefRepository @Inject constructor(
+    private val api: ChefApi,
+    private val chefDao: ChefDao
+) {
 
     suspend fun getChefs(): List<ChefModel> {
         return try {
             val response = api.getChefs()
-            if (response.isSuccessful) {
+            val chefs = if (response.isSuccessful) {
                 response.body()?.data?.map { chefData ->
                     ChefModel(
                         id = chefData.id,
@@ -24,9 +30,19 @@ class ChefRepository @Inject constructor(private val api: ChefApi) {
             } else {
                 emptyList()
             }
+
+
+            chefDao.insertAll(chefs.map {
+                ChefEntity(id = it.id, name = it.name)
+            })
+
+            chefs
         } catch (e: Exception) {
-            Log.e("ChefRepository", "Excepción obteniendo chefs: ${e.message}")
-            emptyList()
+            Log.e("ChefRepository", "Error de red, usando Room: ${e.message}")
+
+            chefDao.getAll().first().map {
+                ChefModel(id = it.id, name = it.name)
+            }
         }
     }
 

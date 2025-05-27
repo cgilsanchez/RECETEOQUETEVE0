@@ -2,6 +2,7 @@ package com.example.receteo.di
 
 import android.content.Context
 import androidx.room.Room
+import com.example.receteo.data.local.ChefDao
 import com.example.receteo.data.local.RecipeDao
 import com.example.receteo.data.local.RecipeDatabase
 import dagger.Module
@@ -30,5 +31,12 @@ object DatabaseModule {
     @Singleton
     fun provideRecipeDao(database: RecipeDatabase): RecipeDao {
         return database.recipeDao()
+    }
+
+
+    @Provides
+    @Singleton
+    fun provideChefDao(database: RecipeDatabase): ChefDao {
+        return database.chefDao()
     }
 }
