@@ -13,12 +13,12 @@
         android:layout_height="wrap_content"
         android:padding="16dp"
         android:background="#FF9800"
-    app:title="Detalle de Receta"
-    app:titleTextColor="@android:color/white"
-    app:navigationIcon="@drawable/flecha"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintEnd_toEndOf="parent" />
+        app:title="@string/recipe_detail_toolbar_title"
+        app:titleTextColor="@android:color/white"
+        app:navigationIcon="@drawable/flecha"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- ScrollView para que el contenido sea desplazable -->
     <android.widget.ScrollView
@@ -44,7 +44,7 @@
                 android:layout_height="200dp"
                 android:layout_marginTop="16dp"
                 android:scaleType="centerCrop"
-                android:contentDescription="Imagen de la receta"
+                android:contentDescription="@string/recipe_detail_image_description"
                 android:layout_gravity="center"/>
 
             <!-- Título de la receta -->
@@ -52,32 +52,32 @@
                 android:id="@+id/textRecipeTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Título de la receta"
+                android:text="@string/recipe_detail_title"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 android:textColor="#FFFFFF"
-            android:layout_marginTop="16dp"
-            android:gravity="center"/>
+                android:layout_marginTop="16dp"
+                android:gravity="center"/>
 
             <!-- Ingredientes -->
             <TextView
                 android:id="@+id/textRecipeIngredientsContent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Ingredientes"
+                android:text="@string/recipe_detail_ingredients"
                 android:textSize="16sp"
                 android:textColor="#FFFFFF"
-            android:layout_marginTop="8dp" />
+                android:layout_marginTop="8dp" />
 
             <!-- Descripción -->
             <TextView
                 android:id="@+id/textRecipeDescriptionContent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Descripción"
+                android:text="@string/recipe_detail_description"
                 android:textSize="16sp"
                 android:textColor="#FFFFFF"
-            android:layout_marginTop="8dp" />
+                android:layout_marginTop="8dp" />
         </LinearLayout>
     </android.widget.ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

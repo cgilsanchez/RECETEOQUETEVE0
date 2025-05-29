@@ -5,7 +5,7 @@
     android:layout_margin="8dp"
     app:cardCornerRadius="8dp"
     app:cardElevation="4dp"
-    android:backgroundTint="@color/orange_light">  <!-- Color de fondo para las cards -->
+    android:backgroundTint="@color/orange_light">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,7 +17,7 @@
             android:id="@+id/ivRecipeImage"
             android:layout_width="match_parent"
             android:layout_height="130dp"
-            android:contentDescription="Recipe Image"
+            android:contentDescription="@string/recipe_image_content_description"
             android:scaleType="centerCrop" />
 
         <TextView
@@ -27,8 +27,6 @@
             android:textSize="20sp"
             android:textColor="@android:color/white"
             android:textStyle="bold" />
-
-
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -42,8 +40,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:backgroundTint="@color/orange_dark"
-            android:text="EDITAR"
-            android:textColor="@android:color/white" />
+                android:text="@string/button_edit"
+                android:textColor="@android:color/white" />
 
             <Button
                 android:id="@+id/btnDelete"
@@ -51,7 +49,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:backgroundTint="@color/red_light"
-                android:text="ELIMINAR"
+                android:text="@string/button_delete"
                 android:textColor="@android:color/white" />
 
             <ImageView
@@ -60,7 +58,7 @@
                 android:layout_height="40dp"
                 android:layout_marginStart="8dp"
                 android:src="@drawable/ic_share"
-                android:contentDescription="Compartir"
+                android:contentDescription="@string/button_share"
                 android:tint="@color/white" />
         </LinearLayout>
     </LinearLayout>

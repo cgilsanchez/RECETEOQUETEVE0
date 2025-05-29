@@ -14,7 +14,7 @@
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:background="@drawable/circle_background"
-        android:contentDescription="Logo de la app"
+        android:contentDescription="@string/register_logo_content_description"
         android:scaleType="centerInside"
         android:src="@mipmap/ic_launcher"
         app:layout_constraintTop_toTopOf="parent"
@@ -44,7 +44,7 @@
                 android:id="@+id/editTextUsername"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Usuario"/>
+                android:hint="@string/register_hint_username"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Campo Correo Electrónico -->
@@ -58,7 +58,7 @@
                 android:id="@+id/editTextEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Correo Electrónico"
+                android:hint="@string/register_hint_email"
                 android:inputType="textEmailAddress"/>
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -73,7 +73,7 @@
                 android:id="@+id/editTextPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Contraseña"
+                android:hint="@string/register_hint_password"
                 android:inputType="textPassword"/>
         </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
@@ -85,7 +85,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:backgroundTint="@color/orange_light"
-        android:text="Registrar"
+        android:text="@string/register_button"
         style="@style/Widget.Material3.Button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -98,8 +98,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:backgroundTint="@color/orange_light"
-        android:text="Volver al Login"
-
+        android:text="@string/register_back_to_login"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/buttonSubmitRegister" />

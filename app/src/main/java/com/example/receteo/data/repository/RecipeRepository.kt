@@ -271,13 +271,13 @@ class RecipeRepository @Inject constructor(private val api: RecipeApi,
         }
     }
 
-    // 🟢 Convierte RecipeRequestModel en RequestBody para enviarlo como JSON
+
     private fun RecipeRequestModel.toJsonRequestBody(): RequestBody {
         val json = Gson().toJson(this)
         return json.toRequestBody("application/json".toMediaType())
     }
 
-    // 🟢 Convierte un archivo en MultipartBody.Part para enviar imágenes
+
     private fun File.toMultipartBody(): MultipartBody.Part {
         val requestFile = this.asRequestBody("image/*".toMediaType())
         return MultipartBody.Part.createFormData("files.image", this.name, requestFile)

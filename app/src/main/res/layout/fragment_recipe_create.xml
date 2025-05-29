@@ -1,73 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <ScrollView
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
-
-    <EditText
-        android:id="@+id/etRecipeName"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Nombre de la receta" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp">
 
-    <EditText
-        android:id="@+id/etIngredients"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Ingredientes" />
+        <EditText
+            android:id="@+id/etRecipeName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/recipe_create_hint_name" />
 
-    <EditText
-        android:id="@+id/etDescription"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Descripción" />
+        <EditText
+            android:id="@+id/etIngredients"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/recipe_create_hint_ingredients" />
 
-    <!-- Spinner para seleccionar el Chef -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Selecciona un Chef"
-        android:paddingTop="8dp"/>
+        <EditText
+            android:id="@+id/etDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/recipe_create_hint_description" />
 
-    <Spinner
-        android:id="@+id/spinnerChef"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/recipe_create_select_chef"
+            android:paddingTop="8dp"/>
 
+        <Spinner
+            android:id="@+id/spinnerChef"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
+        <Button
+            android:id="@+id/btnSelectImage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/recipe_create_select_image"
+            android:backgroundTint="@color/orange_light"
+            android:layout_marginTop="8dp"/>
 
-    <!-- Botón para seleccionar imagen -->
-    <Button
-        android:id="@+id/btnSelectImage"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Seleccionar Imagen"
-        android:backgroundTint="@color/orange_light"
-        android:layout_marginTop="8dp"/>
+        <ImageView
+            android:id="@+id/ivRecipeImage"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:background="@android:color/darker_gray"
+            android:layout_marginTop="8dp"/>
 
-    <!-- ImageView para mostrar la imagen seleccionada -->
-    <ImageView
-        android:id="@+id/ivRecipeImage"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:scaleType="centerCrop"
-        android:background="@android:color/darker_gray"
-        android:layout_marginTop="8dp"/>
-
-    <Button
-        android:id="@+id/btnSaveRecipe"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Guardar Receta"
-        android:backgroundTint="@color/orange_light"
-        android:layout_marginTop="16dp"/>
-</LinearLayout>
+        <Button
+            android:id="@+id/btnSaveRecipe"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/recipe_create_save_button"
+            android:backgroundTint="@color/orange_light"
+            android:layout_marginTop="16dp"/>
+    </LinearLayout>
 </ScrollView>

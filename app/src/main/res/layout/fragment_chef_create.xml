@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,12 +9,12 @@
         android:id="@+id/etChefName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Nombre del Chef" />
+        android:hint="@string/chef_create_hint_name" />
 
     <Button
         android:id="@+id/btnSaveChef"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Guardar Chef"
+        android:text="@string/chef_create_button_save"
         android:backgroundTint="@color/orange_light"/>
 </LinearLayout>
