@@ -64,5 +64,9 @@
     <string name="button_delete">Eliminar</string>
     <string name="button_share">Compartir</string>
     <string name="recipe_image_content_description">Imagen de la receta</string>
+    <string name="nav_recipes">Recetas</string>
+    <string name="nav_chefs">Cocineros</string>
+    <string name="nav_map">Mapa</string>
+    <string name="nav_user">Usuario</string>
 
 </resources>
